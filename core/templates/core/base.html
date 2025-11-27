@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}SamiraDTx{% endblock %}</title>
+</head>
+<body>
+
+    <nav style="background: #ddd; padding: 10px;">
+        <a href="{% url 'home' %}">Inicio</a> | 
+        <a href="#">Quiénes Somos</a> | 
+        <a href="#">Servicios</a> | 
+        <a href="#">Contacto</a>
+    </nav>
+
+    <main style="padding: 20px;">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer style="background: #333; color: white; padding: 10px; margin-top: 20px;">
+        <p>&copy; 2025 SamiraDtx</p>
+    </footer>
+
+</body>
+</html>
