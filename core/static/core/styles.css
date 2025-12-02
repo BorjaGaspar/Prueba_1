@@ -1,0 +1,49 @@
+/* Quitamos los márgenes por defecto */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente moderna */
+    background-color: #f4f4f4;
+}
+
+/* Diseño del Menú */
+nav {
+    background: #2c3e50; /* Azul oscuro corporativo */
+    padding: 1rem;
+    display: flex;       /* Esto pone los elementos en fila */
+    justify-content: center; /* Centrado */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+nav a {
+    color: white;
+    text-decoration: none; /* Quita el subrayado */
+    margin: 0 15px;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+nav a:hover {
+    color: #18bc9c; /* Color verde al pasar el ratón */
+}
+
+/* Diseño del Pie de Página */
+footer {
+    background: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    position: fixed; /* Lo fija abajo del todo (opcional) */
+    bottom: 0;
+    width: 100%;
+}
+
+/* Contenedor principal para que no se pegue a los bordes */
+main {
+    max-width: 800px;
+    margin: 40px auto; /* Centrado horizontalmente */
+    background: white;
+    padding: 30px;
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}

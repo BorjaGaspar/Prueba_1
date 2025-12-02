@@ -5,4 +5,5 @@ from core import views  # Importamos tu vista
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'), # La ruta vacía '' es la portada
+    path('historia/', views.historia, name='historia'),
 ]

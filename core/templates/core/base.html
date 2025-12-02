@@ -1,25 +1,26 @@
-<!DOCTYPE html>
+{% load static %} <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}SamiraDTx{% endblock %}</title>
+    <title>{% block title %}Mi Empresa{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'core/styles.css' %}">
 </head>
 <body>
 
-    <nav style="background: #ddd; padding: 10px;">
-        <a href="{% url 'home' %}">Inicio</a> | 
-        <a href="#">Quiénes Somos</a> | 
-        <a href="#">Servicios</a> | 
+    <nav>
+        <a href="{% url 'home' %}">Inicio</a>
+        <a href="{% url 'historia' %}">Quiénes Somos</a>
+        <a href="#">Servicios</a>
         <a href="#">Contacto</a>
     </nav>
 
-    <main style="padding: 20px;">
+    <main>
         {% block content %}
         {% endblock %}
     </main>
 
-    <footer style="background: #333; color: white; padding: 10px; margin-top: 20px;">
-        <p>&copy; 2025 SamiraDtx</p>
+    <footer>
+        <p>&copy; 2025 Mi Empresa S.L.</p>
     </footer>
 
 </body>

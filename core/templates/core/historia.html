@@ -1,0 +1,11 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Historia | Mi Empresa{% endblock %}
+
+{% block content %}
+    <h2>Nuestra Historia</h2>
+    <p>Nacimos en un garaje en 2025 con una misión clara: aprender Django.</p>
+    <p>Desde entonces, no hemos parado de crecer.</p>
+    
+    <a href="{% url 'home' %}" style="background: blue; color: white; padding: 10px; text-decoration: none;">Volver al Inicio</a>
+{% endblock %}
