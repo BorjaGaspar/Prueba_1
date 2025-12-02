@@ -1,9 +1,10 @@
 {% extends 'core/base.html' %}
-
-{% block title %}Inicio | Mi Empresa{% endblock %}
+{% load static %} {% block title %}Inicio | Mi Empresa{% endblock %}
 
 {% block content %}
     <h1>Bienvenido a SamiraDTx</h1>
     <p>Somos líderes en terapias digitales de bajo coste.</p>
-    <img src="https://via.placeholder.com/600x300" alt="Oficina">
+    
+    <img src="{% static 'core/images/oficina.png' %}" alt="Nuestra Oficina" style="max-width: 100%; height: auto; margin-top: 20px; border-radius: 8px;">
+    
 {% endblock %}

@@ -5,3 +5,10 @@ def home(request):
 
 def historia(request):
     return render(request, "core/historia.html")
+
+def servicios(request):
+    return render(request,"core/servicios.html")
+
+def contacto(request):
+    return render(request,"core/contacto.html")
+
