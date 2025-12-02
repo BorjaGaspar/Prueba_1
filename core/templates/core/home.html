@@ -1,10 +1,49 @@
 {% extends 'core/base.html' %}
-{% load static %} {% block title %}Inicio | Mi Empresa{% endblock %}
+{% load static %}
+
+{% block title %}Inicio | SamiraDTx{% endblock %}
 
 {% block content %}
-    <h1>Bienvenido a SamiraDTx</h1>
-    <p>Somos líderes en terapias digitales de bajo coste.</p>
-    
-    <img src="{% static 'core/images/oficina.png' %}" alt="Nuestra Oficina" style="max-width: 100%; height: auto; margin-top: 20px; border-radius: 8px;">
-    
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">Bienvenido a <span class="text-success">SamiraDTx</span></h1>
+        <p class="lead text-muted">Somos líderes en terapias digitales de bajo coste.</p>
+        
+        <img src="{% static 'core/images/oficina.png' %}" alt="Oficina" class="img-fluid rounded shadow-sm mt-4" style="max-height: 400px; width: auto; object-fit: cover;">
+    </div>
+
+    <div class="row text-center mt-5 pt-4">
+        
+        <div class="col-md-3 mb-4">
+            <div class="text-success mb-3">
+                <i class="bi bi-pie-chart-fill" style="font-size: 2.5rem;"></i>
+            </div>
+            <h5 class="fw-bold">WEB</h5>
+            <p class="small text-muted">En la propia web podemos realizar ejercicios de rehabilitación.</p>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="text-success mb-3">
+                <i class="bi bi-book-half" style="font-size: 2.5rem;"></i>
+            </div>
+            <h5 class="fw-bold">INFORMACIÓN</h5>
+            <p class="small text-muted">Informate de todo lo necesario sobre la terapía digital aquí mismo.</p>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="text-success mb-3">
+                <i class="bi bi-database-fill-gear" style="font-size: 2.5rem;"></i>
+            </div>
+            <h5 class="fw-bold">APP MOVIL</h5>
+            <p class="small text-muted">Hemos creado una app movil para trabajar desde casa.</p>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="text-success mb-3">
+                <i class="bi bi-cpu-fill" style="font-size: 2.5rem;"></i>
+            </div>
+            <h5 class="fw-bold">ALGORITMO</h5>
+            <p class="small text-muted">Desarrollo de un algoritmo basado en IA para recomendación de los mejores ejercicios.</p>
+        </div>
+
+    </div>
 {% endblock %}
