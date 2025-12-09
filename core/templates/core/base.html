@@ -1,4 +1,5 @@
-{% load static %} <!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -17,12 +18,36 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto"> <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Inicio</a></li>
+                <ul class="navbar-nav ms-auto align-items-center"> 
+                    
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Inicio</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'historia' %}">Nuestra Historia</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'servicios' %}">Nuestros servicios</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'contacto' %}">Quienes somos</a></li>
-                    <li class="nav-item"><a class="nav-link btn btn-outline-success ms-2" href="#">Iniciar Sesión</a></li>
+
+                    {% if user.is_authenticated %}
+                        <li class="nav-item ms-3 border-start ps-3"> <span class="navbar-text fw-bold text-success">
+                                <i class="bi bi-person-circle"></i> {{ user.username }}
+                            </span>
+                        </li>
+                        <li class="nav-item ms-2">
+                            <form action="{% url 'logout' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Cerrar Sesión</button>
+                            </form>
+                        </li>
+
+                    {% else %}
+                        <li class="nav-item ms-3">
+                            <a class="nav-link fw-bold" href="{% url 'registro' %}">Registrarse</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-success ms-2" href="{% url 'login' %}">Iniciar Sesión</a>
+                        </li>
+                    {% endif %}
+
                 </ul>
             </div>
         </div>

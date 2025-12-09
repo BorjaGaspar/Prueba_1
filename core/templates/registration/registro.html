@@ -1,0 +1,52 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Registro | SamiraDTx{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-md-12 col-lg-12">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-5">
+                
+                <h2 class="text-center mb-4 fw-bold text-success">Crear Cuenta</h2>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted">{{ field.label_tag }}</label>
+                            <div class="input-group">
+                                {{ field }} 
+                            </div>
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">{{ field.errors }}</div>
+                            {% endif %}
+                            {% if field.help_text %}
+                                <div class="form-text small text-muted">{{ field.help_text }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success btn-lg rounded-pill">Registrarse</button>
+                    </div>
+                </form>
+
+                <p class="text-center mt-3 text-muted">
+                    ¿Ya tienes cuenta? <a href="{% url 'login' %}" class="text-success">Inicia sesión aquí</a>
+                </p>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Este script busca todos los inputs y les añade la clase 'form-control' de Bootstrap
+    var form_fields = document.getElementsByTagName('input');
+    for (var field of form_fields){
+        field.className += ' form-control';
+    }
+</script>
+{% endblock %}
