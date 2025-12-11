@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  web:
+    # Usa el Dockerfile que acabamos de crear para construir la app
+    build: .
+    # El comando para encenderla
+    command: python manage.py runserver 0.0.0.0:8000
+    # Esto conecta tu carpeta real con la del contenedor (espejo)
+    volumes:
+      - .:/app
+    # Abre el puerto 8000 para que puedas ver la web
+    ports:
+      - "8000:8000"

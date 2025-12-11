@@ -1,67 +1,53 @@
-# Web Corporativa SamiraDTx (Clon Wearia)
+#  WebSamira (Prueba_1)
 
-Este proyecto es una aplicación web desarrollada con **Django** y **Bootstrap 5**. Simula la web corporativa de SamiraDTx, incluyendo una sección pública informativa y un área privada con gestión de usuarios.
+Proyecto para la gestión y visualización de datos de wearables, desarrollado en Python/Django y preparado para su implementación con Docker.
 
-## Características
+##  Requisitos
 
-* **Diseño Responsive:** Adaptado a móviles usando Bootstrap 5.
-* **Gestión de Usuarios:** Registro, Inicio de Sesión y Cierre de Sesión.
-* **Arquitectura:** Basada en plantillas de Django (Template Inheritance).
-* **Base de Datos:** SQLite (por defecto para desarrollo).
+* Windows 10/11
+* [Git](https://git-scm.com/)
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Opcional, para despliegue rápido)
+* Python 3.10+ (Si se ejecuta manualmente)
 
-## Requisitos Previos
+##  Instalación
 
-* Python 3.10 o superior.
-* Git.
+### 1. Clonar el repositorio
 
-## Instalación y Configuración
 
-Sigue estos pasos para descargar y ejecutar el proyecto en tu ordenador local:
+```bash
+git clone [https://github.com/TU_USUARIO/web_empresa.git](https://github.com/TU_USUARIO/web_empresa.git)
+cd web_empresa
+```
+### 2. Opción A: Ejecución con Docker
 
-1.  **Clonar el repositorio:**
-    ```bash
-    git clone [https://github.com/TU_USUARIO/web_empresa.git](https://github.com/TU_USUARIO/web_empresa.git)
-    cd web_empresa
-    ```
 
-2.  **Crear y activar un entorno virtual:**
-    ```bash
-    # En Windows:
-    python -m venv venv
-    .\venv\Scripts\activate
+Si tienes Docker instalado, levanta todo el entorno con un solo comando:
+```bash
+docker-compose up --build
+```
 
-    # En Mac/Linux:
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
+La web estará disponible en: http://localhost:8000
 
-3.  **Instalar dependencias:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+### 3. Opción B: Ejecución Manual (Entorno Virtual)
 
-4.  **Aplicar migraciones (Crear base de datos):**
-    ```bash
-    python manage.py migrate
-    ```
+Si prefieres usar el método clásico sin contenedores:
 
-5.  **Ejecutar el servidor:**
-    ```bash
-    python manage.py runserver
-    ```
+Crear y activar entorno:
 
-Visita `http://127.0.0.1:8000/` en tu navegador.
-
-## 👤 Usuarios de Prueba
-
-Para probar la plataforma puedes usar estas credenciales (o crear un usuario nuevo desde "Registrarse"):
-
-* **Usuario:** admin
-* **Contraseña:**  1234
-
-## 📄 Estructura del Proyecto
-
-* `core/`: Aplicación principal (Vistas, Modelos, Templates).
-* `config/`: Configuraciones globales del proyecto (settings.py, urls.py).
-* `templates/`: Archivos HTML.
-* `static/`: Archivos CSS, Imágenes y JS.
+```bash
+python -m venv venv
+.\venv\Scripts\activate
+```
+Instalar dependencias:
+```bash
+pip install -r requirements.txt
+```
+Ejecutar servidor:
+```bash
+python manage.py runserver
+```
+## Estructura del Proyecto
+* config/: Configuración global de Django.
+* core/: Aplicación principal (Vistas públicas y privadas).
+* requirements.txt: Dependencias.
+* Dockerfile & docker-compose.yml: Configuración Docker.
