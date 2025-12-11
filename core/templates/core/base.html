@@ -28,6 +28,11 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'contacto' %}">Quienes somos</a></li>
 
                     {% if user.is_authenticated %}
+                        <li class="nav-item ms-3">
+                            <a class="nav-link btn btn-success text-black px-3 shadow-sm rounded-pill" href="{% url 'dashboard' %}">
+                                <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                            </a>
+                        </li>
                         <li class="nav-item ms-3 border-start ps-3"> <span class="navbar-text fw-bold text-success">
                                 <i class="bi bi-person-circle"></i> {{ user.username }}
                             </span>

@@ -15,8 +15,8 @@ Proyecto para la gestión y visualización de datos de wearables, desarrollado e
 
 
 ```bash
-git clone [https://github.com/TU_USUARIO/web_empresa.git](https://github.com/TU_USUARIO/web_empresa.git)
-cd web_empresa
+git clone [https://github.com/TU_USUARIO/web_empresa.git](https://github.com/BorjaGaspar/Prueba_1.git)
+cd Prueba_1
 ```
 ### 2. Opción A: Ejecución con Docker
 

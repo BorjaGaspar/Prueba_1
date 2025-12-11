@@ -12,4 +12,6 @@ urlpatterns = [
     # Esto habilita /accounts/login/, /accounts/logout/, etc. automáticamente
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/registro/', views.RegistroUsuario.as_view(), name='registro'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('terapia/', views.juegos, name='juegos'),
 ]
