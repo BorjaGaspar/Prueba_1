@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm # <-- NUEVO: Importamos e
 from django.urls import reverse_lazy # <-- NUEVO
 from django.views.generic import CreateView
 from django.contrib.auth.decorators import login_required 
+from .models import PerfilPaciente
 
 def home(request):
     return render(request, "core/home.html")
@@ -27,9 +28,16 @@ class RegistroUsuario(CreateView):
 
 @login_required
 def dashboard(request):
+    # TRUCO: Intentamos obtener el perfil, y si no existe, se crea solo.
+    # Esto evita errores con usuarios antiguos.
+    perfil, created = PerfilPaciente.objects.get_or_create(usuario=request.user)
+    
     return render(request, 'core/dashboard.html')
 
 @login_required
 def juegos(request):
     return render(request, 'core/juegos.html')
 
+@login_required
+def jugar(request):
+    return render(request, 'core/jugar.html')

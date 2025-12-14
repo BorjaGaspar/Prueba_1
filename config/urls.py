@@ -14,4 +14,5 @@ urlpatterns = [
     path('accounts/registro/', views.RegistroUsuario.as_view(), name='registro'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('terapia/', views.juegos, name='juegos'),
+    path('jugar/', views.jugar, name='jugar'),
 ]

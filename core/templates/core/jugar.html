@@ -1,0 +1,48 @@
+{% extends 'core/base_private.html' %}
+
+{% block content %}
+<div class="container py-3">
+    
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="fw-bold mb-0 text-success">Memory Cognitivo</h2>
+            <p class="text-muted small mb-0">Nivel 1: Conceptos Básicos</p>
+        </div>
+        
+        <a href="{% url 'juegos' %}" class="btn btn-outline-danger">
+            <i class="bi bi-x-lg me-2"></i> Salir del Juego
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-lg overflow-hidden bg-black">
+        <div class="card-body p-0 d-flex justify-content-center align-items-center" style="height: 600px; background-color: #000;">
+            
+            <div class="text-center text-white-50">
+                <i class="bi bi-controller display-1 mb-3"></i>
+                <h4>Cargando Entorno de Simulación...</h4>
+                <p class="small">Aquí se ejecutará el juego WebGL cuando importemos los archivos de Unity.</p>
+                <div class="spinner-border text-success mt-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm p-3">
+                <h6 class="fw-bold text-success"><i class="bi bi-info-circle me-2"></i>Instrucciones</h6>
+                <p class="text-muted small mb-0">Encuentra las parejas de cartas idénticas antes de que se acabe el tiempo. Recuerda la posición de cada imagen.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+             <div class="card border-0 shadow-sm p-3 text-center">
+                <small class="text-uppercase text-muted fw-bold">Mejor Puntuación</small>
+                <h3 class="fw-bold text-dark">0 Pts</h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
