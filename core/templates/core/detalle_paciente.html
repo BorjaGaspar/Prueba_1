@@ -1,0 +1,96 @@
+{% extends 'core/base_medico.html' %}
+
+{% block content %}
+<div class="card border-0 shadow-sm mb-4 overflow-hidden">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start">
+            <div class="d-flex">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-4 shadow" style="width: 80px; height: 80px; font-size: 2rem;">
+                    {{ paciente.usuario.username|slice:":2"|upper }}
+                </div>
+                <div>
+                    <h2 class="fw-bold text-dark mb-1">{{ paciente.usuario.username }}</h2>
+                    <p class="text-muted mb-2">
+                        <i class="bi bi-envelope me-1"></i> {{ paciente.usuario.email }} 
+                        {% if paciente.telefono %} | <i class="bi bi-telephone me-1"></i> {{ paciente.telefono }} {% endif %}
+                    </p>
+                    
+                    <div class="d-flex gap-3 mt-3 flex-wrap">
+                        <span class="badge bg-light text-dark border px-3 py-2">
+                            <i class="bi bi-cake2 me-1"></i> {{ paciente.edad|default:"--" }} años
+                        </span>
+                        <span class="badge bg-light text-dark border px-3 py-2">
+                            <i class="bi bi-rulers me-1"></i> {{ paciente.altura|default:"--" }} cm
+                        </span>
+                        <span class="badge bg-light text-dark border px-3 py-2">
+                            <i class="bi bi-speedometer me-1"></i> {{ paciente.peso|default:"--" }} kg
+                        </span>
+                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2">
+                            <i class="bi bi-activity me-1"></i> Ictus: {{ paciente.lado_afectado|default:"No especif." }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary mb-2 d-block">
+                    <i class="bi bi-arrow-left me-2"></i> Volver
+                </a>
+                <button class="btn btn-primary d-block w-100"><i class="bi bi-file-earmark-pdf me-2"></i> Informe</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 border-top border-4 border-warning h-100">
+            <h6 class="text-muted text-uppercase small">Puntuación Global</h6>
+            <h3 class="fw-bold">{{ paciente.puntos }} pts</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 border-top border-4 border-success h-100">
+            <h6 class="text-muted text-uppercase small">Adherencia (Racha)</h6>
+            <h3 class="fw-bold">{{ paciente.racha_dias }} días</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 border-top border-4 border-info h-100">
+            <h6 class="text-muted text-uppercase small">Sesiones Totales</h6>
+            <h3 class="fw-bold">{{ paciente.dias_totales }}</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 border-top border-4 border-primary h-100">
+            <h6 class="text-muted text-uppercase small">Tiempo Medio/Sesión</h6>
+            <h3 class="fw-bold">15 min</h3>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h6 class="fw-bold mb-0">Evolución Cognitiva (Simulación)</h6>
+            </div>
+            <div class="card-body text-center py-5 bg-light">
+                <i class="bi bi-graph-up text-muted opacity-25" style="font-size: 4rem;"></i>
+                <p class="text-muted mt-3">Aquí se mostrará la gráfica de evolución.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h6 class="fw-bold mb-0">Notas del Especialista</h6>
+            </div>
+            <div class="card-body">
+                <textarea class="form-control mb-3" rows="5" placeholder="Escribir nota..."></textarea>
+                <button class="btn btn-sm btn-dark w-100">Guardar Nota</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

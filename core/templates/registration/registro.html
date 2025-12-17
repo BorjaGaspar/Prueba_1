@@ -4,8 +4,7 @@
 
 {% block content %}
 <div class="row justify-content-center mt-4 mb-5">
-    <div class="col-md-12 col-lg-12">
-        <div class="card shadow-sm border-0 rounded-4">
+    <div class="col-md-10 col-lg-10"> <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body p-5">
                 
                 <h2 class="text-center mb-4 fw-bold text-success">Crear Cuenta</h2>
@@ -13,19 +12,73 @@
                 <form method="post">
                     {% csrf_token %}
                     
-                    {% for field in form %}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold text-muted">{{ field.label_tag }}</label>
-                            <div class="input-group">
-                                {{ field }} 
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted">{{ form.username.label }}</label>
+                        {{ form.username }}
+                        <small class="text-muted">{{ form.username.help_text }}</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted">{{ form.email.label }}</label>
+                        {{ form.email }}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="mb-4 form-check form-switch p-3 bg-light rounded">
+                        {{ form.es_medico }}
+                        <label class="form-check-label fw-bold ms-2" for="check_es_medico">
+                            👨‍⚕️ Soy Profesional de la Salud
+                        </label>
+                    </div>
+
+                    <div id="seccion_paciente">
+                        <h5 class="text-success mb-3 small text-uppercase fw-bold"><i class="bi bi-clipboard-pulse me-2"></i>Datos Clínicos</h5>
+                        
+                        <div class="row">
+                            <div class="col-4 mb-3">
+                                <label class="form-label small fw-bold text-muted">Edad</label>
+                                {{ form.edad }}
                             </div>
-                            {% if field.errors %}
-                                <div class="text-danger small mt-1">{{ field.errors }}</div>
-                            {% endif %}
-                            {% if field.help_text %}
-                                <div class="form-text small text-muted">{{ field.help_text }}</div>
-                            {% endif %}
+                            <div class="col-4 mb-3">
+                                <label class="form-label small fw-bold text-muted">Altura (cm)</label>
+                                {{ form.altura }}
+                            </div>
+                            <div class="col-4 mb-3">
+                                <label class="form-label small fw-bold text-muted">Peso (kg)</label>
+                                {{ form.peso }}
+                            </div>
                         </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Lado Afectado</label>
+                            {{ form.lado_afectado }}
+                        </div>
+
+                        <div class="mb-4 p-3 border rounded bg-light-subtle">
+                            <label class="form-label fw-bold text-primary mb-1">🩺 Elige a tu Médico (Opcional)</label>
+                            {{ form.medico_selector }}
+                            <div class="form-text small">El médico podrá ver tu evolución.</div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    {% for field in form %}
+                        {% if field.name not in 'username,email,es_medico,edad,altura,peso,lado_afectado,medico_selector' %}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">{{ field.label }}</label>
+                                <div class="input-group">
+                                    {{ field }} 
+                                </div>
+                                {% if field.errors %}
+                                    <div class="text-danger small mt-1">{{ field.errors }}</div>
+                                {% endif %}
+                                {% if field.help_text %}
+                                    <div class="form-text small text-muted">{{ field.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
                     {% endfor %}
 
                     <div class="d-grid mt-4">
@@ -34,7 +87,7 @@
                 </form>
 
                 <p class="text-center mt-3 text-muted">
-                    ¿Ya tienes cuenta? <a href="{% url 'login' %}" class="text-success">Inicia sesión aquí</a>
+                    ¿Ya tienes cuenta? <a href="{% url 'login' %}" class="text-success fw-bold">Inicia sesión aquí</a>
                 </p>
                 
             </div>
@@ -43,10 +96,41 @@
 </div>
 
 <script>
-    // Este script busca todos los inputs y les añade la clase 'form-control' de Bootstrap
+    // 1. ESTILOS BOOTSTRAP (Tu script original)
     var form_fields = document.getElementsByTagName('input');
+    var selects = document.getElementsByTagName('select');
+    
     for (var field of form_fields){
-        field.className += ' form-control';
+        if (field.type !== 'checkbox') {
+            field.classList.add('form-control');
+        }
     }
+    for (var field of selects){
+        field.classList.add('form-select');
+    }
+
+    // 2. SCRIPT SIMPLE (Solo oculta/muestra, NO CAMBIA TAMAÑO)
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkMedico = document.getElementById('check_es_medico');
+        const seccionPaciente = document.getElementById('seccion_paciente');
+        
+        // Ya no necesitamos seleccionar la tarjeta porque no la vamos a tocar
+
+        function toggleCampos() {
+            if (checkMedico.checked) {
+                // Si es médico, solo ocultamos la sección
+                seccionPaciente.style.display = 'none';
+            } else {
+                // Si es paciente, mostramos la sección
+                seccionPaciente.style.display = 'block';
+            }
+            // ¡Y ya está! Al no tocar las clases 'col', el ancho no cambiará.
+        }
+
+        if(checkMedico){
+            checkMedico.addEventListener('change', toggleCampos);
+            toggleCampos();
+        }
+    });
 </script>
 {% endblock %}
