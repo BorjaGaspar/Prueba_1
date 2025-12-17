@@ -72,25 +72,105 @@
 <div class="row">
     <div class="col-md-8">
         <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white py-3">
-                <h6 class="fw-bold mb-0">Evolución Cognitiva (Simulación)</h6>
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0">Evolución Cognitiva</h6>
+                <span class="badge bg-primary-subtle text-primary">Historial Reciente</span>
             </div>
-            <div class="card-body text-center py-5 bg-light">
-                <i class="bi bi-graph-up text-muted opacity-25" style="font-size: 4rem;"></i>
-                <p class="text-muted mt-3">Aquí se mostrará la gráfica de evolución.</p>
+            
+            <div class="card-body p-4">
+                <div style="height: 350px;">
+                    <canvas id="graficaEvolucion"></canvas>
+                </div>
+                
+                {% if not puntos %}
+                    <p class="text-center text-muted mt-3 small">
+                        * Aún no hay suficientes datos para generar una tendencia.
+                    </p>
+                {% endif %}
             </div>
         </div>
     </div>
+
     <div class="col-md-4">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white py-3">
                 <h6 class="fw-bold mb-0">Notas del Especialista</h6>
             </div>
             <div class="card-body">
-                <textarea class="form-control mb-3" rows="5" placeholder="Escribir nota..."></textarea>
+                <textarea class="form-control mb-3" rows="5" placeholder="Escribir nota sobre el progreso..."></textarea>
                 <button class="btn btn-sm btn-dark w-100">Guardar Nota</button>
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('graficaEvolucion').getContext('2d');
+        
+        // Recogemos los datos que envía Django
+        // El filtro |safe es vital para que JS entienda la lista de Python
+        const fechas = {{ fechas|safe }};
+        const puntos = {{ puntos|safe }};
+
+        if (fechas.length > 0) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: fechas,
+                    datasets: [{
+                        label: 'Puntuación Obtenida',
+                        data: puntos,
+                        borderColor: '#0d6efd', // Azul Bootstrap
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)', // Azul transparente
+                        borderWidth: 3,
+                        tension: 0.3, // Curva suave
+                        fill: true,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#0d6efd',
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false // Ocultamos la leyenda para más limpieza
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw + ' Puntos';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                borderDash: [5, 5]
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            // Si no hay datos, pintamos un texto en el canvas
+            ctx.font = "16px Arial";
+            ctx.fillStyle = "gray";
+            ctx.textAlign = "center";
+            ctx.fillText("Sin datos de juego registrados", ctx.canvas.width/2, ctx.canvas.height/2);
+        }
+    });
+</script>
 {% endblock %}

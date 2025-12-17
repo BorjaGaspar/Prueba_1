@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import RegistroUsuarioForm
 from .models import PerfilPaciente
 from django.shortcuts import render, redirect, get_object_or_404
+from .models import PerfilPaciente, SesionDeJuego
 
 # --- VISTAS PÚBLICAS (Las que ya tenías) ---
 
@@ -97,10 +98,20 @@ def jugar(request):
 
 @login_required
 def detalle_paciente(request, pk):
-    # Buscamos al paciente por su ID
+    # 1. Buscamos al paciente
     perfil_paciente = get_object_or_404(PerfilPaciente, pk=pk)
     
+    # 2. Buscamos sus sesiones de juego (ordenadas por fecha antigua -> nueva)
+    sesiones = SesionDeJuego.objects.filter(paciente=perfil_paciente).order_by('fecha')
+    
+    # 3. Preparamos los datos para la gráfica (Listas de Python)
+    # Formateamos la fecha para que se vea corta (ej: "17/12")
+    fechas = [sesion.fecha.strftime("%d/%m") for sesion in sesiones]
+    puntos = [sesion.puntos for sesion in sesiones]
+    
     context = {
-        'paciente': perfil_paciente
+        'paciente': perfil_paciente,
+        'fechas': fechas,  # Enviamos la lista de fechas
+        'puntos': puntos,  # Enviamos la lista de puntos
     }
     return render(request, 'core/detalle_paciente.html', context)

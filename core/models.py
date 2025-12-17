@@ -42,3 +42,27 @@ class PerfilPaciente(models.Model):
     def __str__(self):
         role = "Médico" if self.es_medico else "Paciente"
         return f"{self.usuario.username} ({role})"
+    
+    
+    
+  
+class SesionDeJuego(models.Model):
+    # 1. ¿Quién jugó? (Vinculamos con el perfil del paciente)
+    paciente = models.ForeignKey(PerfilPaciente, on_delete=models.CASCADE, related_name='sesiones')
+    
+    # 2. Datos de la partida
+    fecha = models.DateTimeField(auto_now_add=True, verbose_name="Fecha y Hora")
+    puntos = models.IntegerField(default=0, verbose_name="Puntos ganados")
+    tiempo_jugado = models.IntegerField(default=0, verbose_name="Segundos jugados")
+    
+    # 3. Datos extra (opcionales por si en el futuro hay más juegos)
+    juego = models.CharField(max_length=50, default="Memory", verbose_name="Nombre del Juego")
+    nivel_alcanzado = models.IntegerField(default=1, verbose_name="Nivel")
+
+    def __str__(self):
+        return f"{self.paciente.usuario.username} - {self.puntos} pts ({self.fecha.strftime('%d/%m/%Y')})"
+
+    class Meta:
+        verbose_name = "Sesión de Juego"
+        verbose_name_plural = "Historial de Sesiones"
+        ordering = ['-fecha'] # Ordenar: las más nuevas primero

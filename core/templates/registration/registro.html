@@ -96,37 +96,35 @@
 </div>
 
 <script>
-    // 1. ESTILOS BOOTSTRAP (Tu script original)
+    // 1. TU SCRIPT ORIGINAL DE ESTILOS (Mejorado para no romper el checkbox)
     var form_fields = document.getElementsByTagName('input');
     var selects = document.getElementsByTagName('select');
     
+    // Aplicar estilo a inputs (menos al checkbox del médico)
     for (var field of form_fields){
         if (field.type !== 'checkbox') {
             field.classList.add('form-control');
         }
     }
+    // Aplicar estilo a los selectores (lado afectado, médico)
     for (var field of selects){
         field.classList.add('form-select');
     }
 
-    // 2. SCRIPT SIMPLE (Solo oculta/muestra, NO CAMBIA TAMAÑO)
+    // 2. SCRIPT PARA OCULTAR/MOSTRAR SECCIÓN PACIENTE
     document.addEventListener('DOMContentLoaded', function() {
         const checkMedico = document.getElementById('check_es_medico');
         const seccionPaciente = document.getElementById('seccion_paciente');
-        
-        // Ya no necesitamos seleccionar la tarjeta porque no la vamos a tocar
 
         function toggleCampos() {
             if (checkMedico.checked) {
-                // Si es médico, solo ocultamos la sección
-                seccionPaciente.style.display = 'none';
+                seccionPaciente.style.display = 'none'; // Si es médico, oculta datos
             } else {
-                // Si es paciente, mostramos la sección
-                seccionPaciente.style.display = 'block';
+                seccionPaciente.style.display = 'block'; // Si es paciente, muestra datos
             }
-            // ¡Y ya está! Al no tocar las clases 'col', el ancho no cambiará.
         }
 
+        // Ejecutar al inicio y al cambiar
         if(checkMedico){
             checkMedico.addEventListener('change', toggleCampos);
             toggleCampos();
