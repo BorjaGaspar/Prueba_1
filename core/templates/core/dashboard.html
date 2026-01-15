@@ -6,6 +6,33 @@
 
     <div class="row mb-4">
         
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow-sm bg-primary text-white overflow-hidden">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase text-white-50 mb-1">Nivel de Terapia Cognitiva Asignado</h6>
+                        
+                        <h2 class="display-4 fw-bold mb-0">
+                            Nivel {{ user.perfil.nivel_asignado|default:"--" }}
+                        </h2>
+
+                        <p class="mb-0 mt-2 badge bg-white text-primary fs-6">
+                            {% if user.perfil.nivel_asignado == 1 %} Deterioro Severo
+                            {% elif user.perfil.nivel_asignado == 2 %} Deterioro Moderado
+                            {% elif user.perfil.nivel_asignado == 3 %} Deterioro Leve
+                            {% elif user.perfil.nivel_asignado == 4 %} Límite Normalidad
+                            {% elif user.perfil.nivel_asignado == 5 %} Normal / Experto
+                            {% else %} Pendiente de Evaluación 
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="opacity-50">
+                        <i class="bi bi-cpu-fill display-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="col-md-6 mb-4">
             <div class="card border-0 shadow-sm p-4 h-100 bg-success text-white">
                 <div class="d-flex justify-content-between align-items-center">
@@ -23,7 +50,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="text-muted text-uppercase mb-2">Días Totales</h6>
-                        <h2 class="fw-bold text-dark mb-0 display-6">{{ user.perfil.dias_totales }} Días</h2>
+                        <h2 class="fw-bold text-dark mb-0 display-6">{{ user.perfil.dias_totales|default:"0" }} Días</h2>
                     </div>
                     <i class="bi bi-calendar-check text-info opacity-50" style="font-size: 3rem;"></i>
                 </div>
@@ -47,7 +74,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="text-muted text-uppercase mb-2">Tiempo de Terapia</h6>
-                        <h2 class="fw-bold text-dark mb-0 display-6">{{ user.perfil.tiempo_terapia }} min</h2>
+                        <h2 class="fw-bold text-dark mb-0 display-6">{{ user.perfil.tiempo_terapia|default:"0" }} min</h2>
                     </div>
                     <i class="bi bi-stopwatch-fill text-primary opacity-50" style="font-size: 3rem;"></i>
                 </div>
