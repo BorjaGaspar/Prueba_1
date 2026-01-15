@@ -21,6 +21,24 @@ class PerfilPaciente(models.Model):
     ]
     lado_afectado = models.CharField(max_length=20, choices=OPCIONES_LADO, null=True, blank=True, verbose_name="Lado Afectado (Hemiplejia)")
     
+    # ### NUEVO: SISTEMA DE EVALUACIÓN Y NIVELES
+    # ==========================================================
+    test_completado = models.BooleanField(default=False, verbose_name="¿Evaluación Inicial Completada?")
+    
+    # El nivel que la web mandará a Unity (1: Muy fácil ... 5: Difícil)
+    nivel_asignado = models.IntegerField(default=1, verbose_name="Nivel de Dificultad (1-5)")
+    
+    # Guardamos las notas exactas para ver la evolución clínica
+    puntuacion_cognitiva = models.IntegerField(default=0, verbose_name="Score Cognitivo (0-30)")
+    puntuacion_motora = models.IntegerField(default=0, verbose_name="Score Motor (0-100)")
+    
+    fecha_ultima_evaluacion = models.DateTimeField(null=True, blank=True, verbose_name="Fecha última evaluación")
+    # ==========================================================
+
+    # Gamificación (Lo que ya tenías)
+    puntos = models.IntegerField(default=0)
+    racha_dias = models.IntegerField(default=0)
+
     # --- RELACIÓN MÉDICO ---
     medico_asignado = models.ForeignKey(
         User, 

@@ -6,6 +6,7 @@ from .forms import RegistroUsuarioForm
 from .models import PerfilPaciente
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import PerfilPaciente, SesionDeJuego
+from django.utils import timezone
 
 # --- VISTAS PÚBLICAS (Las que ya tenías) ---
 
@@ -64,7 +65,7 @@ def registro(request):
 
 # --- ZONA PRIVADA ---
 
-@login_required
+
 @login_required
 def dashboard(request):
     perfil, created = PerfilPaciente.objects.get_or_create(usuario=request.user)
@@ -85,7 +86,12 @@ def dashboard(request):
         return render(request, 'core/dashboard_medico.html', context)
         
     else:
-        # Si es paciente, le mostramos su terapia (verde)
+       # Verificamos si ha completado el test inicial (Cognitivo por ahora)
+        if not perfil.test_completado:
+            # Si es Falso, lo redirigimos obligatoriamente a la evaluación
+            return redirect('sala_evaluacion')
+        
+        # Si es Verdadero, le dejamos pasar y ver su dashboard
         return render(request, 'core/dashboard.html')
 
 @login_required
@@ -115,3 +121,28 @@ def detalle_paciente(request, pk):
         'puntos': puntos,  # Enviamos la lista de puntos
     }
     return render(request, 'core/detalle_paciente.html', context)
+
+@login_required
+def sala_evaluacion(request):
+    perfil, created = PerfilPaciente.objects.get_or_create(usuario=request.user)
+    
+    # Si le damos a un botón de "Simular"
+    if request.method == 'POST':
+        # Ahora el botón nos envía directamente el número (1, 2, 3, 4 o 5)
+        nivel_elegido = int(request.POST.get('resultado_simulado'))
+        
+        # Asignamos el nivel exacto que hemos pulsado
+        perfil.nivel_asignado = nivel_elegido
+        
+        # Inventamos una nota cognitiva realista según el nivel (solo para rellenar)
+        # Nivel 1 = 10 pts ... Nivel 5 = 30 pts
+        perfil.puntuacion_cognitiva = nivel_elegido * 6 
+            
+        # Guardamos que YA HIZO el test
+        perfil.test_completado = True
+        perfil.fecha_ultima_evaluacion = timezone.now()
+        perfil.save()
+        
+        return redirect('dashboard')
+
+    return render(request, 'core/evaluacion.html')
