@@ -1,0 +1,39 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Iniciar Sesión | SamiraDTx{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-12 col-lg-12"> <div class="card shadow-sm border-0 rounded-4"> <div class="card-body p-5">
+                
+                <h2 class="text-center mb-4 fw-bold text-success">Iniciar Sesión</h2>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                        <div class="alert alert-danger text-center">
+                            Usuario o contraseña incorrectos.
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted">Usuario</label>
+                        <input type="text" name="username" class="form-control form-control-lg" placeholder="Ej: admin" required autofocus>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-muted">Contraseña</label>
+                        <input type="password" name="password" class="form-control form-control-lg" placeholder="••••••" required>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg rounded-pill">Entrar</button>
+                    </div>
+                </form>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

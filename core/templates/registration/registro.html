@@ -1,0 +1,134 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Registro | SamiraDTx{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-md-10 col-lg-10"> <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-5">
+                
+                <h2 class="text-center mb-4 fw-bold text-success">Crear Cuenta</h2>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted">{{ form.username.label }}</label>
+                        {{ form.username }}
+                        <small class="text-muted">{{ form.username.help_text }}</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-muted">{{ form.email.label }}</label>
+                        {{ form.email }}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="mb-4 form-check form-switch p-3 bg-light rounded">
+                        {{ form.es_medico }}
+                        <label class="form-check-label fw-bold ms-2" for="check_es_medico">
+                            👨‍⚕️ Soy Profesional de la Salud
+                        </label>
+                    </div>
+
+                    <div id="seccion_paciente">
+                        <h5 class="text-success mb-3 small text-uppercase fw-bold"><i class="bi bi-clipboard-pulse me-2"></i>Datos Clínicos</h5>
+                        
+                        <div class="row">
+                            <div class="col-4 mb-3">
+                                <label class="form-label small fw-bold text-muted">Edad</label>
+                                {{ form.edad }}
+                            </div>
+                            <div class="col-4 mb-3">
+                                <label class="form-label small fw-bold text-muted">Altura (cm)</label>
+                                {{ form.altura }}
+                            </div>
+                            <div class="col-4 mb-3">
+                                <label class="form-label small fw-bold text-muted">Peso (kg)</label>
+                                {{ form.peso }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Lado Afectado</label>
+                            {{ form.lado_afectado }}
+                        </div>
+
+                        <div class="mb-4 p-3 border rounded bg-light-subtle">
+                            <label class="form-label fw-bold text-primary mb-1">🩺 Elige a tu Médico (Opcional)</label>
+                            {{ form.medico_selector }}
+                            <div class="form-text small">El médico podrá ver tu evolución.</div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    {% for field in form %}
+                        {% if field.name not in 'username,email,es_medico,edad,altura,peso,lado_afectado,medico_selector' %}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">{{ field.label }}</label>
+                                <div class="input-group">
+                                    {{ field }} 
+                                </div>
+                                {% if field.errors %}
+                                    <div class="text-danger small mt-1">{{ field.errors }}</div>
+                                {% endif %}
+                                {% if field.help_text %}
+                                    <div class="form-text small text-muted">{{ field.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success btn-lg rounded-pill">Registrarse</button>
+                    </div>
+                </form>
+
+                <p class="text-center mt-3 text-muted">
+                    ¿Ya tienes cuenta? <a href="{% url 'login' %}" class="text-success fw-bold">Inicia sesión aquí</a>
+                </p>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. TU SCRIPT ORIGINAL DE ESTILOS (Mejorado para no romper el checkbox)
+    var form_fields = document.getElementsByTagName('input');
+    var selects = document.getElementsByTagName('select');
+    
+    // Aplicar estilo a inputs (menos al checkbox del médico)
+    for (var field of form_fields){
+        if (field.type !== 'checkbox') {
+            field.classList.add('form-control');
+        }
+    }
+    // Aplicar estilo a los selectores (lado afectado, médico)
+    for (var field of selects){
+        field.classList.add('form-select');
+    }
+
+    // 2. SCRIPT PARA OCULTAR/MOSTRAR SECCIÓN PACIENTE
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkMedico = document.getElementById('check_es_medico');
+        const seccionPaciente = document.getElementById('seccion_paciente');
+
+        function toggleCampos() {
+            if (checkMedico.checked) {
+                seccionPaciente.style.display = 'none'; // Si es médico, oculta datos
+            } else {
+                seccionPaciente.style.display = 'block'; // Si es paciente, muestra datos
+            }
+        }
+
+        // Ejecutar al inicio y al cambiar
+        if(checkMedico){
+            checkMedico.addEventListener('change', toggleCampos);
+            toggleCampos();
+        }
+    });
+</script>
+{% endblock %}

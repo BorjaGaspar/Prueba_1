@@ -1,0 +1,70 @@
+{% extends 'core/base_private.html' %}
+
+{% block content %}
+    <h2 class="fw-bold text-dark mb-2">¡Hola, {{ user.username }}! 👋</h2>
+    <p class="text-muted mb-4">Estás haciendo un gran trabajo. Aquí tienes tu resumen de hoy.</p>
+
+    <div class="row mb-4">
+        
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm p-4 h-100 bg-success text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-white-50 text-uppercase mb-2">Racha Actual</h6>
+                        <h2 class="fw-bold mb-0 display-6">{{ user.perfil.racha_dias }} Días</h2>
+                    </div>
+                    <i class="bi bi-fire opacity-50" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm p-4 h-100 bg-white border-start border-4 border-info">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-2">Días Totales</h6>
+                        <h2 class="fw-bold text-dark mb-0 display-6">{{ user.perfil.dias_totales }} Días</h2>
+                    </div>
+                    <i class="bi bi-calendar-check text-info opacity-50" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm p-4 h-100 bg-white border-start border-4 border-warning">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-2">Puntos Acumulados</h6>
+                        <h2 class="fw-bold text-dark mb-0 display-6">{{ user.perfil.puntos }}</h2>
+                    </div>
+                    <i class="bi bi-trophy-fill text-warning" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm p-4 h-100 bg-white border-start border-4 border-primary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-2">Tiempo de Terapia</h6>
+                        <h2 class="fw-bold text-dark mb-0 display-6">{{ user.perfil.tiempo_terapia }} min</h2>
+                    </div>
+                    <i class="bi bi-stopwatch-fill text-primary opacity-50" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card border-0 shadow-sm bg-white mb-4">
+        <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+                <h5 class="fw-bold text-success">¿Listo para continuar?</h5>
+                <p class="text-muted mb-0">Los diferentes minijuegos te están esperando. ¡Vamos a por ello!</p>
+            </div>
+            <a href="{% url 'juegos' %}" class="btn btn-success btn-lg rounded-pill px-4 mt-3 mt-md-0 shadow">
+                <i class="bi bi-play-circle-fill me-2"></i> Ir a Terapia
+            </a>
+        </div>
+    </div>
+{% endblock %}
