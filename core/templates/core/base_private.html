@@ -35,6 +35,8 @@
 
     <div class="container-fluid">
         <div class="row">
+            
+            {% block sidebar %}
             <div class="col-md-2 sidebar p-3 d-none d-md-block">
                 <h6 class="text-uppercase text-muted small fw-bold mt-2 mb-3">Menú Principal</h6>
                 
@@ -70,8 +72,9 @@
                     </a>
                 </div>
             </div>
+            {% endblock %}
 
-            <div class="col-md-10 p-4">
+            <div class="{% block main_class %}col-md-10 p-4{% endblock %}">
                 {% block content %}
                 {% endblock %}
             </div>
