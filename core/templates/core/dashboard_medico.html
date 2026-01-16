@@ -1,6 +1,8 @@
 {% extends 'core/base_medico.html' %}
 
 {% block content %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold text-dark">Panel de Especialista</h2>
     <button class="btn btn-primary"><i class="bi bi-person-plus-fill me-2"></i>Añadir Paciente</button>
@@ -31,6 +33,7 @@
                 <tr>
                     <th>Paciente</th>
                     <th>Estado</th>
+                    <th>Nivel Cognitivo</th> 
                     <th>Racha Actual</th>
                     <th>Puntos</th>
                     <th>Acciones</th>
@@ -53,6 +56,22 @@
                     <td>
                         <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Activo</span>
                     </td>
+                    
+                    <td>
+                        {% if paciente.nivel_asignado == 1 %}
+                            <span class="badge bg-danger">Nivel 1 - Severo</span>
+                        {% elif paciente.nivel_asignado == 2 %}
+                            <span class="badge bg-warning text-dark">Nivel 2 - Moderado</span>
+                        {% elif paciente.nivel_asignado == 3 %}
+                            <span class="badge bg-info text-dark">Nivel 3 - Leve</span>
+                        {% elif paciente.nivel_asignado == 4 %}
+                            <span class="badge bg-primary">Nivel 4 - Límite</span>
+                        {% elif paciente.nivel_asignado == 5 %}
+                            <span class="badge bg-success">Nivel 5 - Normal</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Sin Evaluar</span>
+                        {% endif %}
+                    </td>
                     <td>
                         <span class="fw-bold text-dark">{{ paciente.racha_dias }}</span> Días
                     </td>
@@ -62,15 +81,27 @@
                             <strong>{{ paciente.puntos }}</strong>
                         </div>
                     </td>
+                    
                     <td>
-                        <a href="{% url 'detalle_paciente' pk=paciente.pk %}" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-eye"></i> Ver Ficha
-                        </a>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'detalle_paciente' pk=paciente.pk %}" 
+                               class="btn btn-sm btn-outline-primary" 
+                               title="Ver Ficha Completa">
+                                <i class="bi bi-eye"></i>
+                            </a>
+
+                            <button onclick="confirmarReevaluacion('{% url 'forzar_evaluacion' pk=paciente.pk %}')" 
+                               class="btn btn-sm btn-outline-warning text-dark" 
+                               title="Forzar Re-evaluación">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </button>
+                        </div>
                     </td>
+
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center py-5 text-muted">
+                    <td colspan="6" class="text-center py-5 text-muted">
                         <i class="bi bi-people fs-1 d-block mb-3 opacity-50"></i>
                         <p class="mb-1">No tienes pacientes asignados todavía.</p>
                         <small>Ve al panel de administración para asignarte un paciente.</small>
@@ -81,4 +112,25 @@
         </table>
     </div>
 </div>
+
+<script>
+    function confirmarReevaluacion(urlDestino) {
+        Swal.fire({
+            title: '¿Solicitar Re-evaluación?',
+            text: "El paciente perderá su nivel actual y deberá repetir el Test Inicial.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ffc107', // Amarillo warning
+            cancelButtonColor: '#6c757d', // Gris
+            confirmButtonText: 'Sí, reiniciar',
+            cancelButtonText: 'Cancelar',
+            color: '#000' // Texto negro
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si dice que sí, le llevamos a la URL de Django
+                window.location.href = urlDestino;
+            }
+        })
+    }
+</script>
 {% endblock %}

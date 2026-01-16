@@ -16,6 +16,32 @@
                     </p>
                     
                     <div class="d-flex gap-3 mt-3 flex-wrap">
+                        
+                        {% if paciente.nivel_asignado == 1 %}
+                            <span class="badge bg-danger px-3 py-2">
+                                <i class="bi bi-exclamation-octagon me-1"></i> Nivel 1 - Severo
+                            </span>
+                        {% elif paciente.nivel_asignado == 2 %}
+                            <span class="badge bg-warning text-dark px-3 py-2">
+                                <i class="bi bi-exclamation-triangle me-1"></i> Nivel 2 - Moderado
+                            </span>
+                        {% elif paciente.nivel_asignado == 3 %}
+                            <span class="badge bg-info text-dark px-3 py-2">
+                                <i class="bi bi-info-circle me-1"></i> Nivel 3 - Leve
+                            </span>
+                        {% elif paciente.nivel_asignado == 4 %}
+                            <span class="badge bg-primary px-3 py-2">
+                                <i class="bi bi-activity me-1"></i> Nivel 4 - Límite
+                            </span>
+                        {% elif paciente.nivel_asignado == 5 %}
+                            <span class="badge bg-success px-3 py-2">
+                                <i class="bi bi-check-circle me-1"></i> Nivel 5 - Normal
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary px-3 py-2">
+                                <i class="bi bi-question-circle me-1"></i> Sin Evaluar
+                            </span>
+                        {% endif %}
                         <span class="badge bg-light text-dark border px-3 py-2">
                             <i class="bi bi-cake2 me-1"></i> {{ paciente.edad|default:"--" }} años
                         </span>
