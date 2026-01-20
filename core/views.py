@@ -63,21 +63,26 @@ def registro(request):
 # --- ZONA PRIVADA (PACIENTE) ---
 
 @login_required
+
+
+@login_required
 def dashboard(request):
     perfil, created = PerfilPaciente.objects.get_or_create(usuario=request.user)
     
-    # SI ES MÉDICO, LO ECHAMOS A SU PROPIO DASHBOARD
+    # 1. SI ES MÉDICO -> A su panel (Esto no cambia)
     if perfil.es_medico:
         return redirect('dashboard_medico')
         
-    # LOGICA DE PACIENTE
+    # 2. SI ES PACIENTE
+    # A) Si no ha hecho el test -> A evaluación
     if not perfil.test_completado:
         return redirect('sala_evaluacion')
     
-    return render(request, 'core/dashboard.html')
-
-# --- ZONA PRIVADA (MÉDICO) ---
-# ¡ESTA ES LA FUNCIÓN QUE TE FALTABA!
+    # B) Si YA ha hecho el test -> ¡DIRECTO A TERAPIA! (Cambio de Isabel)
+    return redirect('juegos') 
+    
+    # Nota: Ya no llegamos a renderizar 'core/dashboard.html' para el paciente,
+    # pero no lo borres por si acaso Isabel cambia de opinión luego.
 
 @login_required
 def dashboard_medico(request):
