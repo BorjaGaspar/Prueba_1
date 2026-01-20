@@ -1,97 +1,137 @@
 {% extends 'core/base_private.html' %}
 
 {% block content %}
-    <h2 class="fw-bold text-dark mb-2">¡Hola, {{ user.username }}! 👋</h2>
-    <p class="text-muted mb-4">Estás haciendo un gran trabajo. Aquí tienes tu resumen de hoy.</p>
-
-    <div class="row mb-4">
-        
-        <div class="col-12 mb-4">
-            <div class="card border-0 shadow-sm bg-primary text-white overflow-hidden">
-                <div class="card-body p-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-uppercase text-white-50 mb-1">Nivel de Terapia Cognitiva Asignado</h6>
-                        
-                        <h2 class="display-4 fw-bold mb-0">
-                            Nivel {{ user.perfil.nivel_asignado|default:"--" }}
-                        </h2>
-
-                        <p class="mb-0 mt-2 badge bg-white text-primary fs-6">
-                            {% if user.perfil.nivel_asignado == 1 %} Deterioro Severo
-                            {% elif user.perfil.nivel_asignado == 2 %} Deterioro Moderado
-                            {% elif user.perfil.nivel_asignado == 3 %} Deterioro Leve
-                            {% elif user.perfil.nivel_asignado == 4 %} Límite Normalidad
-                            {% elif user.perfil.nivel_asignado == 5 %} Normal / Experto
-                            {% else %} Pendiente de Evaluación 
-                            {% endif %}
-                        </p>
-                    </div>
-                    <div class="opacity-50">
-                        <i class="bi bi-cpu-fill display-1"></i>
-                    </div>
-                </div>
-            </div>
+<div class="container py-5">
+    
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-8">
+            <h6 class="text-uppercase text-muted fw-bold mb-1">Panel de Paciente</h6>
+            <h1 class="display-5 fw-bold text-dark">
+                Hola, <span class="text-success">{{ user.username|title }}</span> 👋
+            </h1>
+            <p class="lead text-muted">Hoy es un buen día para avanzar en tu recuperación.</p>
         </div>
-
-        <div class="col-md-6 mb-4">
-            <div class="card border-0 shadow-sm p-4 h-100 bg-success text-white">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-white-50 text-uppercase mb-2">Racha Actual</h6>
-                        <h2 class="fw-bold mb-0 display-6">{{ user.perfil.racha_dias }} Días</h2>
-                    </div>
-                    <i class="bi bi-fire opacity-50" style="font-size: 3rem;"></i>
-                </div>
-            </div>
+        <div class="col-md-4 text-md-end">
+            <span class="badge bg-success-subtle text-success border border-success px-3 py-2 rounded-pill fs-6">
+                Paciente Activo
+            </span>
         </div>
-
-        <div class="col-md-6 mb-4">
-            <div class="card border-0 shadow-sm p-4 h-100 bg-white border-start border-4 border-info">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted text-uppercase mb-2">Días Totales</h6>
-                        <h2 class="fw-bold text-dark mb-0 display-6">{{ user.perfil.dias_totales|default:"0" }} Días</h2>
-                    </div>
-                    <i class="bi bi-calendar-check text-info opacity-50" style="font-size: 3rem;"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 mb-4">
-            <div class="card border-0 shadow-sm p-4 h-100 bg-white border-start border-4 border-warning">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted text-uppercase mb-2">Puntos Acumulados</h6>
-                        <h2 class="fw-bold text-dark mb-0 display-6">{{ user.perfil.puntos }}</h2>
-                    </div>
-                    <i class="bi bi-trophy-fill text-warning" style="font-size: 3rem;"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 mb-4">
-            <div class="card border-0 shadow-sm p-4 h-100 bg-white border-start border-4 border-primary">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted text-uppercase mb-2">Tiempo de Terapia</h6>
-                        <h2 class="fw-bold text-dark mb-0 display-6">{{ user.perfil.tiempo_terapia|default:"0" }} min</h2>
-                    </div>
-                    <i class="bi bi-stopwatch-fill text-primary opacity-50" style="font-size: 3rem;"></i>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <div class="card border-0 shadow-sm bg-white mb-4">
-        <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap">
-            <div>
-                <h5 class="fw-bold text-success">¿Listo para continuar?</h5>
-                <p class="text-muted mb-0">Los diferentes minijuegos te están esperando. ¡Vamos a por ello!</p>
+    <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
+                <div class="card-body p-4 d-flex align-items-center">
+                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3 text-warning">
+                        <i class="bi bi-trophy-fill fs-3"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-0 small text-uppercase fw-bold">Puntos Cognitivos</h6>
+                        <h2 class="fw-bold mb-0">
+                            {{ user.perfilpaciente.puntuacion_cognitiva|default:"0" }}
+                        </h2>
+                    </div>
+                </div>
             </div>
-            <a href="{% url 'juegos' %}" class="btn btn-success btn-lg rounded-pill px-4 mt-3 mt-md-0 shadow">
-                <i class="bi bi-play-circle-fill me-2"></i> Ir a Terapia
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
+                <div class="card-body p-4 d-flex align-items-center">
+                    <div class="bg-danger bg-opacity-10 p-3 rounded-circle me-3 text-danger">
+                        <i class="bi bi-fire fs-3"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-0 small text-uppercase fw-bold">Racha Actual</h6>
+                        <h2 class="fw-bold mb-0">1 Día</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
+                <div class="card-body p-4 d-flex align-items-center">
+                    <div class="bg-info bg-opacity-10 p-3 rounded-circle me-3 text-info">
+                        <i class="bi bi-bar-chart-fill fs-3"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-0 small text-uppercase fw-bold">Nivel Actual</h6>
+                        <h2 class="fw-bold mb-0">
+                            Nivel {{ user.perfilpaciente.nivel_asignado }}
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card {% if user.perfilpaciente.test_completado %}bg-success{% else %}bg-warning bg-opacity-10{% endif %} border-0 shadow rounded-4 overflow-hidden">
+                
+                <div class="card-body p-5 text-center position-relative">
+                    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(45deg, rgba(0,0,0,0.05), transparent);"></div>
+                    
+                    {% if user.perfilpaciente.test_completado %}
+                        <h2 class="fw-bold display-6 mb-3 text-white">Sala de Terapia Lista</h2>
+                        <p class="fs-5 mb-4 text-white opacity-75" style="max-width: 600px; margin: 0 auto;">
+                            Tus ejercicios del <strong>Nivel {{ user.perfilpaciente.nivel_asignado }}</strong> están preparados.
+                        </p>
+                        <a href="{% url 'jugar' %}" class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold text-success shadow-sm transform-scale">
+                            <i class="bi bi-play-circle-fill me-2"></i> CONTINUAR TERAPIA
+                        </a>
+
+                    {% else %}
+                        <h2 class="fw-bold display-6 mb-3 text-dark">Evaluación Inicial Requerida</h2>
+                        <p class="fs-5 mb-4 text-muted" style="max-width: 600px; margin: 0 auto;">
+                            Para adaptar los juegos a tu capacidad, necesitamos hacer un pequeño test de nivelación.
+                        </p>
+                        <a href="{% url 'sala_evaluacion' %}" class="btn btn-warning btn-lg px-5 py-3 rounded-pill fw-bold text-dark shadow-sm transform-scale">
+                            <i class="bi bi-clipboard-data-fill me-2"></i> REALIZAR EVALUACIÓN
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <a href="#" class="text-decoration-none">
+                <div class="card border-0 shadow-sm h-100 rounded-4 hover-effect">
+                    <div class="card-body p-4 text-center">
+                        <i class="bi bi-journal-medical fs-1 text-primary mb-3"></i>
+                        <h5 class="fw-bold text-dark">Mi Historial</h5>
+                        <p class="text-muted small">Consulta tu progreso y gráficas anteriores.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="#" class="text-decoration-none">
+                <div class="card border-0 shadow-sm h-100 rounded-4 hover-effect">
+                    <div class="card-body p-4 text-center">
+                        <i class="bi bi-person-gear fs-1 text-secondary mb-3"></i>
+                        <h5 class="fw-bold text-dark">Mi Perfil</h5>
+                        <p class="text-muted small">Actualiza tus datos o contacta con tu médico.</p>
+                    </div>
+                </div>
             </a>
         </div>
     </div>
+
+</div>
+
+<style>
+    .hover-effect:hover {
+        transform: translateY(-5px);
+        transition: transform 0.3s ease;
+        background-color: #f8f9fa;
+    }
+    .transform-scale:hover {
+        transform: scale(1.05);
+        transition: transform 0.2s ease;
+    }
+</style>
 {% endblock %}
