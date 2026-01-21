@@ -71,7 +71,7 @@
             <div class="card {% if user.perfilpaciente.test_completado %}bg-success{% else %}bg-warning bg-opacity-10{% endif %} border-0 shadow rounded-4 overflow-hidden">
                 
                 <div class="card-body p-5 text-center position-relative">
-                    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(45deg, rgba(0,0,0,0.05), transparent);"></div>
+                    <div class="position-absolute top-0 start-0 w-100 h-100 pe-none" style="background: linear-gradient(45deg, rgba(0,0,0,0.05), transparent);"></div>
                     
                     {% if user.perfilpaciente.test_completado %}
                         <h2 class="fw-bold display-6 mb-3 text-white">Sala de Terapia Lista</h2>

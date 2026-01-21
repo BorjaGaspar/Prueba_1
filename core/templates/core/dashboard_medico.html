@@ -1,4 +1,4 @@
-{% extends 'core/base_private.html' %}
+{% extends 'core/base_medico.html' %}
 
 {% block content %}
 <div class="container py-5">
@@ -26,8 +26,9 @@
     </div>
 
     <div class="row g-4 mb-5">
+        
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-3 border-start border-primary border-4">
+            <div class="card border-0 shadow-sm rounded-3 border-start border-primary border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
@@ -43,12 +44,18 @@
         </div>
         
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-3 border-start border-warning border-4">
+            <div class="card border-0 shadow-sm rounded-3 border-start border-warning border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <h6 class="text-muted text-uppercase small fw-bold mb-1">Pendientes de Test</h6>
-                            <h2 class="mb-0 fw-bold">--</h2>
+                            
+                            {% if pendientes_test > 0 %}
+                                <h2 class="mb-0 fw-bold text-danger">{{ pendientes_test }}</h2>
+                            {% else %}
+                                <h2 class="mb-0 fw-bold text-success">{{ pendientes_test }}</h2>
+                            {% endif %}
+                            
                         </div>
                         <div class="bg-warning bg-opacity-10 p-3 rounded-circle text-warning">
                             <i class="bi bi-exclamation-triangle-fill fs-4"></i>
@@ -59,7 +66,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-3 border-start border-info border-4">
+            <div class="card border-0 shadow-sm rounded-3 border-start border-info border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
