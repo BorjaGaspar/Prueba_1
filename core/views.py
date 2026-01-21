@@ -3,13 +3,10 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
-
-# Importamos formulario y modelos
 from .forms import RegistroUsuarioForm
 from .models import PerfilPaciente, SesionDeJuego
 
 # --- VISTAS PÚBLICAS ---
-
 def home(request):
     return render(request, "core/home.html")
 
@@ -23,19 +20,16 @@ def contacto(request):
     return render(request, "core/contacto.html")
 
 # --- VISTA DE REGISTRO ---
-
 def registro(request):
     if request.method == 'POST':
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
             user = form.save()
-            
             es_medico = form.cleaned_data.get('es_medico')
             
             if es_medico:
                 PerfilPaciente.objects.create(usuario=user, es_medico=True)
                 login(request, user)
-                # Si es médico, lo mandamos directo a SU panel
                 return redirect('dashboard_medico') 
             else:
                 edad = form.cleaned_data.get('edad')
@@ -45,66 +39,55 @@ def registro(request):
                 medico = form.cleaned_data.get('medico_selector')
                 
                 PerfilPaciente.objects.create(
-                    usuario=user, 
-                    es_medico=False,
-                    edad=edad,
-                    altura=altura,
-                    peso=peso,
-                    lado_afectado=lado,
-                    medico_asignado=medico
+                    usuario=user, es_medico=False, edad=edad, altura=altura,
+                    peso=peso, lado_afectado=lado, medico_asignado=medico
                 )
                 login(request, user)
                 return redirect('dashboard')
     else:
         form = RegistroUsuarioForm()
-    
     return render(request, 'registration/registro.html', {'form': form})
 
 # --- ZONA PRIVADA (PACIENTE) ---
 
 @login_required
-
-
-@login_required
 def dashboard(request):
+    # ESTA FUNCIÓN AHORA SOLO ACTÚA DE "SEMÁFORO" AL ENTRAR
     perfil, created = PerfilPaciente.objects.get_or_create(usuario=request.user)
     
-    # 1. SI ES MÉDICO -> A su panel (Esto no cambia)
+    # 1. SI ES MÉDICO
     if perfil.es_medico:
         return redirect('dashboard_medico')
         
     # 2. SI ES PACIENTE
-    # A) Si no ha hecho el test -> A evaluación
     if not perfil.test_completado:
         return redirect('sala_evaluacion')
     
-    # B) Si YA ha hecho el test -> ¡DIRECTO A TERAPIA! (Cambio de Isabel)
+    # SI TODO ESTÁ OK, LE MANDAMOS A JUGAR DIRECTAMENTE
     return redirect('juegos') 
-    
-    # Nota: Ya no llegamos a renderizar 'core/dashboard.html' para el paciente,
-    # pero no lo borres por si acaso Isabel cambia de opinión luego.
+
+@login_required
+def resumen_paciente(request):
+    # ESTA ES LA NUEVA FUNCIÓN QUE SÍ MUESTRA EL HTML DEL RESUMEN
+    # No hace comprobaciones, solo te enseña tu ficha
+    return render(request, 'core/dashboard.html')
+
+# --- ZONA PRIVADA (MÉDICO) ---
 
 @login_required
 def dashboard_medico(request):
     perfil, created = PerfilPaciente.objects.get_or_create(usuario=request.user)
-    
-    # Seguridad: Si un paciente intenta entrar aquí, lo mandamos fuera
     if not perfil.es_medico:
         return redirect('dashboard')
 
-    # 1. Buscamos sus pacientes
     mis_pacientes = PerfilPaciente.objects.filter(medico_asignado=request.user)
-    
-    # 2. Contamos cuántos son
     total_pacientes = mis_pacientes.count()
     
-    # 3. Enviamos datos
     context = {
         'pacientes': mis_pacientes,
         'total_pacientes': total_pacientes
     }
     return render(request, 'core/dashboard_medico.html', context)
-
 
 # --- OTRAS VISTAS ---
 
@@ -149,13 +132,8 @@ def sala_evaluacion(request):
 @login_required
 def forzar_evaluacion(request, pk):
     perfil = get_object_or_404(PerfilPaciente, pk=pk)
-    
-    # Reseteamos valores
     perfil.test_completado = False
     perfil.nivel_asignado = 0
     perfil.save()
-    
     messages.success(request, f"Se ha solicitado re-evaluación para {perfil.usuario.username}.")
-    
-    # AHORA SÍ FUNCIONARÁ PORQUE YA EXISTE LA VISTA dashboard_medico
     return redirect('dashboard_medico')

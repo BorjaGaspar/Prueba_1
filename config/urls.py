@@ -15,6 +15,7 @@ urlpatterns = [
 
     # PANEL PACIENTE
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('mi-progreso/', views.resumen_paciente, name='resumen_paciente'),
     path('terapia/', views.juegos, name='juegos'),
     path('jugar/', views.jugar, name='jugar'),
     

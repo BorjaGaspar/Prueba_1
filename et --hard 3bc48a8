@@ -1,0 +1,25 @@
+[33m13673c1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdiseno-wearia[m[33m, [m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m Merge pull request #6 from BorjaGaspar/diseno-juan
+[33mc4e03c7[m Forzando actualizacion de diseño
+[33m3bc48a8[m Merge pull request #5 from BorjaGaspar/diseno-wearia
+[33ma93d4cf[m[33m ([m[1;31morigin/diseno-wearia[m[33m)[m Cambio sala de terapia
+[33m8911532[m Merge pull request #4 from BorjaGaspar/diseno-wearia
+[33me1c8815[m Añadir sistema de re evaluacion y mas cosas dashboard médico
+[33m4201648[m Merge pull request #3 from BorjaGaspar/diseno-wearia
+[33mfc7c534[m Añadir el nivel de terapia cognitiva
+[33m0774e5d[m Merge pull request #2 from BorjaGaspar/diseno-wearia
+[33m8ddc39d[m Modificacion PerfilPaciente y evaluacion Iniical
+[33mad11fec[m Merge pull request #1 from BorjaGaspar/diseno-wearia
+[33ma4a72a1[m Implementacion del juego de prueba
+[33m5a7656f[m Cambios en el registro y actualizacion dashboard medico
+[33m6d5ad45[m Implementacion de Roles: Registro de Medicos y redireccion a Dashboard diferenciado
+[33m63dc3b4[m Sistema de Gamificacion completo: Base de datos conectada y Pantalla de Juego preparada
+[33m5cb1eab[m Arquitectura finalizada: Separacion Publica/Privada y Dashboard Paciente
+[33m79a3bf9[m Documentación finalizada estilo WebWearia y configuración Docker
+[33m4a93eae[m Añadido README con instrucciones y requirements.txt
+[33m86612b9[m Sistema de autenticacion completo
+[33mb39534a[m Nuevo diseño estilo Wearia con Bootstrap
+[33m496bf11[m Pagina Web terminada
+[33m0291b3b[m Añadidos estilos CSS y configuración de archivos estáticos
+[33m6f3c8d8[m Implementada estructura base y herencia de plantillas
+[33mf3bd219[m He creado la pagina de inicio en donde pone Bienvenidos a Samira DTx y poquito más
+[33m1f61295[m Estructura inicial del proyecto
