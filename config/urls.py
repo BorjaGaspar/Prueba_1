@@ -18,6 +18,7 @@ urlpatterns = [
     path('mi-progreso/', views.resumen_paciente, name='resumen_paciente'),
     path('terapia/', views.juegos, name='juegos'),
     path('jugar/', views.jugar, name='jugar'),
+    path('terapia/test-memoria/', views.jugar_moca_5, name='jugar_moca_5'),
     
     # PANEL MÉDICO 
     path('paciente/<int:pk>/', views.detalle_paciente, name='detalle_paciente'),

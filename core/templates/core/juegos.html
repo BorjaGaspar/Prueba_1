@@ -11,7 +11,6 @@
 </div>
 
 <div id="pantalla-inicio" class="row animate__animated animate__fadeIn">
-    
     <div class="col-md-6 mb-4">
         <div class="card h-100 border-0 shadow-sm p-4 bg-light text-muted" style="opacity: 0.7;">
             <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
@@ -44,7 +43,6 @@
 </div>
 
 <div id="pantalla-categorias" class="row d-none animate__animated animate__fadeIn">
-    
     <div class="col-md-4 mb-4">
         <div class="card border-0 shadow-sm h-100 hover-elevate" onclick="mostrarJuegos('Atención')">
             <div class="card-body p-4 text-center">
@@ -79,13 +77,44 @@
 <div id="pantalla-lista-juegos" class="d-none animate__animated animate__fadeIn">
     <h4 class="mb-4 text-muted">Ejercicios disponibles de <span id="nombre-categoria" class="fw-bold text-dark">--</span>:</h4>
     
-    <div class="row">
+    <div id="lista-juegos-comunes" class="row">
         {% for i in "123" %}
         <div class="col-md-4 mb-4">
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm h-100">
                 <div class="card-body p-5 text-center bg-light rounded">
                     <i class="bi bi-puzzle display-4 text-secondary opacity-50 mb-3"></i>
                     <h5 class="fw-bold">Juego {{ i }} <span class="nombre-cat-dinamico"></span></h5>
+                    <button class="btn btn-sm btn-outline-dark mt-3" disabled>Disponible pronto</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="lista-juegos-lenguaje" class="row d-none">
+        
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm h-100 transform-hover">
+                <div class="card-body p-4 text-center bg-white rounded border-top border-5 border-success">
+                    <div class="mb-3">
+                        <i class="bi bi-cpu-fill display-4 text-success"></i>
+                    </div>
+                    <h5 class="fw-bold">Juego 1: Memoria</h5>
+                    <p class="text-muted small">Test MoCA - Ejercicio 5</p>
+                    
+                    <a href="{% url 'jugar_moca_5' %}" class="btn btn-success rounded-pill px-4 w-100 mt-2">
+                        <i class="bi bi-play-fill me-2"></i> JUGAR
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {% for i in "23" %}
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm h-100 opacity-50">
+                <div class="card-body p-5 text-center bg-light rounded">
+                    <i class="bi bi-puzzle display-4 text-secondary opacity-50 mb-3"></i>
+                    <h5 class="fw-bold">Juego {{ i }} Lenguaje</h5>
                     <button class="btn btn-sm btn-outline-dark mt-3" disabled>Disponible pronto</button>
                 </div>
             </div>
@@ -106,9 +135,12 @@
     const pJuegos = document.getElementById('pantalla-lista-juegos');
     const btnVolver = document.getElementById('btn-volver');
     const titulo = document.getElementById('titulo-seccion');
+
+    // Contenedores de listas
+    const listaComun = document.getElementById('lista-juegos-comunes');
+    const listaLenguaje = document.getElementById('lista-juegos-lenguaje');
     
-    // Estado actual (para saber a dónde volver)
-    let estado = 'inicio'; // inicio -> categorias -> juegos
+    let estado = 'inicio'; 
 
     function mostrarCategorias() {
         pInicio.classList.add('d-none');
@@ -129,9 +161,19 @@
         titulo.innerText = "Área de " + categoria;
         document.getElementById('nombre-categoria').innerText = categoria;
         
-        // Actualizamos los nombres de las tarjetas
-        let titulosJuegos = document.querySelectorAll('.nombre-cat-dinamico');
-        titulosJuegos.forEach(el => el.innerText = categoria);
+        // LÓGICA IMPORTANTE: Si es Lenguaje mostramos la lista especial
+        if (categoria === 'Lenguaje') {
+            listaComun.classList.add('d-none');
+            listaLenguaje.classList.remove('d-none');
+        } else {
+            // Si es Motor o Atención, mostramos la lista genérica
+            listaComun.classList.remove('d-none');
+            listaLenguaje.classList.add('d-none');
+
+            // Actualizamos los nombres dinámicos solo en la lista común
+            let titulosJuegos = document.querySelectorAll('.nombre-cat-dinamico');
+            titulosJuegos.forEach(el => el.innerText = categoria);
+        }
 
         estado = 'juegos';
     }
@@ -140,7 +182,6 @@
         if (estado === 'juegos') {
             mostrarCategorias();
         } else if (estado === 'categorias') {
-            // Volver al inicio
             pInicio.classList.remove('d-none');
             pCategorias.classList.add('d-none');
             pJuegos.classList.add('d-none');
