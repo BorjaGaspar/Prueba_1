@@ -1,13 +1,18 @@
 from django.contrib import admin
 from django.urls import path, include
-from core import views  # Importamos tu vista
+from core import views  # <--- ESTA ES LA IMPORTANTE (La única que debes tener)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    # PÁGINAS PÚBLICAS
     path('', views.home, name='home'),
     path('historia/', views.historia, name='historia'),
     path('servicios/', views.servicios, name='servicios'),
     path('contacto/', views.contacto, name='contacto'),
+
+    # API WHISPER (La nueva conexión con Unity)
+    path('api/transcribir-audio/', views.transcribir_audio, name='transcribir_audio'),
 
     # RUTAS DE AUTENTICACIÓN
     path('accounts/', include('django.contrib.auth.urls')),

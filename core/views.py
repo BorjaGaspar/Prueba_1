@@ -6,6 +6,17 @@ from django.contrib import messages
 from .forms import RegistroUsuarioForm
 from .models import PerfilPaciente, SesionDeJuego
 
+# --- NUEVOS IMPORTS PARA WHISPER ---
+import whisper
+import os
+import tempfile
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt 
+
+# --- CONFIGURACIÓN WHISPER (CORREGIDO) ---
+# Inicializamos la variable vacía para no bloquear el arranque del servidor
+MODELO_WHISPER = None
+
 # --- VISTAS PÚBLICAS ---
 def home(request):
     return render(request, "core/home.html")
@@ -19,20 +30,13 @@ def servicios(request):
 def contacto(request):
     return render(request, "core/contacto.html")
 
-# --- VISTA DE REGISTRO (CORREGIDA) ---
+# --- VISTA DE REGISTRO ---
 def registro(request):
     if request.method == 'POST':
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
-            # 1. Guardamos el formulario. 
-            # Gracias a tu cambio en forms.py, esto crea el Usuario Y el Perfil a la vez.
             user = form.save()
-            
-            # 2. Iniciamos sesión automáticamente
             login(request, user)
-            
-            # 3. Redirección inteligente
-            # Verificamos si es médico mirando su perfil ya creado
             if hasattr(user, 'perfilpaciente') and user.perfilpaciente.es_medico:
                 return redirect('dashboard_medico') 
             else:
@@ -45,24 +49,15 @@ def registro(request):
 
 @login_required
 def dashboard(request):
-    # ESTA FUNCIÓN AHORA SOLO ACTÚA DE "SEMÁFORO" AL ENTRAR
     perfil, created = PerfilPaciente.objects.get_or_create(usuario=request.user)
-    
-    # 1. SI ES MÉDICO
     if perfil.es_medico:
         return redirect('dashboard_medico')
-        
-    # 2. SI ES PACIENTE
     if not perfil.test_completado:
         return redirect('sala_evaluacion')
-    
-    # SI TODO ESTÁ OK, LE MANDAMOS A JUGAR DIRECTAMENTE
     return redirect('juegos') 
 
 @login_required
 def resumen_paciente(request):
-    # ESTA ES LA NUEVA FUNCIÓN QUE SÍ MUESTRA EL HTML DEL RESUMEN
-    # No hace comprobaciones, solo te enseña tu ficha
     return render(request, 'core/dashboard.html')
 
 # --- ZONA PRIVADA (MÉDICO) ---
@@ -70,23 +65,15 @@ def resumen_paciente(request):
 @login_required
 def dashboard_medico(request):
     perfil, created = PerfilPaciente.objects.get_or_create(usuario=request.user)
-    
-    # Verificación de Seguridad: Si no es médico, fuera.
     if not perfil.es_medico:
         return redirect('dashboard')
 
-    # 1. Filtramos SOLO mis pacientes
     mis_pacientes = PerfilPaciente.objects.filter(medico_asignado=request.user)
-    
-    # 2. Cálculos Estadísticos Reales
     total_pacientes = mis_pacientes.count()
-    # Contamos cuántos tienen 'test_completado = False'
-    pendientes_test = mis_pacientes.filter(test_completado=False).count()
     
     context = {
         'pacientes': mis_pacientes,
-        'total_pacientes': total_pacientes,
-        'pendientes_test': pendientes_test, # <--- Dato nuevo enviado al HTML
+        'total_pacientes': total_pacientes
     }
     return render(request, 'core/dashboard_medico.html', context)
 
@@ -142,3 +129,44 @@ def forzar_evaluacion(request, pk):
 @login_required
 def jugar_moca_5(request):
     return render(request, 'core/juego_moca5.html')
+
+
+# ---------------------------------------------------------
+# NUEVA FUNCIÓN: EL CEREBRO QUE ESCUCHA (WHISPER)
+# ---------------------------------------------------------
+@csrf_exempt 
+def transcribir_audio(request):
+    global MODELO_WHISPER # Usamos la variable global
+
+    if request.method == 'POST' and request.FILES.get('audio'):
+        try:
+            # --- CARGA PEREZOSA (LA SOLUCIÓN AL CRASH) ---
+            # Solo cargamos el modelo si está vacío.
+            if MODELO_WHISPER is None:
+                print("⏳ Cargando modelo Whisper por primera vez...")
+                MODELO_WHISPER = whisper.load_model("tiny")
+                print("✅ Modelo cargado y listo.")
+
+            archivo_audio = request.FILES['audio']
+            
+            # 1. Guardar archivo temporal
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
+                for chunk in archivo_audio.chunks():
+                    tmp.write(chunk)
+                ruta_temporal = tmp.name
+
+            # 2. Transcribir
+            resultado = MODELO_WHISPER.transcribe(ruta_temporal, language="es")
+            texto_detectado = resultado["text"]
+            
+            # 3. Limpieza
+            os.remove(ruta_temporal)
+            
+            print(f"🎤 Whisper escuchó: {texto_detectado}")
+            return JsonResponse({'texto_transcrito': texto_detectado})
+
+        except Exception as e:
+            print(f"❌ Error al transcribir: {e}")
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'No se recibió audio'}, status=400)
