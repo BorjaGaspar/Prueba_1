@@ -19,30 +19,23 @@ def servicios(request):
 def contacto(request):
     return render(request, "core/contacto.html")
 
-# --- VISTA DE REGISTRO ---
+# --- VISTA DE REGISTRO (CORREGIDA) ---
 def registro(request):
     if request.method == 'POST':
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
+            # 1. Guardamos el formulario. 
+            # Gracias a tu cambio en forms.py, esto crea el Usuario Y el Perfil a la vez.
             user = form.save()
-            es_medico = form.cleaned_data.get('es_medico')
             
-            if es_medico:
-                PerfilPaciente.objects.create(usuario=user, es_medico=True)
-                login(request, user)
+            # 2. Iniciamos sesión automáticamente
+            login(request, user)
+            
+            # 3. Redirección inteligente
+            # Verificamos si es médico mirando su perfil ya creado
+            if hasattr(user, 'perfilpaciente') and user.perfilpaciente.es_medico:
                 return redirect('dashboard_medico') 
             else:
-                edad = form.cleaned_data.get('edad')
-                altura = form.cleaned_data.get('altura')
-                peso = form.cleaned_data.get('peso')
-                lado = form.cleaned_data.get('lado_afectado')
-                medico = form.cleaned_data.get('medico_selector')
-                
-                PerfilPaciente.objects.create(
-                    usuario=user, es_medico=False, edad=edad, altura=altura,
-                    peso=peso, lado_afectado=lado, medico_asignado=medico
-                )
-                login(request, user)
                 return redirect('dashboard')
     else:
         form = RegistroUsuarioForm()
@@ -145,3 +138,7 @@ def forzar_evaluacion(request, pk):
     perfil.save()
     messages.success(request, f"Se ha solicitado re-evaluación para {perfil.usuario.username}.")
     return redirect('dashboard_medico')
+
+@login_required
+def jugar_moca_5(request):
+    return render(request, 'core/juego_moca5.html')

@@ -4,14 +4,33 @@ from django.contrib.auth.models import User
 from .models import PerfilPaciente
 
 class RegistroUsuarioForm(UserCreationForm):
-    # 1. Casilla de Rol
+    # --- 1. NUEVOS CAMPOS (Petición de Juliam) ---
+    first_name = forms.CharField(
+        label="Nombre", 
+        max_length=30, 
+        required=True, 
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Borja'})
+    )
+    last_name = forms.CharField(
+        label="Apellidos", 
+        max_length=30, 
+        required=True, 
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Gaspar'})
+    )
+    email = forms.EmailField(
+        label="Correo Electrónico", 
+        required=True, 
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
+    )
+
+    # --- 2. Casilla de Rol ---
     es_medico = forms.BooleanField(
         required=False, 
         label="Soy Profesional de la Salud (Médico/Terapeuta)",
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'id': 'check_es_medico'})
     )
 
-    # 2. Datos Clínicos (Los ponemos required=False para validarlos manualmente luego)
+    # --- 3. Datos Clínicos ---
     edad = forms.IntegerField(required=False, label="Edad", widget=forms.NumberInput(attrs={'class': 'form-control'}))
     altura = forms.IntegerField(required=False, label="Altura (cm)", widget=forms.NumberInput(attrs={'class': 'form-control'}))
     peso = forms.IntegerField(required=False, label="Peso (kg)", widget=forms.NumberInput(attrs={'class': 'form-control'}))
@@ -23,8 +42,7 @@ class RegistroUsuarioForm(UserCreationForm):
         widget=forms.Select(attrs={'class': 'form-select'})
     )
 
-    # 3. Selector de Médico
-    # Esto busca en la base de datos a usuarios que tengan perfil.es_medico = True
+    # --- 4. Selector de Médico ---
     medico_selector = forms.ModelChoiceField(
         queryset=User.objects.filter(perfil__es_medico=True),
         required=False,
@@ -35,4 +53,36 @@ class RegistroUsuarioForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email']
+        # IMPORTANTE: Aquí añadimos los nuevos campos a la lista
+        fields = ['username', 'first_name', 'last_name', 'email']
+
+    # --- 5. Lógica de Guardado (IMPORTANTE) ---
+    def save(self, commit=True):
+        # Primero guardamos el usuario base (User)
+        user = super().save(commit=False)
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.email = self.cleaned_data['email']
+        
+        if commit:
+            user.save()
+            
+            # Ahora creamos el PerfilPaciente asociado
+            es_medico = self.cleaned_data.get('es_medico')
+            
+            if es_medico:
+                # Si es médico, creamos perfil básico de médico
+                PerfilPaciente.objects.create(usuario=user, es_medico=True)
+            else:
+                # Si es paciente, guardamos todos sus datos clínicos
+                PerfilPaciente.objects.create(
+                    usuario=user,
+                    es_medico=False,
+                    edad=self.cleaned_data.get('edad'),
+                    altura=self.cleaned_data.get('altura'),
+                    peso=self.cleaned_data.get('peso'),
+                    lado_afectado=self.cleaned_data.get('lado_afectado'),
+                    medico_asignado=self.cleaned_data.get('medico_selector')
+                )
+                
+        return user

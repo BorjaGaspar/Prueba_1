@@ -35,35 +35,34 @@
                             <h6 class="text-muted text-uppercase small fw-bold mb-1">Total Pacientes</h6>
                             <h2 class="mb-0 fw-bold">{{ total_pacientes }}</h2>
                         </div>
-                        <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
-                            <i class="bi bi-people-fill fs-4"></i>
+                    </td>
+                    
+                    <td><span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Activo</span></td>
+                    
+                    <td>
+                        {% if paciente.nivel_asignado == 1 %} <span class="badge bg-danger">Nivel 1 - Severo</span>
+                        {% elif paciente.nivel_asignado == 2 %} <span class="badge bg-warning text-dark">Nivel 2 - Moderado</span>
+                        {% elif paciente.nivel_asignado == 3 %} <span class="badge bg-info text-dark">Nivel 3 - Leve</span>
+                        {% elif paciente.nivel_asignado == 4 %} <span class="badge bg-primary">Nivel 4 - Límite</span>
+                        {% elif paciente.nivel_asignado == 5 %} <span class="badge bg-success">Nivel 5 - Normal</span>
+                        {% else %} <span class="badge bg-secondary">Sin Evaluar</span>
+                        {% endif %}
+                    </td>
+
+                    <td><span class="fw-bold text-dark">{{ paciente.racha_dias }}</span> Días</td>
+
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-trophy-fill text-warning me-1"></i>
+                            <strong>{{ paciente.puntos }}</strong>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-3 border-start border-warning border-4 h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted text-uppercase small fw-bold mb-1">Pendientes de Test</h6>
-                            
-                            {% if pendientes_test > 0 %}
-                                <h2 class="mb-0 fw-bold text-danger">{{ pendientes_test }}</h2>
-                            {% else %}
-                                <h2 class="mb-0 fw-bold text-success">{{ pendientes_test }}</h2>
-                            {% endif %}
-                            
-                        </div>
-                        <div class="bg-warning bg-opacity-10 p-3 rounded-circle text-warning">
-                            <i class="bi bi-exclamation-triangle-fill fs-4"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    </td>
+                    
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'detalle_paciente' pk=paciente.pk %}" class="btn btn-sm btn-outline-primary" title="Ver Ficha Completa">
+                                <i class="bi bi-eye"></i>
+                            </a>
 
         <div class="col-md-4">
             <div class="card border-0 shadow-sm rounded-3 border-start border-info border-4 h-100">
@@ -73,97 +72,38 @@
                             <h6 class="text-muted text-uppercase small fw-bold mb-1">Mensajes Nuevos</h6>
                             <h2 class="mb-0 fw-bold">0</h2>
                         </div>
-                        <div class="bg-info bg-opacity-10 p-3 rounded-circle text-info">
-                            <i class="bi bi-envelope-fill fs-4"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="bi bi-people fs-1 d-block mb-3 opacity-50"></i>
+                        <p class="mb-1">No tienes pacientes asignados todavía.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-        <div class="card-header bg-white p-4 border-bottom">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h5 class="fw-bold mb-0">Listado de Pacientes</h5>
-                </div>
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control bg-light border-0" placeholder="Buscar por nombre o historia...">
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="bg-light">
-                    <tr>
-                        <th class="ps-4 py-3 text-uppercase small text-muted">Paciente</th>
-                        <th class="py-3 text-uppercase small text-muted">Edad / Peso</th>
-                        <th class="py-3 text-uppercase small text-muted">Nivel Asignado</th>
-                        <th class="py-3 text-uppercase small text-muted">Estado Test</th>
-                        <th class="pe-4 py-3 text-end text-uppercase small text-muted">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for paciente in pacientes %}
-                    <tr>
-                        <td class="ps-4">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                    {{ paciente.usuario.username|slice:":1"|upper }}
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 fw-bold text-dark">{{ paciente.usuario.username }}</h6>
-                                    <small class="text-muted">ID: #{{ paciente.id|stringformat:"04d" }}</small>
-                                </div>
-                            </div>
-                        </td>
-                        
-                        <td>
-                            <span class="d-block">{{ paciente.edad }} años</span>
-                            <small class="text-muted">{{ paciente.peso }} kg</small>
-                        </td>
-
-                        <td>
-                            <span class="badge bg-light text-dark border px-3 py-2">
-                                Nivel {{ paciente.nivel_asignado }}
-                            </span>
-                        </td>
-
-                        <td>
-                            {% if paciente.test_completado %}
-                                <span class="badge bg-success-subtle text-success rounded-pill">
-                                    <i class="bi bi-check-circle-fill me-1"></i> Completado
-                                </span>
-                            {% else %}
-                                <span class="badge bg-warning-subtle text-warning rounded-pill">
-                                    <i class="bi bi-clock-fill me-1"></i> Pendiente
-                                </span>
-                            {% endif %}
-                        </td>
-
-                        <td class="pe-4 text-end">
-                            <a href="{% url 'detalle_paciente' paciente.pk %}" class="btn btn-sm btn-outline-primary fw-bold">
-                                Ver Ficha <i class="bi bi-arrow-right ms-1"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5" class="text-center py-5 text-muted">
-                            <i class="bi bi-folder-x display-4 d-block mb-3 opacity-25"></i>
-                            No tienes pacientes asignados todavía.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-</div>
+<script>
+    function confirmarReevaluacion(urlDestino) {
+        Swal.fire({
+            title: '¿Solicitar Re-evaluación?',
+            text: "El paciente perderá su nivel actual y deberá repetir el Test Inicial.",
+            icon: 'warning', // Icono de exclamación
+            showCancelButton: true,
+            confirmButtonColor: '#ffc107', // Amarillo (como en tu foto)
+            cancelButtonColor: '#6c757d',  // Gris
+            confirmButtonText: 'Sí, reiniciar',
+            cancelButtonText: 'Cancelar',
+            color: '#000'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el médico dice "Sí", vamos a Django para borrar el nivel
+                window.location.href = urlDestino;
+            }
+        })
+    }
+</script>
 {% endblock %}

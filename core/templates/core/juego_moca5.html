@@ -1,0 +1,69 @@
+{% extends 'core/base_private.html' %}
+{% load static %}
+
+{% block title %}Prueba Unity | SamiraDTx{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <a href="{% url 'juegos' %}" class="btn btn-outline-secondary mb-3">
+        <i class="bi bi-arrow-left"></i> Volver a Sala de Terapia
+    </a>
+
+    <div class="card shadow border-0">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="bi bi-controller"></i> Test MoCA - Ejercicio 5: Memoria</h5>
+        </div>
+        
+        <div class="card-body bg-dark text-center p-0" style="position: relative;">
+            <canvas id="unity-canvas" style="width: 100%; height: 600px; background: #231F20"></canvas>
+            
+            <div id="loading-bar" class="text-white" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <div class="spinner-border text-light" role="status"></div>
+                <p class="mt-2">Cargando ejercicio...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- CONFIGURACIÓN CON TUS NOMBRES REALES ---
+    // He sacado estos nombres de tu captura de pantalla
+    var nombreLoader = "JuegoMoca5Prueba2.loader.js";     
+    var nombreData   = "JuegoMoca5Prueba2.data";          
+    var nombreFramework = "JuegoMoca5Prueba2.framework.js"; 
+    var nombreWasm   = "JuegoMoca5Prueba2.wasm";          
+    // --------------------------------------------------
+
+    // Aquí le decimos a Django dónde buscar esos archivos (carpeta /static/games/moca5/Build)
+    var buildUrl = "{% static 'games/moca5/Build' %}";
+    var loaderUrl = buildUrl + "/" + nombreLoader;
+    
+    var config = {
+        dataUrl: buildUrl + "/" + nombreData,
+        frameworkUrl: buildUrl + "/" + nombreFramework,
+        codeUrl: buildUrl + "/" + nombreWasm,
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "SamiraDTx",
+        productName: "MocaTest5",
+        productVersion: "1.0",
+    };
+
+    var container = document.querySelector("#unity-canvas");
+    var loadingBar = document.querySelector("#loading-bar");
+
+    var script = document.createElement("script");
+    script.src = loaderUrl;
+    
+    script.onload = () => {
+        createUnityInstance(container, config, (progress) => {
+            // Barra de progreso (opcional)
+        }).then((unityInstance) => {
+            loadingBar.style.display = "none";
+            window.unityInstance = unityInstance; 
+        }).catch((message) => {
+            alert("Error al cargar Unity: " + message);
+        });
+    };
+    document.body.appendChild(script);
+</script>
+{% endblock %}
