@@ -42,6 +42,17 @@ Instalar dependencias:
 ```bash
 pip install -r requirements.txt
 ```
+
+Inicializar la base de datos (Obligatorio para la primera vez):
+```bash
+python manage.py migrate
+```
+Crear un usuario administrador (Para poder acceder al sistema):
+```bash
+python manage.py createsuperuser
+```
+
+
 Ejecutar servidor:
 ```bash
 python manage.py runserver
@@ -51,3 +62,6 @@ python manage.py runserver
 * core/: Aplicación principal (Vistas públicas y privadas).
 * requirements.txt: Dependencias.
 * Dockerfile & docker-compose.yml: Configuración Docker.
+
+## Base de Datos
+El proyecto utiliza **SQLite** por defecto (archivo `db.sqlite3`), que es la configuración estándar de Django para desarrollo local. No requiere instalar servidores SQL adicionales; el archivo se genera automáticamente tras ejecutar el comando `migrate`.

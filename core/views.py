@@ -70,15 +70,23 @@ def resumen_paciente(request):
 @login_required
 def dashboard_medico(request):
     perfil, created = PerfilPaciente.objects.get_or_create(usuario=request.user)
+    
+    # Verificación de Seguridad: Si no es médico, fuera.
     if not perfil.es_medico:
         return redirect('dashboard')
 
+    # 1. Filtramos SOLO mis pacientes
     mis_pacientes = PerfilPaciente.objects.filter(medico_asignado=request.user)
+    
+    # 2. Cálculos Estadísticos Reales
     total_pacientes = mis_pacientes.count()
+    # Contamos cuántos tienen 'test_completado = False'
+    pendientes_test = mis_pacientes.filter(test_completado=False).count()
     
     context = {
         'pacientes': mis_pacientes,
-        'total_pacientes': total_pacientes
+        'total_pacientes': total_pacientes,
+        'pendientes_test': pendientes_test, # <--- Dato nuevo enviado al HTML
     }
     return render(request, 'core/dashboard_medico.html', context)
 

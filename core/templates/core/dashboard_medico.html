@@ -1,56 +1,39 @@
 {% extends 'core/base_medico.html' %}
 
 {% block content %}
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold text-dark">Panel de Especialista</h2>
-    <button class="btn btn-primary"><i class="bi bi-person-plus-fill me-2"></i>Añadir Paciente</button>
-</div>
-
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card border-0 shadow-sm p-3">
-            <h6 class="text-muted text-uppercase small">Total Pacientes</h6>
-            <h2 class="fw-bold">{{ total_pacientes }}</h2>
+<div class="container py-5">
+    
+    <div class="row mb-4 align-items-end">
+        <div class="col-md-8">
+            <h6 class="text-uppercase text-primary fw-bold mb-1">
+                <i class="bi bi-hospital me-2"></i>Portal del Especialista
+            </h6>
+            <h1 class="display-6 fw-bold text-dark">
+                Dr/a. {{ user.username }}
+            </h1>
+            <p class="text-muted mb-0">Resumen de actividad y seguimiento de pacientes.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="btn-group">
+                <button class="btn btn-outline-primary">
+                    <i class="bi bi-gear-fill"></i> Configuración
+                </button>
+                <button class="btn btn-primary">
+                    <i class="bi bi-person-plus-fill me-2"></i> Nuevo Paciente
+                </button>
+            </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card border-0 shadow-sm p-3">
-            <h6 class="text-muted text-uppercase small">Ejercicios Realizados</h6>
-            <h2 class="fw-bold text-success">15 <span class="small text-muted fw-normal">esta semana</span></h2>
-        </div>
-    </div>
-</div>
 
-<div class="card border-0 shadow-sm">
-    <div class="card-header bg-white py-3">
-        <h6 class="mb-0 fw-bold">Mis Pacientes Asignados</h6>
-    </div>
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>Paciente</th>
-                    <th>Estado</th>
-                    <th>Nivel Cognitivo</th> 
-                    <th>Racha Actual</th>
-                    <th>Puntos</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for paciente in pacientes %}
-                <tr>
-                    <td>
-                        <div class="d-flex align-items-center">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; font-weight: bold;">
-                                {{ paciente.usuario.username|slice:":2"|upper }}
-                            </div>
-                            <div>
-                                <div class="fw-bold">{{ paciente.usuario.username }}</div>
-                                <div class="small text-muted">{{ paciente.usuario.email|default:"Sin email registrado" }}</div>
-                            </div>
+    <div class="row g-4 mb-5">
+        
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-3 border-start border-primary border-4 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-1">Total Pacientes</h6>
+                            <h2 class="mb-0 fw-bold">{{ total_pacientes }}</h2>
                         </div>
                     </td>
                     
@@ -81,11 +64,13 @@
                                 <i class="bi bi-eye"></i>
                             </a>
 
-                            <button onclick="confirmarReevaluacion('{% url 'forzar_evaluacion' pk=paciente.pk %}')" 
-                               class="btn btn-sm btn-outline-warning text-dark" 
-                               title="Forzar Re-evaluación">
-                                <i class="bi bi-arrow-repeat"></i>
-                            </button>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-3 border-start border-info border-4 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-1">Mensajes Nuevos</h6>
+                            <h2 class="mb-0 fw-bold">0</h2>
                         </div>
                     </td>
                 </tr>
@@ -100,7 +85,6 @@
             </tbody>
         </table>
     </div>
-</div>
 
 <script>
     function confirmarReevaluacion(urlDestino) {
