@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.contrib import messages
 from .forms import RegistroUsuarioForm
 from .models import PerfilPaciente, SesionDeJuego
+import json 
 
 # --- NUEVOS IMPORTS PARA WHISPER ---
 import whisper
@@ -13,7 +14,7 @@ import tempfile
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt 
 
-# --- CONFIGURACIÓN WHISPER (CORREGIDO) ---
+# --- CONFIGURACIÓN WHISPER ---
 # Inicializamos la variable vacía para no bloquear el arranque del servidor
 MODELO_WHISPER = None
 
@@ -37,6 +38,8 @@ def registro(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+            
+            # Verificamos si es médico mirando su perfil
             if hasattr(user, 'perfilpaciente') and user.perfilpaciente.es_medico:
                 return redirect('dashboard_medico') 
             else:
@@ -130,18 +133,22 @@ def forzar_evaluacion(request, pk):
 def jugar_moca_5(request):
     return render(request, 'core/juego_moca5.html')
 
+# --- AQUÍ ESTABA LO QUE FALTABA (LA NUEVA FUNCIÓN) ---
+@login_required
+def jugar_moca_5_definitivo(request):
+    return render(request, 'core/juego_moca5_definitivo.html')
+
 
 # ---------------------------------------------------------
-# NUEVA FUNCIÓN: EL CEREBRO QUE ESCUCHA (WHISPER)
+# FUNCIÓN 1: EL CEREBRO QUE ESCUCHA (WHISPER)
 # ---------------------------------------------------------
 @csrf_exempt 
 def transcribir_audio(request):
-    global MODELO_WHISPER # Usamos la variable global
+    global MODELO_WHISPER 
 
     if request.method == 'POST' and request.FILES.get('audio'):
         try:
-            # --- CARGA PEREZOSA (LA SOLUCIÓN AL CRASH) ---
-            # Solo cargamos el modelo si está vacío.
+            # Carga Perezosa
             if MODELO_WHISPER is None:
                 print("⏳ Cargando modelo Whisper por primera vez...")
                 MODELO_WHISPER = whisper.load_model("tiny")
@@ -149,17 +156,14 @@ def transcribir_audio(request):
 
             archivo_audio = request.FILES['audio']
             
-            # 1. Guardar archivo temporal
             with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
                 for chunk in archivo_audio.chunks():
                     tmp.write(chunk)
                 ruta_temporal = tmp.name
 
-            # 2. Transcribir
             resultado = MODELO_WHISPER.transcribe(ruta_temporal, language="es")
             texto_detectado = resultado["text"]
             
-            # 3. Limpieza
             os.remove(ruta_temporal)
             
             print(f"🎤 Whisper escuchó: {texto_detectado}")
@@ -170,3 +174,42 @@ def transcribir_audio(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'No se recibió audio'}, status=400)
+
+
+# ---------------------------------------------------------
+# FUNCIÓN 2: GUARDAR EL PROGRESO (ARREGLO DEL ERROR 404)
+# ---------------------------------------------------------
+@csrf_exempt
+def guardar_progreso(request):
+    if request.method == 'POST':
+        try:
+            datos = json.loads(request.body)
+            juego = datos.get('ejercicio', 'desconocido')
+            estado = datos.get('estado', 'incompleto')
+            
+            print(f"💾 Guardando: Juego={juego}, Estado={estado}")
+
+            if request.user.is_authenticated:
+                perfil = getattr(request.user, 'perfilpaciente', None)
+                if perfil:
+                    puntos = 10 if estado == 'completado' else 0
+                    SesionDeJuego.objects.create(
+                        paciente=perfil,
+                        juego=juego,
+                        puntos=puntos,
+                        comentarios=f"Estado: {estado}"
+                    )
+                    return JsonResponse({'status': 'ok'})
+            
+            # Si estamos en Unity Editor (sin usuario), devolvemos OK igual
+            return JsonResponse({'status': 'ok'})
+
+        except Exception as e:
+            print(f"❌ Error al guardar: {e}")
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+@login_required
+def jugar_elsa(request):
+    return render(request, 'core/juego_elsa.html')
