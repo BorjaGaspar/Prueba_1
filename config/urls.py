@@ -13,6 +13,7 @@ urlpatterns = [
 
     # API WHISPER (La nueva conexión con Unity)
     path('api/transcribir-audio/', views.transcribir_audio, name='transcribir_audio'),
+    path('api/guardar-progreso/', views.guardar_progreso, name='guardar_progreso'),
 
     # RUTAS DE AUTENTICACIÓN
     path('accounts/', include('django.contrib.auth.urls')),
@@ -24,6 +25,8 @@ urlpatterns = [
     path('terapia/', views.juegos, name='juegos'),
     path('jugar/', views.jugar, name='jugar'),
     path('terapia/test-memoria/', views.jugar_moca_5, name='jugar_moca_5'),
+    path('terapia/test-memoria-definitivo/', views.jugar_moca_5_definitivo, name='jugar_moca_5_definitivo'),
+    path('terapia/elsa/', views.jugar_elsa, name='jugar_elsa'),
     
     # PANEL MÉDICO 
     path('paciente/<int:pk>/', views.detalle_paciente, name='detalle_paciente'),
