@@ -28,7 +28,7 @@
                     <div>
                         <h6 class="text-muted mb-0 small text-uppercase fw-bold">Puntos Cognitivos</h6>
                         <h2 class="fw-bold mb-0">
-                            {{ user.perfilpaciente.puntuacion_cognitiva|default:"0" }}
+                            {{ perfil.puntuacion_cognitiva|default:"0" }}
                         </h2>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                     <div>
                         <h6 class="text-muted mb-0 small text-uppercase fw-bold">Nivel Actual</h6>
                         <h2 class="fw-bold mb-0">
-                            Nivel {{ user.perfilpaciente.nivel_asignado }}
+                            Nivel {{ perfil.nivel_asignado|default:"-" }}
                         </h2>
                     </div>
                 </div>
@@ -68,28 +68,52 @@
 
     <div class="row mb-5">
         <div class="col-12">
-            <div class="card {% if user.perfilpaciente.test_completado %}bg-success{% else %}bg-warning bg-opacity-10{% endif %} border-0 shadow rounded-4 overflow-hidden">
+            <div class="card {% if perfil.test_completado %}bg-success{% elif perfil.medico_asignado %}bg-secondary bg-opacity-10{% else %}bg-warning bg-opacity-10{% endif %} border-0 shadow rounded-4 overflow-hidden">
                 
                 <div class="card-body p-5 text-center position-relative">
                     <div class="position-absolute top-0 start-0 w-100 h-100 pe-none" style="background: linear-gradient(45deg, rgba(0,0,0,0.05), transparent);"></div>
                     
-                    {% if user.perfilpaciente.test_completado %}
+                    {% if perfil.test_completado %}
                         <h2 class="fw-bold display-6 mb-3 text-white">Sala de Terapia Lista</h2>
-                        <p class="fs-5 mb-4 text-white opacity-75" style="max-width: 600px; margin: 0 auto;">
-                            Tus ejercicios del <strong>Nivel {{ user.perfilpaciente.nivel_asignado }}</strong> están preparados.
+                        <p class="fs-5 mb-5 text-white opacity-75" style="max-width: 600px; margin: 0 auto;">
+                            Tus ejercicios del <strong>Nivel {{ perfil.nivel_asignado }}</strong> están preparados.
                         </p>
-                        <a href="{% url 'jugar' %}" class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold text-success shadow-sm transform-scale">
-                            <i class="bi bi-play-circle-fill me-2"></i> CONTINUAR TERAPIA
+                        
+                        <a href="{% url 'jugar' %}" class="btn btn-light btn-lg px-5 py-4 rounded-pill fw-bold text-success shadow display-6 transform-scale mb-5">
+                            <i class="bi bi-play-circle-fill me-3 display-6"></i> <span class="fs-4">CONTINUAR TERAPIA</span>
                         </a>
 
+                        {% if not perfil.medico_asignado %}
+                            <div class="mt-4 p-4 bg-warning rounded-4 shadow-sm text-dark mx-auto position-relative" style="max-width: 600px; z-index: 2;">
+                                <h4 class="fw-bold mb-3">¿Necesitas ajustar tu nivel?</h4>
+                                <p class="fs-5 mb-4 fw-medium">Si sientes que los ejercicios son muy fáciles o difíciles, puedes repetir el test ahora mismo.</p>
+                                <a href="{% url 'sala_evaluacion' %}" class="btn btn-dark btn-lg rounded-pill px-5 py-3 fw-bold transform-scale">
+                                    <i class="bi bi-arrow-counterclockwise me-2 fs-4"></i> <span class="fs-5">Repetir Evaluación</span>
+                                </a>
+                            </div>
+                        {% endif %}
+
+
                     {% else %}
-                        <h2 class="fw-bold display-6 mb-3 text-dark">Evaluación Inicial Requerida</h2>
-                        <p class="fs-5 mb-4 text-muted" style="max-width: 600px; margin: 0 auto;">
-                            Para adaptar los juegos a tu capacidad, necesitamos hacer un pequeño test de nivelación.
-                        </p>
-                        <a href="{% url 'sala_evaluacion' %}" class="btn btn-warning btn-lg px-5 py-3 rounded-pill fw-bold text-dark shadow-sm transform-scale">
-                            <i class="bi bi-clipboard-data-fill me-2"></i> REALIZAR EVALUACIÓN
-                        </a>
+                        {% if perfil.medico_asignado %}
+                            <h2 class="fw-bold display-6 mb-3 text-dark">Plan en construcción</h2>
+                            <p class="fs-5 mb-4 text-muted" style="max-width: 600px; margin: 0 auto;">
+                                Tu especialista <strong>Dr/a. {{ perfil.medico_asignado.last_name }}</strong> está diseñando tu evaluación.
+                            </p>
+                            <button class="btn btn-secondary btn-lg px-5 py-3 rounded-pill fw-bold disabled border-0" style="opacity: 0.7;">
+                                <i class="bi bi-clock-history me-2"></i> ESPERANDO ASIGNACIÓN
+                            </button>
+
+                        {% else %}
+                            <h2 class="fw-bold display-6 mb-3 text-dark">Evaluación Inicial Requerida</h2>
+                            <p class="fs-5 mb-4 text-muted" style="max-width: 600px; margin: 0 auto;">
+                                Para adaptar los juegos a tu capacidad, necesitamos hacer un pequeño test de nivelación.
+                            </p>
+                            <a href="{% url 'sala_evaluacion' %}" class="btn btn-warning btn-lg px-5 py-3 rounded-pill fw-bold text-dark shadow-sm transform-scale">
+                                <i class="bi bi-clipboard-data-fill me-2 fs-4"></i> <span class="fs-5">REALIZAR EVALUACIÓN</span>
+                            </a>
+                        {% endif %}
+
                     {% endif %}
                 </div>
             </div>
@@ -130,7 +154,7 @@
         background-color: #f8f9fa;
     }
     .transform-scale:hover {
-        transform: scale(1.05);
+        transform: scale(1.02); /* Un poco menos de escala para que no maree */
         transition: transform 0.2s ease;
     }
 </style>

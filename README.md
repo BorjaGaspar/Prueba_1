@@ -15,7 +15,7 @@ Proyecto para la gestión y visualización de datos de wearables, desarrollado e
 
 
 ```bash
-git clone [https://github.com/TU_USUARIO/web_empresa.git](https://github.com/BorjaGaspar/Prueba_1.git)
+git clone [https://github.com/BorjaGaspar/Prueba_1.git](https://github.com/BorjaGaspar/Prueba_1.git)
 cd Prueba_1
 ```
 ### 2. Opción A: Ejecución con Docker
@@ -24,6 +24,10 @@ cd Prueba_1
 Si tienes Docker instalado, levanta todo el entorno con un solo comando:
 ```bash
 docker-compose up --build
+```
+Importante: La primera vez que levantes el contenedor, debes sincronizar la base de datos ejecutando en otra terminal
+```bash
+python manage.py migrate
 ```
 
 La web estará disponible en: http://localhost:8000
@@ -42,17 +46,6 @@ Instalar dependencias:
 ```bash
 pip install -r requirements.txt
 ```
-
-Inicializar la base de datos (Obligatorio para la primera vez):
-```bash
-python manage.py migrate
-```
-Crear un usuario administrador (Para poder acceder al sistema):
-```bash
-python manage.py createsuperuser
-```
-
-
 Ejecutar servidor:
 ```bash
 python manage.py runserver
@@ -62,6 +55,3 @@ python manage.py runserver
 * core/: Aplicación principal (Vistas públicas y privadas).
 * requirements.txt: Dependencias.
 * Dockerfile & docker-compose.yml: Configuración Docker.
-
-## Base de Datos
-El proyecto utiliza **SQLite** por defecto (archivo `db.sqlite3`), que es la configuración estándar de Django para desarrollo local. No requiere instalar servidores SQL adicionales; el archivo se genera automáticamente tras ejecutar el comando `migrate`.
