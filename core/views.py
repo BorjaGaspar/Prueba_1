@@ -15,7 +15,6 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt 
 
 # --- CONFIGURACIÓN WHISPER ---
-# Inicializamos la variable vacía para no bloquear el arranque del servidor
 MODELO_WHISPER = None
 
 # --- VISTAS PÚBLICAS ---
@@ -39,7 +38,6 @@ def registro(request):
             user = form.save()
             login(request, user)
             
-            # Verificamos si es médico mirando su perfil
             if hasattr(user, 'perfilpaciente') and user.perfilpaciente.es_medico:
                 return redirect('dashboard_medico') 
             else:
@@ -59,9 +57,20 @@ def dashboard(request):
         return redirect('sala_evaluacion')
     return redirect('juegos') 
 
+
 @login_required
 def resumen_paciente(request):
-    return render(request, 'core/dashboard.html')
+    # 1. Obtenemos el perfil actualizado de la base de datos
+    perfil, created = PerfilPaciente.objects.get_or_create(usuario=request.user)
+    
+    # 2. Imprimimos en la consola negra para que veas si Django lo detecta
+    print(f"DEBUG: Usuario {request.user.username} - Médico: {perfil.medico_asignado}")
+
+    # 3. Enviamos el 'perfil' explícitamente al HTML
+    context = {
+        'perfil': perfil
+    }
+    return render(request, 'core/dashboard.html', context)
 
 # --- ZONA PRIVADA (MÉDICO) ---
 
@@ -133,14 +142,21 @@ def forzar_evaluacion(request, pk):
 def jugar_moca_5(request):
     return render(request, 'core/juego_moca5.html')
 
-# --- AQUÍ ESTABA LO QUE FALTABA (LA NUEVA FUNCIÓN) ---
 @login_required
 def jugar_moca_5_definitivo(request):
     return render(request, 'core/juego_moca5_definitivo.html')
 
+@login_required
+def jugar_prueba_camara(request):
+    return render(request, 'core/juego_prueba_camara.html')
+
+@login_required
+def jugar_elsa(request):
+    return render(request, 'core/juego_elsa.html')
+
 
 # ---------------------------------------------------------
-# FUNCIÓN 1: EL CEREBRO QUE ESCUCHA (WHISPER)
+# FUNCIONES API (WHISPER Y GUARDADO)
 # ---------------------------------------------------------
 @csrf_exempt 
 def transcribir_audio(request):
@@ -148,7 +164,6 @@ def transcribir_audio(request):
 
     if request.method == 'POST' and request.FILES.get('audio'):
         try:
-            # Carga Perezosa
             if MODELO_WHISPER is None:
                 print("⏳ Cargando modelo Whisper por primera vez...")
                 MODELO_WHISPER = whisper.load_model("tiny")
@@ -175,10 +190,6 @@ def transcribir_audio(request):
 
     return JsonResponse({'error': 'No se recibió audio'}, status=400)
 
-
-# ---------------------------------------------------------
-# FUNCIÓN 2: GUARDAR EL PROGRESO (ARREGLO DEL ERROR 404)
-# ---------------------------------------------------------
 @csrf_exempt
 def guardar_progreso(request):
     if request.method == 'POST':
@@ -201,7 +212,6 @@ def guardar_progreso(request):
                     )
                     return JsonResponse({'status': 'ok'})
             
-            # Si estamos en Unity Editor (sin usuario), devolvemos OK igual
             return JsonResponse({'status': 'ok'})
 
         except Exception as e:
@@ -209,7 +219,3 @@ def guardar_progreso(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Método no permitido'}, status=405)
-
-@login_required
-def jugar_elsa(request):
-    return render(request, 'core/juego_elsa.html')
