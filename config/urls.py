@@ -27,6 +27,8 @@ urlpatterns = [
     path('terapia/test-memoria/', views.jugar_moca_5, name='jugar_moca_5'),
     path('terapia/test-memoria-definitivo/', views.jugar_moca_5_definitivo, name='jugar_moca_5_definitivo'),
     path('terapia/elsa/', views.jugar_elsa, name='jugar_elsa'),
+    path('terapia/calculadora/', views.jugar_calculadora, name='jugar_calculadora'),
+
     
     # PANEL MÉDICO 
     path('paciente/<int:pk>/', views.detalle_paciente, name='detalle_paciente'),

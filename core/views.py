@@ -219,3 +219,7 @@ def guardar_progreso(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+@login_required
+def jugar_calculadora(request):
+    return render(request, 'core/juego_calculadora.html')
