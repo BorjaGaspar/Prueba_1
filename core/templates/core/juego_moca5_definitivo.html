@@ -8,7 +8,8 @@
             <i class="bi bi-arrow-left me-2"></i> Volver a Terapia
         </a>
         <h4 class="fw-bold m-0">Ejercicio: Memoria (Versión Definitiva)</h4>
-        <div style="width: 100px;"></div> </div>
+        <div style="width: 100px;"></div> 
+    </div>
 
     <div class="row justify-content-center">
         <div class="col-12 text-center">
@@ -64,13 +65,15 @@
         updateBannerVisibility();
     }
 
-    // --- AQUÍ ESTÁN LAS RUTAS CLAVE ---
+    // --- RUTAS DE UNITY ---
     var buildUrl = "{% static 'games/moca5Definitivo/Build' %}";
     var loaderUrl = buildUrl + "/JuegoMoca5Definitivo.loader.js";
+    
     var config = {
         dataUrl: buildUrl + "/JuegoMoca5Definitivo.data",
         frameworkUrl: buildUrl + "/JuegoMoca5Definitivo.framework.js",
         codeUrl: buildUrl + "/JuegoMoca5Definitivo.wasm",
+        streamingAssetsUrl: "StreamingAssets", // <--- LÍNEA INCLUIDA COMO PEDISTE
         companyName: "DefaultCompany",
         productName: "Moca5Definitivo",
         productVersion: "1.0",
