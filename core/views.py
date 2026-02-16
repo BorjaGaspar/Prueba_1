@@ -6,6 +6,9 @@ from django.contrib import messages
 from .forms import RegistroUsuarioForm
 from .models import PerfilPaciente, SesionDeJuego
 import json 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import SesionDeJuego
 
 # --- NUEVOS IMPORTS PARA WHISPER ---
 import whisper
@@ -223,3 +226,42 @@ def guardar_progreso(request):
 @login_required
 def jugar_calculadora(request):
     return render(request, 'core/juego_calculadora.html')
+
+# En core/views.py
+
+@login_required
+def jugar_encuentra_letra(request):
+    try:
+        
+        perfil = request.user.perfil 
+    except:
+        perfil = None
+
+    # Si encontramos el perfil, sacamos su nivel. Si no, nivel 1.
+    nivel_actual = perfil.nivel_asignado if perfil else 1
+    
+    context = {
+        'nivel_inicial': nivel_actual
+    }
+    return render(request, 'core/juego_encuentra_letra.html', context)
+
+def guardar_progreso(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            perfil = request.user.perfil
+            
+            SesionDeJuego.objects.create(
+                paciente=perfil,
+                juego=data.get('juego'),
+                nivel_jugado=data.get('nivel'),
+                puntos=data.get('puntos'),
+                # --- ESTA ES LA LÍNEA QUE FALTABA ---
+                tiempo_jugado=data.get('tiempo', 0), 
+                # ------------------------------------
+                completado=data.get('completado', True)
+            )
+            return JsonResponse({'status': 'ok'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    return JsonResponse({'status': 'error'}, status=400)

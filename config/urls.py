@@ -28,6 +28,8 @@ urlpatterns = [
     path('terapia/test-memoria-definitivo/', views.jugar_moca_5_definitivo, name='jugar_moca_5_definitivo'),
     path('terapia/elsa/', views.jugar_elsa, name='jugar_elsa'),
     path('terapia/calculadora/', views.jugar_calculadora, name='jugar_calculadora'),
+    path('terapia/encuentra-letra/', views.jugar_encuentra_letra, name='jugar_encuentra_letra'),
+    path('api/guardar-progreso/', views.guardar_progreso, name='guardar_progreso'),
 
     
     # PANEL MÉDICO 
