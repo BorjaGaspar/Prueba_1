@@ -1,0 +1,328 @@
+{% extends 'core/base_private.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Encuentra la Letra Diferente</h2>
+            <p class="text-muted mb-0">Nivel del Paciente: <span id="display-nivel" class="fw-bold text-primary">{{ nivel_inicial }}</span></p>
+        </div>
+        
+        <div class="d-flex gap-4 text-end">
+            <div>
+                <h4 class="mb-0 text-muted">Tiempo</h4>
+                <h3 class="mb-0 fw-bold text-primary" id="timer">0.0s</h3>
+            </div>
+            <div>
+                <h4 class="mb-0 text-muted">Puntos</h4>
+                <h3 class="mb-0 fw-bold text-success" id="score">0</h3>
+                <small>Ronda: <span id="ronda">1</span>/5</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4 text-center">
+            
+            <h3 class="mb-4" id="instruccion">Busca la letra <span class="badge bg-warning text-dark" id="target-letter">?</span></h3>
+            
+            <div id="game-grid" class="game-grid">
+                </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalFinJuego" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center p-4">
+            <div class="modal-header border-0 justify-content-center">
+                <h2 class="modal-title fw-bold">¡Sesión Completada!</h2>
+            </div>
+            <div class="modal-body">
+                <div id="medalla-icon" class="display-1 mb-3">🏅</div>
+                <h3 id="mensaje-final">¡Buen trabajo!</h3>
+                <p class="lead">Puntuación Final: <strong id="puntos-finales">0</strong></p>
+                <p class="text-muted small">Tiempo total: <span id="tiempo-final-display"></span> segundos</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <a href="{% url 'juegos' %}" class="btn btn-primary rounded-pill px-4">Volver al Menú</a>
+                <button onclick="location.reload()" class="btn btn-outline-secondary rounded-pill px-4">Jugar otra vez</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .game-grid {
+        display: grid;
+        gap: 10px;
+        justify-content: center;
+        margin: 0 auto;
+        max-width: 600px;
+    }
+    
+    .letter-box {
+        background-color: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 2rem;
+        transition: all 0.2s;
+        aspect-ratio: 1; 
+        user-select: none;
+    }
+
+    .letter-box:hover {
+        background-color: #e2e6ea;
+        transform: scale(1.05);
+    }
+
+    .correct-click {
+        background-color: #d1e7dd !important; 
+        border-color: #198754 !important;
+        color: #0f5132;
+        transform: scale(1.1);
+    }
+    
+    .wrong-click {
+        background-color: #f8d7da !important; 
+        border-color: #dc3545 !important;
+        animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+        0% { transform: translate(1px, 1px) rotate(0deg); }
+        10% { transform: translate(-1px, -2px) rotate(-1deg); }
+        20% { transform: translate(-3px, 0px) rotate(1deg); }
+        30% { transform: translate(3px, 2px) rotate(0deg); }
+        40% { transform: translate(1px, -1px) rotate(1deg); }
+        50% { transform: translate(-1px, 2px) rotate(-1deg); }
+        60% { transform: translate(-3px, 1px) rotate(0deg); }
+        70% { transform: translate(3px, 1px) rotate(-1deg); }
+        80% { transform: translate(-1px, -1px) rotate(1deg); }
+        90% { transform: translate(1px, 2px) rotate(0deg); }
+        100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+</style>
+
+<script>
+    // --- 1. MOTOR DE FAMILIAS VISUALES ---
+    const FAMILIAS = {
+        CURVAS: ['O', 'C', 'G', 'Q', 'D', 'U'],
+        RECTAS: ['E', 'F', 'H', 'I', 'L', 'T'],
+        DIAGONALES: ['A', 'V', 'M', 'W', 'N', 'Z', 'X', 'K'],
+        CONFUSAS: ['b', 'd', 'p', 'q', '6', '9'], 
+    };
+
+    let ultimoIntruso = null;
+
+    // --- 2. CONFIGURACIÓN DE NIVELES ---
+    const NIVELES_CONFIG = {
+        1: { grid: 3, timeBonus: 200, generar: () => getParejaDiferente() }, 
+        2: { grid: 4, timeBonus: 60, generar: () => getParejaDiferente() },
+        3: { grid: 5, timeBonus: 45, generar: () => getParejaMismaFamilia(['RECTAS', 'CURVAS']) },
+        4: { grid: 6, timeBonus: 30, generar: () => getParejaMismaFamilia(['CONFUSAS', 'DIAGONALES']) },
+        5: { grid: 8, timeBonus: 20, generar: () => getParejaEspecifica(['Q', 'O'], ['6', '9'], ['E', 'F'], ['M', 'N'], ['B', '8'], ['S', '5'], ['Z', '2'], ['1', 'I']) }  
+    };
+
+    // Variables de estado
+    let nivelUsuario = {{ nivel_inicial }}; 
+    let rondaActual = 1;
+    let maxRondas = 5;
+    let puntosTotales = 0;
+    
+    // VARIABLES DE TIEMPO
+    let startTime;
+    let timerInterval; 
+    let clickHabilitado = true;
+    let tiempoTotalAcumulado = 0; 
+
+    // Elementos del DOM
+    const gridEl = document.getElementById('game-grid');
+    const scoreEl = document.getElementById('score');
+    const rondaEl = document.getElementById('ronda');
+    const targetEl = document.getElementById('target-letter');
+    const timerEl = document.getElementById('timer'); 
+
+    // --- GENERADORES ---
+    function getParejaDiferente() {
+        const keys = ['CURVAS', 'RECTAS', 'DIAGONALES'];
+        let fam1, fam2, intruso, fondo, intentos = 0;
+        do {
+            const k1 = keys[Math.floor(Math.random() * keys.length)];
+            let k2 = keys[Math.floor(Math.random() * keys.length)];
+            while (k1 === k2) k2 = keys[Math.floor(Math.random() * keys.length)];
+            fam1 = FAMILIAS[k1]; fam2 = FAMILIAS[k2];
+            intruso = fam1[Math.floor(Math.random() * fam1.length)];
+            fondo = fam2[Math.floor(Math.random() * fam2.length)];
+            intentos++;
+        } while (intruso === ultimoIntruso && intentos < 20);
+        ultimoIntruso = intruso;
+        return { intruso, fondo };
+    }
+
+    function getParejaMismaFamilia(tipos) {
+        let intruso, fondo, intentos = 0;
+        do {
+            const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+            const familia = FAMILIAS[tipo];
+            intruso = familia[Math.floor(Math.random() * familia.length)];
+            fondo = familia[Math.floor(Math.random() * familia.length)];
+            while (intruso === fondo) fondo = familia[Math.floor(Math.random() * familia.length)];
+            intentos++;
+        } while (intruso === ultimoIntruso && intentos < 20);
+        ultimoIntruso = intruso;
+        return { intruso, fondo };
+    }
+
+    function getParejaEspecifica(...pares) {
+        const disponibles = pares.filter(p => p[0] !== ultimoIntruso);
+        const pool = disponibles.length > 0 ? disponibles : pares;
+        const par = pool[Math.floor(Math.random() * pool.length)];
+        ultimoIntruso = par[0];
+        return { intruso: par[0], fondo: par[1] };
+    }
+
+    function actualizarCronometro() {
+        let tiempoActual = (Date.now() - startTime) / 1000;
+        timerEl.innerText = tiempoActual.toFixed(1) + 's';
+    }
+
+    // --- LÓGICA DEL JUEGO ---
+    function iniciarRonda() {
+        if (rondaActual > maxRondas) {
+            finalizarJuego();
+            return;
+        }
+
+        clearInterval(timerInterval);
+        timerEl.innerText = "0.0s";
+
+        clickHabilitado = true;
+        rondaEl.innerText = rondaActual;
+        
+        const config = NIVELES_CONFIG[nivelUsuario] || NIVELES_CONFIG[5];
+        const { intruso, fondo } = config.generar();
+        targetEl.innerText = intruso; 
+
+        gridEl.style.gridTemplateColumns = `repeat(${config.grid}, 1fr)`;
+        const totalCeldas = config.grid * config.grid;
+        const posIntruso = Math.floor(Math.random() * totalCeldas);
+        
+        gridEl.innerHTML = ''; 
+
+        for (let i = 0; i < totalCeldas; i++) {
+            let letra = (i === posIntruso) ? intruso : fondo;
+            let esTarget = (i === posIntruso);
+            let btn = document.createElement('div');
+            btn.className = 'letter-box';
+            btn.innerText = letra;
+            btn.onclick = () => procesarClic(btn, esTarget, config.timeBonus);
+            gridEl.appendChild(btn);
+        }
+
+        startTime = Date.now();
+        timerInterval = setInterval(actualizarCronometro, 100);
+    }
+
+    function procesarClic(elemento, esCorrecto, tiempoMaximo) {
+        if (!clickHabilitado) return;
+
+        if (esCorrecto) {
+            clearInterval(timerInterval);
+            clickHabilitado = false;
+            elemento.classList.add('correct-click');
+            
+            let tiempoUsado = (Date.now() - startTime) / 1000; 
+            
+            // --- SUMA EL TIEMPO AQUÍ ---
+            tiempoTotalAcumulado += tiempoUsado;
+
+            timerEl.innerText = tiempoUsado.toFixed(1) + 's';
+
+            let puntosRonda = 100; 
+            let bonus = 0;
+            if (tiempoUsado <= (tiempoMaximo / 2)) {
+                bonus = 100; 
+            } else if (tiempoUsado < tiempoMaximo) {
+                bonus = 200 * (1 - (tiempoUsado / tiempoMaximo));
+            }
+            
+            puntosRonda += Math.floor(Math.max(0, bonus));
+            puntosTotales += puntosRonda;
+            scoreEl.innerText = puntosTotales;
+
+            setTimeout(() => {
+                rondaActual++;
+                iniciarRonda();
+            }, 1000);
+
+        } else {
+            elemento.classList.add('wrong-click');
+            puntosTotales = Math.max(0, puntosTotales - 10);
+            scoreEl.innerText = puntosTotales;
+        }
+    }
+
+    function finalizarJuego() {
+        clearInterval(timerInterval);
+        const modal = new bootstrap.Modal(document.getElementById('modalFinJuego'));
+        document.getElementById('puntos-finales').innerText = puntosTotales;
+        
+        // Mostrar el tiempo final en el modal también
+        const displayTiempo = document.getElementById('tiempo-final-display');
+        if(displayTiempo) displayTiempo.innerText = Math.round(tiempoTotalAcumulado);
+
+        const medallaIcon = document.getElementById('medalla-icon');
+        const mensaje = document.getElementById('mensaje-final');
+        
+        if (puntosTotales >= 800) {
+            medallaIcon.innerText = '🥇'; 
+            mensaje.innerText = "¡Increíble! Nivel Oro";
+            mensaje.className = "text-warning";
+        } else if (puntosTotales >= 400) {
+            medallaIcon.innerText = '🥈'; 
+            mensaje.innerText = "¡Muy bien! Nivel Plata";
+            mensaje.className = "text-secondary";
+        } else {
+            medallaIcon.innerText = '🥉'; 
+            mensaje.innerText = "¡Bien hecho! Sigue así";
+            mensaje.className = "text-danger";
+        }
+        
+        modal.show();
+        guardarSesion(puntosTotales);
+    }
+
+    function guardarSesion(puntos) {
+        const datos = {
+            juego: "Encuentra la Letra",
+            nivel: nivelUsuario,
+            puntos: puntos,
+            tiempo: Math.round(tiempoTotalAcumulado), // Ahora views.py sí escuchará esto
+            completado: true
+        };
+
+        fetch('/api/guardar-progreso/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(datos)
+        })
+        .then(response => {
+            if (response.ok) console.log("¡Guardado con éxito!");
+            else console.error("Error al guardar");
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', iniciarRonda);
+
+</script>
+{% endblock %}

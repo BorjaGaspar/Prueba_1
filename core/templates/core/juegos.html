@@ -91,6 +91,34 @@
         {% endfor %}
     </div>
 
+    <div id="lista-juegos-atencion" class="row d-none">
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm h-100 transform-hover">
+                <div class="card-body p-4 text-center bg-white rounded border-top border-5 border-warning">
+                    <div class="mb-3">
+                        <i class="bi bi-search display-4 text-warning"></i>
+                    </div>
+                    <h5 class="fw-bold">Encuentra la Letra</h5>
+                    <p class="text-muted small">Atención Selectiva</p>
+                    
+                    <a href="{% url 'jugar_encuentra_letra' %}" class="btn btn-outline-warning rounded-pill px-4 w-100 mt-2 text-dark">
+                        <i class="bi bi-play-fill me-2"></i> JUGAR
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm h-100 opacity-50">
+                <div class="card-body p-5 text-center bg-light">
+                    <i class="bi bi-eye display-4 text-secondary opacity-50 mb-3"></i>
+                    <h5 class="fw-bold">Próximamente</h5>
+                    <button class="btn btn-sm btn-outline-dark mt-3" disabled>En desarrollo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="lista-juegos-lenguaje" class="row d-none">
         
         <div class="col-md-4 mb-4">
@@ -174,8 +202,9 @@
     const titulo = document.getElementById('titulo-seccion');
 
     // Contenedores de listas
-    const listaComun = document.getElementById('lista-juegos-comunes');
-    const listaLenguaje = document.getElementById('lista-juegos-lenguaje');
+    const listaComun = document.getElementById('lista-juegos-comunes');     // Para Motor
+    const listaLenguaje = document.getElementById('lista-juegos-lenguaje'); // Para Lenguaje
+    const listaAtencion = document.getElementById('lista-juegos-atencion'); // Para Atención (NUEVO)
     
     let estado = 'inicio'; 
 
@@ -198,16 +227,23 @@
         titulo.innerText = "Área de " + categoria;
         document.getElementById('nombre-categoria').innerText = categoria;
         
-        // LÓGICA IMPORTANTE: Si es Lenguaje mostramos la lista especial
-        if (categoria === 'Lenguaje') {
-            listaComun.classList.add('d-none');
-            listaLenguaje.classList.remove('d-none');
-        } else {
-            // Si es Motor o Atención, mostramos la lista genérica
-            listaComun.classList.remove('d-none');
-            listaLenguaje.classList.add('d-none');
+        // 1. OCULTAR TODO PRIMERO
+        listaComun.classList.add('d-none');
+        listaLenguaje.classList.add('d-none');
+        listaAtencion.classList.add('d-none');
 
-            // Actualizamos los nombres dinámicos solo en la lista común
+        // 2. MOSTRAR SEGÚN LA CATEGORÍA ELEGIDA
+        if (categoria === 'Lenguaje') {
+            listaLenguaje.classList.remove('d-none');
+        } 
+        else if (categoria === 'Atención') {
+            listaAtencion.classList.remove('d-none');
+        } 
+        else {
+            // Para Motor u otros, mostramos la lista genérica
+            listaComun.classList.remove('d-none');
+            
+            // Actualizamos títulos dinámicos solo para la lista común
             let titulosJuegos = document.querySelectorAll('.nombre-cat-dinamico');
             titulosJuegos.forEach(el => el.innerText = categoria);
         }
