@@ -18,38 +18,21 @@
                     <div class="d-flex gap-3 mt-3 flex-wrap">
                         
                         {% if paciente.nivel_asignado == 1 %}
-                            <span class="badge bg-danger px-3 py-2">
-                                <i class="bi bi-exclamation-octagon me-1"></i> Nivel 1 - Severo
-                            </span>
+                            <span class="badge bg-danger px-3 py-2"><i class="bi bi-exclamation-octagon me-1"></i> Global: Severo</span>
                         {% elif paciente.nivel_asignado == 2 %}
-                            <span class="badge bg-warning text-dark px-3 py-2">
-                                <i class="bi bi-exclamation-triangle me-1"></i> Nivel 2 - Moderado
-                            </span>
+                            <span class="badge bg-warning text-dark px-3 py-2"><i class="bi bi-exclamation-triangle me-1"></i> Global: Moderado</span>
                         {% elif paciente.nivel_asignado == 3 %}
-                            <span class="badge bg-info text-dark px-3 py-2">
-                                <i class="bi bi-info-circle me-1"></i> Nivel 3 - Leve
-                            </span>
+                            <span class="badge bg-info text-dark px-3 py-2"><i class="bi bi-info-circle me-1"></i> Global: Leve</span>
                         {% elif paciente.nivel_asignado == 4 %}
-                            <span class="badge bg-primary px-3 py-2">
-                                <i class="bi bi-activity me-1"></i> Nivel 4 - Límite
-                            </span>
+                            <span class="badge bg-primary px-3 py-2"><i class="bi bi-activity me-1"></i> Global: Límite</span>
                         {% elif paciente.nivel_asignado == 5 %}
-                            <span class="badge bg-success px-3 py-2">
-                                <i class="bi bi-check-circle me-1"></i> Nivel 5 - Normal
-                            </span>
+                            <span class="badge bg-success px-3 py-2"><i class="bi bi-check-circle me-1"></i> Global: Normal</span>
                         {% else %}
-                            <span class="badge bg-secondary px-3 py-2">
-                                <i class="bi bi-question-circle me-1"></i> Sin Evaluar
-                            </span>
+                            <span class="badge bg-secondary px-3 py-2"><i class="bi bi-question-circle me-1"></i> Sin Evaluar</span>
                         {% endif %}
+
                         <span class="badge bg-light text-dark border px-3 py-2">
                             <i class="bi bi-cake2 me-1"></i> {{ paciente.edad|default:"--" }} años
-                        </span>
-                        <span class="badge bg-light text-dark border px-3 py-2">
-                            <i class="bi bi-rulers me-1"></i> {{ paciente.altura|default:"--" }} cm
-                        </span>
-                        <span class="badge bg-light text-dark border px-3 py-2">
-                            <i class="bi bi-speedometer me-1"></i> {{ paciente.peso|default:"--" }} kg
                         </span>
                         <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2">
                             <i class="bi bi-activity me-1"></i> Ictus: {{ paciente.lado_afectado|default:"No especif." }}
@@ -59,20 +42,69 @@
             </div>
             
             <div>
-                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary mb-2 d-block">
+                <a href="{% url 'dashboard_medico' %}" class="btn btn-outline-secondary mb-2 d-block">
                     <i class="bi bi-arrow-left me-2"></i> Volver
                 </a>
                 <button class="btn btn-primary d-block w-100"><i class="bi bi-file-earmark-pdf me-2"></i> Informe</button>
             </div>
         </div>
-    </div>
+
+        <hr class="my-4">
+
+        <h5 class="fw-bold mb-3 text-secondary">Configuración de Terapia</h5>
+        <form method="POST" class="bg-light p-4 rounded-4 border mb-2">
+            {% csrf_token %}
+            <input type="hidden" name="actualizar_niveles" value="true">
+            
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-primary small mb-1">NIVEL COGNITIVO</label>
+                    <select name="nivel_cognitivo" class="form-select border-primary fw-bold text-primary">
+                        {% for i in "12345" %}
+                            <option value="{{ i }}" {% if paciente.nivel_cognitivo|stringformat:"i" == i %}selected{% endif %}>
+                                Nivel {{ i }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-warning small mb-1">NIVEL LENGUAJE</label>
+                    <select name="nivel_lenguaje" class="form-select border-warning fw-bold text-warning">
+                        {% for i in "12345" %}
+                            <option value="{{ i }}" {% if paciente.nivel_lenguaje|stringformat:"i" == i %}selected{% endif %}>
+                                Nivel {{ i }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-danger small mb-1">NIVEL MOTOR</label>
+                    <select name="nivel_motor" class="form-select border-danger fw-bold text-danger">
+                        {% for i in "12345" %}
+                            <option value="{{ i }}" {% if paciente.nivel_motor|stringformat:"i" == i %}selected{% endif %}>
+                                Nivel {{ i }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-dark w-100 fw-bold shadow-sm">
+                        <i class="bi bi-save me-2"></i> Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </form>
+        </div>
 </div>
 
 <div class="row mb-4">
     <div class="col-md-3">
         <div class="card border-0 shadow-sm p-3 border-top border-4 border-warning h-100">
             <h6 class="text-muted text-uppercase small">Puntuación Global</h6>
-            <h3 class="fw-bold">{{ paciente.puntos }} pts</h3>
+            <h3 class="fw-bold">{{ paciente.puntos_totales }} pts</h3>
         </div>
     </div>
     <div class="col-md-3">
@@ -135,9 +167,6 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('graficaEvolucion').getContext('2d');
-        
-        // Recogemos los datos que envía Django
-        // El filtro |safe es vital para que JS entienda la lista de Python
         const fechas = {{ fechas|safe }};
         const puntos = {{ puntos|safe }};
 
@@ -149,10 +178,10 @@
                     datasets: [{
                         label: 'Puntuación Obtenida',
                         data: puntos,
-                        borderColor: '#0d6efd', // Azul Bootstrap
-                        backgroundColor: 'rgba(13, 110, 253, 0.1)', // Azul transparente
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
                         borderWidth: 3,
-                        tension: 0.3, // Curva suave
+                        tension: 0.3,
                         fill: true,
                         pointBackgroundColor: '#fff',
                         pointBorderColor: '#0d6efd',
@@ -165,7 +194,7 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            display: false // Ocultamos la leyenda para más limpieza
+                            display: false 
                         },
                         tooltip: {
                             callbacks: {
@@ -191,7 +220,6 @@
                 }
             });
         } else {
-            // Si no hay datos, pintamos un texto en el canvas
             ctx.font = "16px Arial";
             ctx.fillStyle = "gray";
             ctx.textAlign = "center";

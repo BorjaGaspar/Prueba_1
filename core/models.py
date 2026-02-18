@@ -6,7 +6,6 @@ from django.utils import timezone
 # TABLA 1: PERFIL DEL PACIENTE
 # ================================================================
 class PerfilPaciente(models.Model):
-    # --- ¡AQUÍ ESTABA EL FALLO! LO HE DEVUELTO A 'perfil' ---
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
     
     # --- DATOS GENERALES ---
@@ -18,7 +17,6 @@ class PerfilPaciente(models.Model):
     altura = models.IntegerField(null=True, blank=True)
     peso = models.IntegerField(null=True, blank=True)
     
-    # --- LISTA DE OPCIONES (NECESARIA PARA FORMS.PY) ---
     OPCIONES_LADO = [
         ('Izquierdo', 'Lado Izquierdo'),
         ('Derecho', 'Lado Derecho'),
@@ -26,21 +24,26 @@ class PerfilPaciente(models.Model):
         ('Ninguno', 'Sin afectación motora'),
     ]
     
-    lado_afectado = models.CharField(
-        max_length=20, 
-        choices=OPCIONES_LADO, 
-        null=True, blank=True
-    )
+    lado_afectado = models.CharField(max_length=20, choices=OPCIONES_LADO, null=True, blank=True)
     
     # --- ESTADO DE EVALUACIÓN ---
     test_completado = models.BooleanField(default=False)
     fecha_ultima_evaluacion = models.DateTimeField(null=True, blank=True)
     
-    # Puntuación Global
-    nivel_asignado = models.IntegerField(default=1, verbose_name="Nivel (1-5)")
-    puntuacion_total_moca = models.IntegerField(default=0, verbose_name="MoCA Total (0-30)")
+    # --- NIVELES ESPECÍFICOS (NUEVO SISTEMA) ---
+    # Nivel Global (Mantenemos por compatibilidad, pero usaremos los de abajo)
+    nivel_asignado = models.IntegerField(default=1, verbose_name="Nivel Global (Legacy)")
     
-    # --- DESGLOSE MOCA (NUEVO: Para Julian) ---
+    # Los 3 Pilares de la Terapia
+    nivel_cognitivo = models.IntegerField(default=1, verbose_name="Nivel Cognitivo (1-5)")
+    nivel_lenguaje = models.IntegerField(default=1, verbose_name="Nivel Lenguaje (1-5)")
+    nivel_motor = models.IntegerField(default=1, verbose_name="Nivel Motor (1-5)")
+
+    # Puntuaciones MoCA
+    puntuacion_total_moca = models.IntegerField(default=0, verbose_name="MoCA Total (0-30)")
+    puntuacion_cognitiva = models.IntegerField(default=0) # Campo extra que tenías
+    
+    # Desglose MoCA
     score_visuoespacial = models.IntegerField(default=0, verbose_name="Visuoespacial/Ejecutiva")
     score_identificacion = models.IntegerField(default=0, verbose_name="Identificación")
     score_atencion = models.IntegerField(default=0, verbose_name="Atención")
@@ -49,7 +52,6 @@ class PerfilPaciente(models.Model):
     score_recuerdo = models.IntegerField(default=0, verbose_name="Recuerdo Diferido")
     score_orientacion = models.IntegerField(default=0, verbose_name="Orientación")
     
-    # Score Motor
     puntuacion_motora = models.IntegerField(default=0, verbose_name="Score Motor (0-100)")
     
     # --- GAMIFICACIÓN ---
@@ -70,16 +72,11 @@ class PerfilPaciente(models.Model):
 class SesionDeJuego(models.Model):
     paciente = models.ForeignKey(PerfilPaciente, on_delete=models.CASCADE, related_name='sesiones')
     juego = models.CharField(max_length=100, default="General")
-    
-    # FECHA UTC
     fecha = models.DateTimeField(default=timezone.now, verbose_name="Fecha UTC")
-    
     puntos = models.IntegerField(default=0)
     nivel_jugado = models.IntegerField(default=1)
     tiempo_jugado = models.IntegerField(default=0, verbose_name="Segundos")
     completado = models.BooleanField(default=True)
-    
-    # Campo extra flexible
     detalles = models.TextField(blank=True, null=True, verbose_name="Detalles JSON")
 
     def __str__(self):

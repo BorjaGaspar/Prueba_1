@@ -19,53 +19,42 @@
     </div>
 
     <div class="row g-4 mb-5">
-        <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
-                <div class="card-body p-4 d-flex align-items-center">
-                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3 text-warning">
-                        <i class="bi bi-trophy-fill fs-3"></i>
-                    </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden bg-primary bg-opacity-10">
+                <div class="card-body p-4 d-flex align-items-center justify-content-between">
                     <div>
-                        <h6 class="text-muted mb-0 small text-uppercase fw-bold">Puntos Cognitivos</h6>
-                        <h2 class="fw-bold mb-0">
-                            {{ perfil.puntuacion_cognitiva|default:"0" }}
-                        </h2>
+                        <h6 class="text-primary fw-bold text-uppercase mb-1 small">Cognitivo</h6>
+                        <h2 class="fw-bold text-dark mb-0">Nivel {{ perfil.nivel_cognitivo }}</h2>
                     </div>
+                    <i class="bi bi-puzzle-fill fs-1 text-primary opacity-50"></i>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
-                <div class="card-body p-4 d-flex align-items-center">
-                    <div class="bg-danger bg-opacity-10 p-3 rounded-circle me-3 text-danger">
-                        <i class="bi bi-fire fs-3"></i>
-                    </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden bg-warning bg-opacity-10">
+                <div class="card-body p-4 d-flex align-items-center justify-content-between">
                     <div>
-                        <h6 class="text-muted mb-0 small text-uppercase fw-bold">Racha Actual</h6>
-                        <h2 class="fw-bold mb-0">1 Día</h2>
+                        <h6 class="text-warning fw-bold text-uppercase mb-1 small">Lenguaje</h6>
+                        <h2 class="fw-bold text-dark mb-0">Nivel {{ perfil.nivel_lenguaje }}</h2>
                     </div>
+                    <i class="bi bi-chat-quote-fill fs-1 text-warning opacity-50"></i>
                 </div>
             </div>
         </div>
         
-        <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
-                <div class="card-body p-4 d-flex align-items-center">
-                    <div class="bg-info bg-opacity-10 p-3 rounded-circle me-3 text-info">
-                        <i class="bi bi-bar-chart-fill fs-3"></i>
-                    </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden bg-danger bg-opacity-10">
+                <div class="card-body p-4 d-flex align-items-center justify-content-between">
                     <div>
-                        <h6 class="text-muted mb-0 small text-uppercase fw-bold">Nivel Actual</h6>
-                        <h2 class="fw-bold mb-0">
-                            Nivel {{ perfil.nivel_asignado|default:"-" }}
-                        </h2>
+                        <h6 class="text-danger fw-bold text-uppercase mb-1 small">Motor</h6>
+                        <h2 class="fw-bold text-dark mb-0">Nivel {{ perfil.nivel_motor }}</h2>
                     </div>
+                    <i class="bi bi-hand-index-thumb-fill fs-1 text-danger opacity-50"></i>
                 </div>
             </div>
         </div>
     </div>
-
     <div class="row mb-5">
         <div class="col-12">
             <div class="card {% if perfil.test_completado %}bg-success{% elif perfil.medico_asignado %}bg-secondary bg-opacity-10{% else %}bg-warning bg-opacity-10{% endif %} border-0 shadow rounded-4 overflow-hidden">
@@ -76,7 +65,7 @@
                     {% if perfil.test_completado %}
                         <h2 class="fw-bold display-6 mb-3 text-white">Sala de Terapia Lista</h2>
                         <p class="fs-5 mb-5 text-white opacity-75" style="max-width: 600px; margin: 0 auto;">
-                            Tus ejercicios del <strong>Nivel {{ perfil.nivel_asignado }}</strong> están preparados.
+                            Tus ejercicios están adaptados a tus niveles actuales (Cognitivo, Motor y Lenguaje).
                         </p>
                         
                         <a href="{% url 'jugar' %}" class="btn btn-light btn-lg px-5 py-4 rounded-pill fw-bold text-success shadow display-6 transform-scale mb-5">

@@ -97,6 +97,26 @@ def dashboard_medico(request):
 @login_required
 def detalle_paciente(request, pk):
     perfil_paciente = get_object_or_404(PerfilPaciente, pk=pk)
+    
+    # --- LÓGICA DE ACTUALIZACIÓN DE NIVELES (MÉDICO) ---
+    # Esta parte recibe los datos del formulario en el HTML del médico
+    if request.method == 'POST' and 'actualizar_niveles' in request.POST:
+        try:
+            # Capturamos los 3 niveles por separado
+            perfil_paciente.nivel_cognitivo = int(request.POST.get('nivel_cognitivo', 1))
+            perfil_paciente.nivel_lenguaje = int(request.POST.get('nivel_lenguaje', 1))
+            perfil_paciente.nivel_motor = int(request.POST.get('nivel_motor', 1))
+            
+            # Actualizamos el global como referencia (opcional, igualamos al cognitivo por defecto)
+            perfil_paciente.nivel_asignado = perfil_paciente.nivel_cognitivo
+            
+            perfil_paciente.save()
+            messages.success(request, "Niveles del paciente actualizados correctamente.")
+        except ValueError:
+            messages.error(request, "Error al actualizar los niveles. Verifique los datos.")
+        return redirect('detalle_paciente', pk=pk)
+    # ----------------------------------------------------
+
     sesiones = SesionDeJuego.objects.filter(paciente=perfil_paciente).order_by('fecha')
     
     fechas = [sesion.fecha.strftime("%d/%m") for sesion in sesiones]
@@ -135,7 +155,14 @@ def sala_evaluacion(request):
     perfil, created = PerfilPaciente.objects.get_or_create(usuario=request.user)
     if request.method == 'POST':
         nivel_elegido = int(request.POST.get('resultado_simulado'))
+        
+        # --- ASIGNACIÓN INICIAL MÚLTIPLE ---
+        # Al hacer el test, asignamos el mismo nivel a las 3 áreas para empezar
         perfil.nivel_asignado = nivel_elegido
+        perfil.nivel_cognitivo = nivel_elegido
+        perfil.nivel_lenguaje = nivel_elegido
+        perfil.nivel_motor = nivel_elegido
+        
         perfil.puntuacion_cognitiva = nivel_elegido * 6 
         perfil.test_completado = True
         perfil.fecha_ultima_evaluacion = timezone.now()
@@ -147,28 +174,28 @@ def sala_evaluacion(request):
 @login_required
 def jugar_moca_5(request):
     # Ruta basada en tu captura: games/Lenguaje/moca/
-    return render(request, 'core/games/moca/juego_moca5.html')
+    return render(request, 'core/games/Lenguaje/moca/juego_moca5.html')
 
 @login_required
 def jugar_moca_5_definitivo(request):
     # Ruta basada en tu captura: games/Lenguaje/moca/
-    return render(request, 'core/games/moca/juego_moca5_definitivo.html')
+    return render(request, 'core/games/Lenguaje/moca/juego_moca5_definitivo.html')
 
 @login_required
 def jugar_elsa(request):
     # Ruta basada en tu captura: games/Lenguaje/moca/
-    return render(request, 'core/games/moca/juego_elsa.html')
+    return render(request, 'core/games/Lenguaje/moca/juego_elsa.html')
 
 @login_required
 def jugar_calculadora(request):
     # Ruta basada en tu captura: games/Lenguaje/moca/
-    return render(request, 'core/games/moca/juego_calculadora.html')
+    return render(request, 'core/games/Lenguaje/moca/juego_calculadora.html')
 
 # --- JUEGOS MOTORES ---
 @login_required
 def jugar_prueba_camara(request):
     # Ruta basada en tu captura: games/motor/
-    return render(request, 'core/games/juego_prueba_camara.html')
+    return render(request, 'core/games/motor/juego_prueba_camara.html')
 
 # --- JUEGOS COGNITIVOS (El nuevo) ---
 @login_required
@@ -178,8 +205,8 @@ def jugar_encuentra_letra(request):
     except:
         perfil = None
 
-    # Si encontramos el perfil, sacamos su nivel. Si no, nivel 1.
-    nivel_actual = perfil.nivel_asignado if perfil else 1
+    # --- CAMBIO CLAVE: Usamos el nivel específico COGNITIVO ---
+    nivel_actual = perfil.nivel_cognitivo if perfil else 1
     
     context = {
         'nivel_inicial': nivel_actual
