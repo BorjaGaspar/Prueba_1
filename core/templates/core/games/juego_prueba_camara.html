@@ -1,4 +1,4 @@
-{% extends 'core/base_private.html' %}
+{% extends 'core/layouts/base_private.html' %}
 {% load static %}
 
 {% block content %}
@@ -7,7 +7,7 @@
         <a href="{% url 'juegos' %}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-2"></i> Volver a Terapia
         </a>
-        <h4 class="fw-bold m-0">Ejercicio: Calculadora</h4>
+        <h4 class="fw-bold m-0">Ejercicio: Reconocimiento Facial/Objetos</h4>
         <div style="width: 100px;"></div>
     </div>
 
@@ -19,7 +19,7 @@
                     <canvas id="unity-canvas" width=960 height=600 style="width: 100%; height: 100%; background: #231F20;"></canvas>
                     
                     <div id="unity-loading-bar" class="position-absolute top-50 start-50 translate-middle text-center w-50">
-                        <div class="text-white mb-2 fw-bold">Cargando Calculadora...</div>
+                        <div class="text-white mb-2 fw-bold">Activando Cámara...</div>
                         <div class="progress" style="height: 10px;">
                             <div id="unity-progress-bar-full" class="progress-bar bg-warning progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
                         </div>
@@ -27,7 +27,7 @@
                 </div>
                 
                 <div id="unity-footer" class="card-footer bg-dark text-white d-flex justify-content-between align-items-center py-2">
-                    <small>Entrenamiento Cognitivo</small>
+                    <small>Módulo de Visión Artificial</small>
                     <button id="unity-fullscreen-button" class="btn btn-sm btn-outline-light">
                         <i class="bi bi-arrows-fullscreen"></i> Pantalla Completa
                     </button>
@@ -43,17 +43,19 @@
     var progressBarFull = document.querySelector("#unity-progress-bar-full");
     var fullscreenButton = document.querySelector("#unity-fullscreen-button");
 
-    // --- RUTAS BASADAS EN TU FOTO (Nombre: Elsa_calculadora) ---
-    var buildUrl = "{% static 'games/juego_calculadora/Build' %}";
-    var loaderUrl = buildUrl + "/Elsa_calculadora.loader.js";
+    // --- RUTAS BASADAS EN TU FOTO (Nombre: Builds) ---
+    // NOTA: Si tienes archivos .br, Unity intentará cargarlos.
+    // Si te da error, intenta conseguir la versión "Descomprimida" del juego.
+    
+    var buildUrl = "{% static 'games/prueba_camara/Build' %}";
+    var loaderUrl = buildUrl + "/Builds.loader.js";
     
     var config = {
-        dataUrl: buildUrl + "/Elsa_calculadora.data.br",
-        frameworkUrl: buildUrl + "/Elsa_calculadora.framework.js.br",
-        codeUrl: buildUrl + "/Elsa_calculadora.wasm.br",
-        streamingAssetsUrl: "StreamingAssets",
+        dataUrl: buildUrl + "/Builds.data.br",
+        frameworkUrl: buildUrl + "/Builds.framework.js.br",
+        codeUrl: buildUrl + "/Builds.wasm.br",
         companyName: "DefaultCompany",
-        productName: "ElsaCalculadora",
+        productName: "ReconocimientoCamara",
         productVersion: "1.0",
     };
 
