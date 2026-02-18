@@ -1,4 +1,4 @@
-{% extends 'core/base_private.html' %}
+{% extends 'core/layouts/base_private.html' %}
 {% load static %}
 
 {% block content %}
@@ -7,8 +7,8 @@
         <a href="{% url 'juegos' %}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-2"></i> Volver a Terapia
         </a>
-        <h4 class="fw-bold m-0">Ejercicio: Elsa</h4>
-        <div style="width: 100px;"></div>
+        <h4 class="fw-bold m-0">Ejercicio: Memoria (Versión Definitiva)</h4>
+        <div style="width: 100px;"></div> 
     </div>
 
     <div class="row justify-content-center">
@@ -19,15 +19,17 @@
                     <canvas id="unity-canvas" width=960 height=600 style="width: 100%; height: 100%; background: #231F20;"></canvas>
                     
                     <div id="unity-loading-bar" class="position-absolute top-50 start-50 translate-middle text-center w-50">
-                        <div class="text-white mb-2 fw-bold">Cargando Elsa...</div>
+                        <div class="text-white mb-2 fw-bold">Cargando Experiencia...</div>
                         <div class="progress" style="height: 10px;">
-                            <div id="unity-progress-bar-full" class="progress-bar bg-info progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                            <div id="unity-progress-bar-full" class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
                         </div>
                     </div>
+
+                    <div id="unity-warning" class="alert alert-warning position-absolute bottom-0 start-0 m-3 d-none"></div>
                 </div>
                 
                 <div id="unity-footer" class="card-footer bg-dark text-white d-flex justify-content-between align-items-center py-2">
-                    <small>Unity WebGL</small>
+                    <small>SamiraDTx - Motor Unity WebGL</small>
                     <button id="unity-fullscreen-button" class="btn btn-sm btn-outline-light">
                         <i class="bi bi-arrows-fullscreen"></i> Pantalla Completa
                     </button>
@@ -38,27 +40,46 @@
 </div>
 
 <script>
+    var container = document.querySelector("#unity-container");
     var canvas = document.querySelector("#unity-canvas");
     var loadingBar = document.querySelector("#unity-loading-bar");
     var progressBarFull = document.querySelector("#unity-progress-bar-full");
     var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+    var warningBanner = document.querySelector("#unity-warning");
 
-    // --- RUTAS BASADAS EN TU FOTO (Nombre: Downloads) ---
-    // NOTA: Los archivos acaban en .br (Comprimidos)
-    
-    var buildUrl = "{% static 'games/juego_elsa/Build' %}";
-    var loaderUrl = buildUrl + "/Downloads.loader.js";
+    function unityShowBanner(msg, type) {
+        function updateBannerVisibility() {
+            warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+            if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+            setTimeout(function() {
+                warningBanner.removeChild(div);
+                updateBannerVisibility();
+            }, 5000);
+        }
+        updateBannerVisibility();
+    }
+
+    // --- RUTAS DE UNITY ---
+    var buildUrl = "{% static 'games/moca5Definitivo/Build' %}";
+    var loaderUrl = buildUrl + "/JuegoMoca5Definitivo.loader.js";
     
     var config = {
-        dataUrl: buildUrl + "/Downloads.data.br",
-        frameworkUrl: buildUrl + "/Downloads.framework.js.br",
-        codeUrl: buildUrl + "/Downloads.wasm.br",
+        dataUrl: buildUrl + "/JuegoMoca5Definitivo.data",
+        frameworkUrl: buildUrl + "/JuegoMoca5Definitivo.framework.js",
+        codeUrl: buildUrl + "/JuegoMoca5Definitivo.wasm",
+        streamingAssetsUrl: "StreamingAssets", // <--- LÍNEA INCLUIDA COMO PEDISTE
         companyName: "DefaultCompany",
-        productName: "JuegoElsa",
+        productName: "Moca5Definitivo",
         productVersion: "1.0",
+        showBanner: unityShowBanner,
     };
 
-    // Adaptar a móviles
     if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         var meta = document.createElement('meta');
         meta.name = 'viewport';
@@ -67,6 +88,7 @@
         canvas.style.width = "100%";
         canvas.style.height = "100%";
         canvas.style.position = "fixed";
+        document.body.style.textAlign = "left";
     }
 
     loadingBar.style.display = "block";
@@ -82,7 +104,7 @@
                 unityInstance.SetFullscreen(1);
             };
         }).catch((message) => {
-            alert("Error al cargar Unity: " + message);
+            alert(message);
         });
     };
     document.body.appendChild(script);
