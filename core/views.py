@@ -173,23 +173,23 @@ def sala_evaluacion(request):
 # --- JUEGOS DE LENGUAJE / MOCA ---
 @login_required
 def jugar_moca_5(request):
-    # Ruta basada en tu captura: games/Lenguaje/moca/
-    return render(request, 'core/games/Lenguaje/moca/juego_moca5.html')
+    # Ruta basada en tu captura: games/moca/
+    return render(request, 'core/games/moca/juego_moca5.html')
 
 @login_required
 def jugar_moca_5_definitivo(request):
-    # Ruta basada en tu captura: games/Lenguaje/moca/
-    return render(request, 'core/games/Lenguaje/moca/juego_moca5_definitivo.html')
+    # Ruta basada en tu captura: games/moca/
+    return render(request, 'core/games/moca/juego_moca5_definitivo.html')
 
 @login_required
 def jugar_elsa(request):
-    # Ruta basada en tu captura: games/Lenguaje/moca/
-    return render(request, 'core/games/Lenguaje/moca/juego_elsa.html')
+    # Ruta basada en tu captura: games/moca/
+    return render(request, 'core/games/moca/juego_elsa.html')
 
 @login_required
 def jugar_calculadora(request):
-    # Ruta basada en tu captura: games/Lenguaje/moca/
-    return render(request, 'core/games/Lenguaje/moca/juego_calculadora.html')
+    # Ruta basada en tu captura: games/moca/
+    return render(request, 'core/games/moca/juego_calculadora.html')
 
 # --- JUEGOS MOTORES ---
 @login_required

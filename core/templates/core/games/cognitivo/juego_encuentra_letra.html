@@ -1,42 +1,94 @@
 {% extends 'core/layouts/base_private.html' %}
-
-{% block content %}
+{% load static %} {% block content %}
 <div class="container-fluid py-2 d-flex flex-column" style="height: 92vh; max-height: 95vh;"> 
     
-    <div class="d-flex justify-content-between align-items-center mb-1 px-3" style="max-width: 1200px; margin: 0 auto; width: 100%;">
-        <div>
-            <h4 class="fw-bold mb-0">Encuentra el Intruso</h4>
-            <p class="text-muted mb-0 small">Nivel: <span id="display-nivel" class="fw-bold text-primary">{{ nivel_inicial }}</span></p>
-        </div>
-        
-        <div class="d-flex gap-3 text-end">
-            <div>
-                <span class="text-muted small">Tiempo</span>
-                <div class="fw-bold text-primary h5 mb-0" id="timer">0.0s</div>
+    <div id="pantalla-instrucciones" class="card shadow-lg border-0 mx-auto w-100 my-auto" style="max-width: 800px; border-radius: 20px;">
+        <div class="card-body p-5 text-center">
+            
+            <button id="btn-leer-instrucciones" class="btn btn-primary rounded-circle mb-4 shadow" style="width: 80px; height: 80px; transition: transform 0.2s;">
+                <i class="bi bi-volume-up-fill" style="font-size: 2.5rem;"></i>
+            </button>
+
+            <h2 class="fw-bold mb-4 display-6 text-dark">¿Cómo se juega?</h2>
+            
+            <div id="texto-instrucciones" class="fs-4 text-muted mb-5 px-3" style="line-height: 1.6;">
+                En la siguiente pantalla aparecerán muchas letras iguales.<br><br>
+                Tu objetivo es encontrar la <strong>ÚNICA letra que es diferente</strong> a las demás y tocarla lo más rápido posible.
             </div>
-            <div>
-                <span class="text-muted small">Puntos</span>
-                <div class="fw-bold text-success h5 mb-0" id="score">0</div>
-                <small class="d-block" style="line-height: 1;">Ronda: <span id="ronda">1</span>/5</small>
+
+            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                <button class="btn btn-light btn-lg px-4 py-3 rounded-pill border shadow-sm fw-bold text-secondary" data-bs-toggle="modal" data-bs-target="#modalVideoAyuda">
+                    <i class="bi bi-camera-video me-2 fs-5"></i> No lo entiendo muy bien
+                </button>
+                <button class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow fw-bold text-white" onclick="comenzarJuego()" style="font-size: 1.2rem;">
+                    <i class="bi bi-play-fill me-2 fs-4"></i> ¡Empezar a Jugar!
+                </button>
             </div>
+
         </div>
     </div>
 
-    <div class="card shadow-sm border-0 mx-auto d-flex justify-content-center align-items-center flex-grow-1" style="width: 100%; max-width: 1300px; background-color: #fff;"> 
-        <div class="card-body p-1 text-center w-100 h-100 d-flex flex-column justify-content-center">
+    <div id="pantalla-juego" style="display: none; height: 100%; flex-direction: column;">
+        <div class="d-flex justify-content-between align-items-center mb-1 px-3" style="max-width: 1200px; margin: 0 auto; width: 100%;">
+            <div>
+                <h4 class="fw-bold mb-0">Encuentra el Intruso</h4>
+                <p class="text-muted mb-0 small">Nivel: <span id="display-nivel" class="fw-bold text-primary">{{ nivel_inicial }}</span></p>
+            </div>
             
-            <h5 class="mb-2" id="instruccion">Busca: <span class="badge bg-warning text-dark letra-objetivo fs-4" id="target-letter">?</span></h5>
-            
-            <div id="game-grid" class="game-grid">
+            <div class="d-flex gap-3 text-end">
+                <div>
+                    <span class="text-muted small">Tiempo</span>
+                    <div class="fw-bold text-primary h5 mb-0" id="timer">0.0s</div>
+                </div>
+                <div>
+                    <span class="text-muted small">Puntos</span>
+                    <div class="fw-bold text-success h5 mb-0" id="score">0</div>
+                    <small class="d-block" style="line-height: 1;">Ronda: <span id="ronda">1</span>/5</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mx-auto d-flex justify-content-center align-items-center flex-grow-1" style="width: 100%; max-width: 1300px; background-color: #fff;"> 
+            <div class="card-body p-1 text-center w-100 h-100 d-flex flex-column justify-content-center">
+                
+                <h5 class="mb-2" id="instruccion">Busca: <span class="badge bg-warning text-dark letra-objetivo fs-4" id="target-letter">?</span></h5>
+                
+                <div id="game-grid" class="game-grid">
+                    </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalVideoAyuda" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-header border-0 bg-light rounded-top-4 p-4">
+                <h4 class="modal-title fw-bold text-dark"><i class="bi bi-info-circle-fill text-primary me-2"></i> Explicación Detallada</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <p class="fs-5 text-muted mb-4">Aquí tienes un vídeo de ejemplo de cómo funciona el ejercicio.</p>
+                
+                <div class="mb-4 mx-auto overflow-hidden shadow-sm" style="max-width: 600px; border-radius: 12px; border: 2px solid #e9ecef;">
+                    <video id="video-tutorial" width="100%" controls class="d-block" preload="metadata">
+                        <source src="{% static 'core/videos/tutorial_letras.mp4' %}" type="video/mp4">
+                        Tu navegador no soporta la reproducción de vídeos.
+                    </video>
                 </div>
 
+                <button type="button" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold" data-bs-dismiss="modal">
+                    ¡Entendido, vamos a jugar!
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="modalFinJuego" tabindex="-1" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center p-4">
+        <div class="modal-content text-center p-4 rounded-4 border-0 shadow-lg">
             <div class="modal-header border-0 justify-content-center">
                 <h2 class="modal-title fw-bold">¡Sesión Completada!</h2>
             </div>
@@ -47,8 +99,8 @@
                 <p class="text-muted small">Tiempo total: <span id="tiempo-final-display"></span> segundos</p>
             </div>
             <div class="modal-footer border-0 justify-content-center">
-                <a href="{% url 'juegos' %}" class="btn btn-primary rounded-pill px-4">Volver al Menú</a>
-                <button onclick="location.reload()" class="btn btn-outline-secondary rounded-pill px-4">Jugar otra vez</button>
+                <a href="{% url 'juegos' %}" class="btn btn-light rounded-pill px-4 border fw-bold">Volver al Menú</a>
+                <button onclick="location.reload()" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Jugar otra vez</button>
             </div>
         </div>
     </div>
@@ -57,7 +109,6 @@
 <style>
     .game-grid {
         display: grid;
-        /* GAP MÍNIMO: 2px para que estén casi pegadas (Crowding Effect) */
         gap: 2px; 
         justify-content: center;
         margin: 0 auto;
@@ -67,27 +118,20 @@
     .letter-box {
         background-color: #f8f9fa;
         border: 1px solid #dee2e6;
-        border-radius: 3px; /* Bordes más rectos para aprovechar espacio */
+        border-radius: 3px;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        
-        /* TAMAÑO INTELIGENTE: */
-        /* Reducimos ligeramente el multiplicador vh (de 6.5 a 5.8) para que quepan las 11 filas */
         width: clamp(22px, 5.8vh, 55px);
         height: clamp(22px, 5.8vh, 55px);
-        
-        /* Fuente grande y clara */
         font-size: clamp(0.9rem, 3.2vh, 2rem);
         font-weight: bold;
         color: #212529;
-        
         transition: transform 0.1s;
         user-select: none;
     }
 
-    /* Efecto Hover sutil */
     .letter-box:hover {
         background-color: #e9ecef;
         transform: scale(1.15);
@@ -118,9 +162,53 @@
         75% { transform: translateX(-4px); }
         100% { transform: translateX(0); }
     }
+
+    #btn-leer-instrucciones:active {
+        transform: scale(0.9);
+    }
 </style>
 
 <script>
+    // --- LÓGICA DEL ALTAVOZ (TEXT-TO-SPEECH) ---
+    document.getElementById('btn-leer-instrucciones').addEventListener('click', function() {
+        window.speechSynthesis.cancel(); 
+        
+        const texto = "En la siguiente pantalla aparecerán muchas letras iguales. Tu objetivo es encontrar la ÚNICA letra que es diferente a las demás, y tocarla lo más rápido posible.";
+        
+        const utterance = new SpeechSynthesisUtterance(texto);
+        utterance.lang = 'es-ES'; 
+        utterance.rate = 0.85;     
+        utterance.pitch = 1;      
+        
+        window.speechSynthesis.speak(utterance);
+    });
+
+    // --- PAUSAR VIDEO AL CERRAR MODAL ---
+    // Esto evita que el video siga sonando si el usuario cierra la ventana de ayuda
+    const modalVideo = document.getElementById('modalVideoAyuda');
+    modalVideo.addEventListener('hidden.bs.modal', function () {
+        const video = document.getElementById('video-tutorial');
+        if (video) {
+            video.pause();
+        }
+    });
+
+    // --- TRANSICIÓN: DE INSTRUCCIONES A JUEGO ---
+    function comenzarJuego() {
+        window.speechSynthesis.cancel();
+        
+        // Pausar el video por si acaso lo dejaron reproduciéndose
+        const video = document.getElementById('video-tutorial');
+        if (video) video.pause();
+
+        document.getElementById('pantalla-instrucciones').style.display = 'none';
+        
+        const pantallaJuego = document.getElementById('pantalla-juego');
+        pantallaJuego.style.display = 'flex'; 
+        
+        iniciarRonda();
+    }
+
     // --- 1. MOTOR DE FAMILIAS VISUALES ---
     const FAMILIAS = {
         CURVAS: ['O', 'C', 'G', 'Q', 'D', 'U'],
@@ -132,30 +220,13 @@
 
     let ultimoIntruso = null;
 
-    // --- 2. CONFIGURACIÓN DE NIVELES (MÁS FILAS, MÁS DENSIDAD) ---
+    // --- 2. CONFIGURACIÓN DE NIVELES ---
     const NIVELES_CONFIG = {
-        // Nivel 1: 4x3 (12 letras) - Tutorial rectangular
         1: { cols: 4, rows: 3, timeBonus: 200, generar: () => getParejaDiferente() },  
-        
-        // Nivel 2: 6x5 (30 letras) - +1 fila
         2: { cols: 6, rows: 5, timeBonus: 60, generar: () => getParejaDiferente() },  
-        
-        // Nivel 3: 9x6 (54 letras) - +1 fila
         3: { cols: 9, rows: 6, timeBonus: 45, generar: () => getParejaMismaFamilia(['RECTAS', 'CURVAS']) }, 
-        
-        // Nivel 4: 12x8 (96 letras) - +1 fila
         4: { cols: 12, rows: 8, timeBonus: 30, generar: () => getParejaMismaFamilia(['ROTACIONES', 'DIAGONALES']) }, 
-        
-        // Nivel 5: 16x11 (176 letras) - +1 fila. MÁXIMA DENSIDAD.
-        5: { 
-            cols: 16, 
-            rows: 11, 
-            timeBonus: 20, 
-            generar: () => getParejaEspecifica(
-                ['Q', 'O'], ['E', 'F'], ['M', 'N'], ['P', 'R'], 
-                ['6', '9'], ['3', '8'], ['5', 'S']  
-            ) 
-        }  
+        5: { cols: 16, rows: 11, timeBonus: 20, generar: () => getParejaEspecifica(['Q', 'O'], ['E', 'F'], ['M', 'N'], ['P', 'R'], ['6', '9'], ['3', '8'], ['5', 'S']) }  
     };
 
     let nivelUsuario = {{ nivel_inicial }}; 
@@ -174,7 +245,6 @@
     const targetEl = document.getElementById('target-letter');
     const timerEl = document.getElementById('timer'); 
 
-    // --- GENERADORES ---
     function getParejaDiferente() {
         const keys = ['CURVAS', 'RECTAS', 'DIAGONALES']; 
         let fam1, fam2, intruso, fondo, intentos = 0;
@@ -218,7 +288,6 @@
         timerEl.innerText = tiempoActual.toFixed(1) + 's';
     }
 
-    // --- LÓGICA DEL JUEGO ---
     function iniciarRonda() {
         if (rondaActual > maxRondas) {
             finalizarJuego();
@@ -343,8 +412,6 @@
             else console.error("Error al guardar");
         });
     }
-
-    document.addEventListener('DOMContentLoaded', iniciarRonda);
 
 </script>
 {% endblock %}
