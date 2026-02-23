@@ -77,6 +77,11 @@ class SesionDeJuego(models.Model):
     nivel_jugado = models.IntegerField(default=1)
     tiempo_jugado = models.IntegerField(default=0, verbose_name="Segundos")
     completado = models.BooleanField(default=True)
+    
+    # --- NUEVOS CAMPOS DE AUTOPERCEPCIÓN (Escala 1-5) ---
+    dificultad_percibida = models.IntegerField(null=True, blank=True)
+    estado_animo = models.IntegerField(null=True, blank=True)
+    
     detalles = models.TextField(blank=True, null=True, verbose_name="Detalles JSON")
 
     def __str__(self):

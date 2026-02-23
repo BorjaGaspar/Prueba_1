@@ -1,0 +1,148 @@
+{% extends 'core/layouts/base_private.html' %}
+
+{% block content %}
+<div class="container py-5 d-flex flex-column align-items-center justify-content-center" style="min-height: 80vh;">
+    
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark mb-2">Laboratorio de Voz (Prueba Whisper)</h2>
+        <p class="text-muted fs-5">Pulsa el botón, di algo, y vuelve a pulsar para transcribir.</p>
+    </div>
+
+    <div class="mb-5 position-relative text-center">
+        <button id="btn-mic" class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center mx-auto" style="width: 120px; height: 120px; transition: all 0.3s;">
+            <i id="icono-mic" class="bi bi-mic-fill text-white" style="font-size: 4rem;"></i>
+        </button>
+        <p id="estado-texto" class="mt-4 fw-bold text-secondary fs-5">Listo para grabar</p>
+    </div>
+
+    <div class="card border-0 shadow-sm w-100" style="max-width: 600px; border-radius: 15px;">
+        <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+            <h5 class="fw-bold text-primary mb-0"><i class="bi bi-chat-left-text-fill me-2"></i> Whisper dice:</h5>
+        </div>
+        <div class="card-body p-4">
+            <div id="resultado-transcripcion" class="p-3 bg-light rounded-3 text-dark fs-5 min-vh-25" style="min-height: 100px; border: 1px dashed #dee2e6;">
+                <em>Aquí aparecerá lo que digas...</em>
+            </div>
+            
+            <div id="cargando" class="text-center mt-3" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="text-muted small mt-2">La IA está procesando el audio...</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-5">
+        <a href="{% url 'juegos' %}" class="btn btn-outline-secondary rounded-pill px-4">Volver al Menú</a>
+    </div>
+
+</div>
+
+<style>
+    /* Efecto de pulso cuando está grabando */
+    .grabando {
+        background-color: #dc3545 !important; /* Rojo peligro */
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+        animation: pulsoRojo 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+    }
+
+    @keyframes pulsoRojo {
+        to {
+            box-shadow: 0 0 0 30px rgba(220, 53, 69, 0);
+        }
+    }
+</style>
+
+<script>
+    let mediaRecorder;
+    let audioChunks = [];
+    let isRecording = false;
+
+    const btnMic = document.getElementById('btn-mic');
+    const iconoMic = document.getElementById('icono-mic');
+    const estadoTexto = document.getElementById('estado-texto');
+    const resultadoBox = document.getElementById('resultado-transcripcion');
+    const cargandoSpinner = document.getElementById('cargando');
+
+    btnMic.addEventListener('click', async () => {
+        if (!isRecording) {
+            try {
+                // 1. PEDIR PERMISO Y EMPEZAR A GRABAR
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                
+                audioChunks = [];
+                mediaRecorder.addEventListener("dataavailable", event => {
+                    audioChunks.push(event.data);
+                });
+
+                mediaRecorder.addEventListener("stop", () => {
+                    // Cuando paramos, creamos el archivo de audio y lo enviamos
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    enviarAudioADjango(audioBlob);
+                    
+                    // Apagamos el micrófono del navegador para que no se quede la luz roja encendida
+                    stream.getTracks().forEach(track => track.stop());
+                });
+
+                mediaRecorder.start();
+                isRecording = true;
+                
+                // Cambios visuales a "Grabando"
+                btnMic.classList.add('grabando');
+                iconoMic.classList.replace('bi-mic-fill', 'bi-stop-fill');
+                estadoTexto.innerText = "🔴 Grabando... (Pulsa para detener)";
+                resultadoBox.innerHTML = "<em>Escuchando...</em>";
+
+            } catch (err) {
+                console.error("Error al acceder al micrófono:", err);
+                alert("No se pudo acceder al micrófono. Comprueba los permisos de tu navegador.");
+            }
+        } else {
+            // 2. DETENER GRABACIÓN
+            mediaRecorder.stop();
+            isRecording = false;
+            
+            // Cambios visuales a "Procesando"
+            btnMic.classList.remove('grabando');
+            iconoMic.classList.replace('bi-stop-fill', 'bi-mic-fill');
+            estadoTexto.innerText = "⏳ Procesando audio...";
+            cargandoSpinner.style.display = 'block';
+        }
+    });
+
+    function enviarAudioADjango(blob) {
+        // Preparamos los datos como si fuera un formulario de archivo
+        const formData = new FormData();
+        formData.append('audio', blob, 'grabacion.wav');
+
+        // Hacemos la petición a la URL que configuramos en urls.py
+        fetch('/api/transcribir-audio/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}' // Seguridad de Django
+                // IMPORTANTE: No pongas 'Content-Type' aquí, fetch lo hace automático con FormData
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            cargandoSpinner.style.display = 'none'; // Ocultamos el spinner
+            estadoTexto.innerText = "¡Listo! Pulsa para probar de nuevo.";
+            
+            if(data.texto_transcrito) {
+                resultadoBox.innerHTML = `<strong>"${data.texto_transcrito}"</strong>`;
+            } else if (data.error) {
+                resultadoBox.innerHTML = `<span class="text-danger">Error: ${data.error}</span>`;
+            }
+        })
+        .catch(error => {
+            console.error("Error en la petición:", error);
+            cargandoSpinner.style.display = 'none';
+            estadoTexto.innerText = "Error de conexión.";
+            resultadoBox.innerHTML = `<span class="text-danger">No se pudo conectar con el servidor Whisper.</span>`;
+        });
+    }
+</script>
+{% endblock %}

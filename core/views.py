@@ -173,23 +173,23 @@ def sala_evaluacion(request):
 # --- JUEGOS DE LENGUAJE / MOCA ---
 @login_required
 def jugar_moca_5(request):
-    # Ruta basada en tu captura: games/Lenguaje/moca/
-    return render(request, 'core/games/Lenguaje/moca/juego_moca5.html')
+    # Ruta basada en tu captura: games/moca/
+    return render(request, 'core/games/moca/juego_moca5.html')
 
 @login_required
 def jugar_moca_5_definitivo(request):
-    # Ruta basada en tu captura: games/Lenguaje/moca/
-    return render(request, 'core/games/Lenguaje/moca/juego_moca5_definitivo.html')
+    # Ruta basada en tu captura: games/moca/
+    return render(request, 'core/games/moca/juego_moca5_definitivo.html')
 
 @login_required
 def jugar_elsa(request):
-    # Ruta basada en tu captura: games/Lenguaje/moca/
-    return render(request, 'core/games/Lenguaje/moca/juego_elsa.html')
+    # Ruta basada en tu captura: games/moca/
+    return render(request, 'core/games/moca/juego_elsa.html')
 
 @login_required
 def jugar_calculadora(request):
-    # Ruta basada en tu captura: games/Lenguaje/moca/
-    return render(request, 'core/games/Lenguaje/moca/juego_calculadora.html')
+    # Ruta basada en tu captura: games/moca/
+    return render(request, 'core/games/moca/juego_calculadora.html')
 
 # --- JUEGOS MOTORES ---
 @login_required
@@ -214,6 +214,11 @@ def jugar_encuentra_letra(request):
     # Ruta basada en tu captura: games/cognitivo/
     return render(request, 'core/games/cognitivo/juego_encuentra_letra.html', context)
 
+@login_required
+def jugar_prueba_voz(request):
+    # Una vista simple para probar el micrófono y Whisper
+    return render(request, 'core/games/Lenguaje/juego_prueba_voz.html')
+
 
 # =========================================================
 # FUNCIONES API (GUARDADO Y WHISPER)
@@ -221,34 +226,36 @@ def jugar_encuentra_letra(request):
 
 @csrf_exempt
 def guardar_progreso(request):
-    """
-    Guarda el progreso de cualquier juego.
-    Soporta formato JSON con campos: juego, nivel, puntos, tiempo, completado.
-    """
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            # Intentamos obtener el perfil de forma segura
+            
             if hasattr(request.user, 'perfil'):
                 perfil = request.user.perfil
             else:
                 perfil = PerfilPaciente.objects.get(usuario=request.user)
             
-            # Recibimos los datos (usamos .get para evitar errores si falta algo)
-            juego_nombre = data.get('juego', data.get('ejercicio', 'Desconocido')) # Soporta ambos nombres
+            # Extraemos los datos básicos
+            juego_nombre = data.get('juego', data.get('ejercicio', 'Desconocido'))
             nivel = data.get('nivel', 1)
             puntos = data.get('puntos', 0)
             tiempo = data.get('tiempo', 0)
             completado = data.get('completado', True)
+
+            # EXTRAEMOS LOS NUEVOS DATOS SUBJETIVOS
+            dificultad = data.get('dificultad_percibida') # Puede ser None
+            animo = data.get('estado_animo')              # Puede ser None
             
-            # Guardamos en BD
+            # Guardamos en la base de datos incluyendo los nuevos campos
             SesionDeJuego.objects.create(
                 paciente=perfil,
                 juego=juego_nombre,
                 nivel_jugado=nivel,
                 puntos=puntos,
-                tiempo_jugado=tiempo, # ¡Aquí se guardan tus segundos!
-                completado=completado
+                tiempo_jugado=tiempo,
+                completado=completado,
+                dificultad_percibida=dificultad,
+                estado_animo=animo
             )
             return JsonResponse({'status': 'ok'})
         except Exception as e:
@@ -264,7 +271,7 @@ def transcribir_audio(request):
         try:
             if MODELO_WHISPER is None:
                 print("⏳ Cargando modelo Whisper por primera vez...")
-                MODELO_WHISPER = whisper.load_model("tiny")
+                MODELO_WHISPER = whisper.load_model("small")
                 print("✅ Modelo cargado y listo.")
 
             archivo_audio = request.FILES['audio']
@@ -287,3 +294,39 @@ def transcribir_audio(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'No se recibió audio'}, status=400)
+
+@login_required
+def analisis_paciente(request, pk):
+    perfil_paciente = get_object_or_404(PerfilPaciente, pk=pk)
+    sesiones = SesionDeJuego.objects.filter(paciente=perfil_paciente).order_by('fecha')
+    
+    datos_por_juego = {}
+    for sesion in sesiones:
+        juego = sesion.juego
+        nivel = str(sesion.nivel_jugado)
+        
+        if juego not in datos_por_juego:
+            datos_por_juego[juego] = {}
+            
+        if nivel not in datos_por_juego[juego]:
+            # Añadimos listas para dificultad y ánimo
+            datos_por_juego[juego][nivel] = {
+                'fechas': [], 
+                'puntos': [], 
+                'tiempos': [],
+                'dificultades': [], 
+                'animos': []
+            }
+            
+        datos_por_juego[juego][nivel]['fechas'].append(sesion.fecha.strftime("%d/%m"))
+        datos_por_juego[juego][nivel]['puntos'].append(sesion.puntos)
+        datos_por_juego[juego][nivel]['tiempos'].append(sesion.tiempo_jugado)
+        # Guardamos el dato subjetivo (si es None, mandamos 0 para no romper la gráfica)
+        datos_por_juego[juego][nivel]['dificultades'].append(sesion.dificultad_percibida or 0)
+        datos_por_juego[juego][nivel]['animos'].append(sesion.estado_animo or 0)
+
+    context = {
+        'paciente': perfil_paciente,
+        'datos_juegos_json': json.dumps(datos_por_juego)
+    }
+    return render(request, 'core/patients/analisis_paciente.html', context)

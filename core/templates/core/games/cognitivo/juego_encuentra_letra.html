@@ -1,44 +1,134 @@
 {% extends 'core/layouts/base_private.html' %}
+{% load static %} 
 
 {% block content %}
 <div class="container-fluid py-2 d-flex flex-column" style="height: 92vh; max-height: 95vh;"> 
     
-    <div class="d-flex justify-content-between align-items-center mb-1 px-3" style="max-width: 1200px; margin: 0 auto; width: 100%;">
-        <div>
-            <h4 class="fw-bold mb-0">Encuentra el Intruso</h4>
-            <p class="text-muted mb-0 small">Nivel: <span id="display-nivel" class="fw-bold text-primary">{{ nivel_inicial }}</span></p>
-        </div>
-        
-        <div class="d-flex gap-3 text-end">
-            <div>
-                <span class="text-muted small">Tiempo</span>
-                <div class="fw-bold text-primary h5 mb-0" id="timer">0.0s</div>
+    <div id="pantalla-instrucciones" class="card shadow-lg border-0 mx-auto w-100 my-auto" style="max-width: 800px; border-radius: 20px;">
+        <div class="card-body p-5 text-center">
+            
+            <button id="btn-leer-instrucciones" class="btn btn-primary rounded-circle mb-4 shadow" style="width: 80px; height: 80px; transition: transform 0.2s;">
+                <i class="bi bi-volume-up-fill" style="font-size: 2.5rem;"></i>
+            </button>
+
+            <h2 class="fw-bold mb-4 display-6 text-dark">¿Cómo se juega?</h2>
+            
+            <div id="texto-instrucciones" class="fs-4 text-muted mb-5 px-3" style="line-height: 1.6;">
+                En la siguiente pantalla aparecerán muchas letras iguales.<br><br>
+                Tu objetivo es encontrar la <strong>ÚNICA letra que es diferente</strong> a las demás y tocarla lo más rápido posible.
             </div>
-            <div>
-                <span class="text-muted small">Puntos</span>
-                <div class="fw-bold text-success h5 mb-0" id="score">0</div>
-                <small class="d-block" style="line-height: 1;">Ronda: <span id="ronda">1</span>/5</small>
+
+            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                <button class="btn btn-light btn-lg px-4 py-3 rounded-pill border shadow-sm fw-bold text-secondary" data-bs-toggle="modal" data-bs-target="#modalVideoAyuda">
+                    <i class="bi bi-camera-video me-2 fs-5"></i> No lo entiendo muy bien
+                </button>
+                <button class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow fw-bold text-white" onclick="comenzarJuego()" style="font-size: 1.2rem;">
+                    <i class="bi bi-play-fill me-2 fs-4"></i> ¡Empezar a Jugar!
+                </button>
             </div>
+
         </div>
     </div>
 
-    <div class="card shadow-sm border-0 mx-auto d-flex justify-content-center align-items-center flex-grow-1" style="width: 100%; max-width: 1300px; background-color: #fff;"> 
-        <div class="card-body p-1 text-center w-100 h-100 d-flex flex-column justify-content-center">
+    <div id="pantalla-juego" style="display: none; height: 100%; flex-direction: column;">
+        <div class="d-flex justify-content-between align-items-center mb-1 px-3" style="max-width: 1200px; margin: 0 auto; width: 100%;">
+            <div>
+                <h4 class="fw-bold mb-0">Encuentra el Intruso</h4>
+                <p class="text-muted mb-0 small">Nivel: <span id="display-nivel" class="fw-bold text-primary">{{ nivel_inicial }}</span></p>
+            </div>
             
-            <h5 class="mb-2" id="instruccion">Busca: <span class="badge bg-warning text-dark letra-objetivo fs-4" id="target-letter">?</span></h5>
-            
-            <div id="game-grid" class="game-grid">
+            <div class="d-flex gap-3 text-end">
+                <div>
+                    <span class="text-muted small">Tiempo</span>
+                    <div class="fw-bold text-primary h5 mb-0" id="timer">0.0s</div>
+                </div>
+                <div>
+                    <span class="text-muted small">Puntos</span>
+                    <div class="fw-bold text-success h5 mb-0" id="score">0</div>
+                    <small class="d-block" style="line-height: 1;">Ronda: <span id="ronda">1</span>/5</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mx-auto d-flex justify-content-center align-items-center flex-grow-1" style="width: 100%; max-width: 1300px; background-color: #fff;"> 
+            <div class="card-body p-1 text-center w-100 h-100 d-flex flex-column justify-content-center">
+                
+                <h5 class="mb-2" id="instruccion">Busca: <span class="badge bg-warning text-dark letra-objetivo fs-4" id="target-letter">?</span></h5>
+                
+                <div id="game-grid" class="game-grid">
+                    </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalVideoAyuda" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-header border-0 bg-light rounded-top-4 p-4">
+                <h4 class="modal-title fw-bold text-dark"><i class="bi bi-info-circle-fill text-primary me-2"></i> Explicación Detallada</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <p class="fs-5 text-muted mb-4">Aquí tienes un vídeo de ejemplo de cómo funciona el ejercicio.</p>
+                
+                <div class="mb-4 mx-auto overflow-hidden shadow-sm" style="max-width: 600px; border-radius: 12px; border: 2px solid #e9ecef;">
+                    <video id="video-tutorial" width="100%" controls class="d-block" preload="metadata">
+                        <source src="{% static 'core/videos/tutorial_letras.mp4' %}" type="video/mp4">
+                        Tu navegador no soporta la reproducción de vídeos.
+                    </video>
                 </div>
 
+                <button type="button" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold" data-bs-dismiss="modal">
+                    ¡Entendido, vamos a jugar!
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalAutopercepcion" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 border-0 shadow-lg p-2 p-md-4">
+            <div class="modal-header border-0 justify-content-center pb-0">
+                <h2 class="fw-bold text-dark mb-0">¡Completado!</h2>
+            </div>
+            <div class="modal-body text-center">
+                <p class="fs-5 text-muted mb-5">Antes de ver tu puntuación, cuéntanos cómo te ha ido:</p>
+
+                <h5 class="fw-bold text-secondary mb-3">¿Qué tan difícil te ha parecido el ejercicio?</h5>
+                <div class="d-flex justify-content-center gap-2 mb-5 flex-wrap">
+                    <button class="btn btn-outline-success btn-prom btn-prom-dif fw-bold" onclick="seleccionarDificultad(1, this)">Muy Fácil</button>
+                    <button class="btn btn-outline-info btn-prom btn-prom-dif fw-bold" onclick="seleccionarDificultad(2, this)">Fácil</button>
+                    <button class="btn btn-outline-warning btn-prom btn-prom-dif fw-bold" onclick="seleccionarDificultad(3, this)">Normal</button>
+                    <button class="btn btn-outline-danger btn-prom btn-prom-dif fw-bold opacity-75" onclick="seleccionarDificultad(4, this)">Difícil</button>
+                    <button class="btn btn-outline-danger btn-prom btn-prom-dif fw-bold" onclick="seleccionarDificultad(5, this)">Muy Difícil</button>
+                </div>
+
+                <h5 class="fw-bold text-secondary mb-3">¿Cómo te sientes ahora mismo?</h5>
+                <div class="d-flex justify-content-center gap-3 mb-4 flex-wrap">
+                    <button class="btn btn-outline-secondary btn-prom btn-prom-ani display-6 p-3" onclick="seleccionarAnimo(1, this)">😢</button>
+                    <button class="btn btn-outline-secondary btn-prom btn-prom-ani display-6 p-3" onclick="seleccionarAnimo(2, this)">🙁</button>
+                    <button class="btn btn-outline-secondary btn-prom btn-prom-ani display-6 p-3" onclick="seleccionarAnimo(3, this)">😐</button>
+                    <button class="btn btn-outline-secondary btn-prom btn-prom-ani display-6 p-3" onclick="seleccionarAnimo(4, this)">🙂</button>
+                    <button class="btn btn-outline-secondary btn-prom btn-prom-ani display-6 p-3" onclick="seleccionarAnimo(5, this)">😄</button>
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pt-0">
+                <button id="btn-continuar-prom" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold" disabled onclick="enviarAutopercepcion()">
+                    Ver mis Resultados <i class="bi bi-arrow-right ms-2"></i>
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="modalFinJuego" tabindex="-1" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center p-4">
+        <div class="modal-content text-center p-4 rounded-4 border-0 shadow-lg">
             <div class="modal-header border-0 justify-content-center">
-                <h2 class="modal-title fw-bold">¡Sesión Completada!</h2>
+                <h2 class="modal-title fw-bold">¡Resumen de la Sesión!</h2>
             </div>
             <div class="modal-body">
                 <div id="medalla-icon" class="display-1 mb-3">🏅</div>
@@ -47,17 +137,17 @@
                 <p class="text-muted small">Tiempo total: <span id="tiempo-final-display"></span> segundos</p>
             </div>
             <div class="modal-footer border-0 justify-content-center">
-                <a href="{% url 'juegos' %}" class="btn btn-primary rounded-pill px-4">Volver al Menú</a>
-                <button onclick="location.reload()" class="btn btn-outline-secondary rounded-pill px-4">Jugar otra vez</button>
+                <a href="{% url 'juegos' %}" class="btn btn-light rounded-pill px-4 border fw-bold">Volver al Menú</a>
+                <button onclick="location.reload()" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Jugar otra vez</button>
             </div>
         </div>
     </div>
 </div>
 
 <style>
+    /* Estilos del Grid del Juego */
     .game-grid {
         display: grid;
-        /* GAP MÍNIMO: 2px para que estén casi pegadas (Crowding Effect) */
         gap: 2px; 
         justify-content: center;
         margin: 0 auto;
@@ -67,27 +157,20 @@
     .letter-box {
         background-color: #f8f9fa;
         border: 1px solid #dee2e6;
-        border-radius: 3px; /* Bordes más rectos para aprovechar espacio */
+        border-radius: 3px;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        
-        /* TAMAÑO INTELIGENTE: */
-        /* Reducimos ligeramente el multiplicador vh (de 6.5 a 5.8) para que quepan las 11 filas */
         width: clamp(22px, 5.8vh, 55px);
         height: clamp(22px, 5.8vh, 55px);
-        
-        /* Fuente grande y clara */
         font-size: clamp(0.9rem, 3.2vh, 2rem);
         font-weight: bold;
         color: #212529;
-        
         transition: transform 0.1s;
         user-select: none;
     }
 
-    /* Efecto Hover sutil */
     .letter-box:hover {
         background-color: #e9ecef;
         transform: scale(1.15);
@@ -118,10 +201,89 @@
         75% { transform: translateX(-4px); }
         100% { transform: translateX(0); }
     }
+
+    #btn-leer-instrucciones:active {
+        transform: scale(0.9);
+    }
+
+    /* Estilos para los botones de Autopercepción (PROMs) */
+    .btn-prom {
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .btn-prom.active {
+        transform: scale(1.15);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        z-index: 10;
+    }
+    .btn-prom-ani {
+        border-radius: 20px;
+        border-width: 2px;
+    }
+    .btn-prom-dif {
+        border-radius: 12px;
+        border-width: 2px;
+        padding: 10px 20px;
+    }
 </style>
 
 <script>
-    // --- 1. MOTOR DE FAMILIAS VISUALES ---
+    // --- LÓGICA DEL ALTAVOZ (TEXT-TO-SPEECH) ---
+    document.getElementById('btn-leer-instrucciones').addEventListener('click', function() {
+        window.speechSynthesis.cancel(); 
+        const texto = "En la siguiente pantalla aparecerán muchas letras iguales. Tu objetivo es encontrar la ÚNICA letra que es diferente a las demás, y tocarla lo más rápido posible.";
+        const utterance = new SpeechSynthesisUtterance(texto);
+        utterance.lang = 'es-ES'; 
+        utterance.rate = 0.85;     
+        utterance.pitch = 1;      
+        window.speechSynthesis.speak(utterance);
+    });
+
+    const modalVideo = document.getElementById('modalVideoAyuda');
+    modalVideo.addEventListener('hidden.bs.modal', function () {
+        const video = document.getElementById('video-tutorial');
+        if (video) video.pause();
+    });
+
+    function comenzarJuego() {
+        window.speechSynthesis.cancel();
+        const video = document.getElementById('video-tutorial');
+        if (video) video.pause();
+        document.getElementById('pantalla-instrucciones').style.display = 'none';
+        
+        const pantallaJuego = document.getElementById('pantalla-juego');
+        pantallaJuego.style.display = 'flex'; 
+        
+        iniciarRonda();
+    }
+
+    // --- VARIABLES DE AUTOPERCEPCIÓN ---
+    let dificultadSeleccionada = null;
+    let animoSeleccionado = null;
+
+    function seleccionarDificultad(valor, btnElement) {
+        dificultadSeleccionada = valor;
+        // Quitar la clase active a todos los botones de dificultad
+        document.querySelectorAll('.btn-prom-dif').forEach(btn => btn.classList.remove('active'));
+        // Ponerla al que acabamos de clickar
+        btnElement.classList.add('active');
+        comprobarFormularioProm();
+    }
+
+    function seleccionarAnimo(valor, btnElement) {
+        animoSeleccionado = valor;
+        document.querySelectorAll('.btn-prom-ani').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+        comprobarFormularioProm();
+    }
+
+    function comprobarFormularioProm() {
+        // Solo activamos el botón de continuar si ha respondido a las dos preguntas
+        if (dificultadSeleccionada !== null && animoSeleccionado !== null) {
+            document.getElementById('btn-continuar-prom').disabled = false;
+        }
+    }
+
+    // --- LÓGICA DEL JUEGO ---
     const FAMILIAS = {
         CURVAS: ['O', 'C', 'G', 'Q', 'D', 'U'],
         RECTAS: ['E', 'F', 'H', 'I', 'L', 'T'],
@@ -131,31 +293,12 @@
     };
 
     let ultimoIntruso = null;
-
-    // --- 2. CONFIGURACIÓN DE NIVELES (MÁS FILAS, MÁS DENSIDAD) ---
     const NIVELES_CONFIG = {
-        // Nivel 1: 4x3 (12 letras) - Tutorial rectangular
         1: { cols: 4, rows: 3, timeBonus: 200, generar: () => getParejaDiferente() },  
-        
-        // Nivel 2: 6x5 (30 letras) - +1 fila
         2: { cols: 6, rows: 5, timeBonus: 60, generar: () => getParejaDiferente() },  
-        
-        // Nivel 3: 9x6 (54 letras) - +1 fila
         3: { cols: 9, rows: 6, timeBonus: 45, generar: () => getParejaMismaFamilia(['RECTAS', 'CURVAS']) }, 
-        
-        // Nivel 4: 12x8 (96 letras) - +1 fila
         4: { cols: 12, rows: 8, timeBonus: 30, generar: () => getParejaMismaFamilia(['ROTACIONES', 'DIAGONALES']) }, 
-        
-        // Nivel 5: 16x11 (176 letras) - +1 fila. MÁXIMA DENSIDAD.
-        5: { 
-            cols: 16, 
-            rows: 11, 
-            timeBonus: 20, 
-            generar: () => getParejaEspecifica(
-                ['Q', 'O'], ['E', 'F'], ['M', 'N'], ['P', 'R'], 
-                ['6', '9'], ['3', '8'], ['5', 'S']  
-            ) 
-        }  
+        5: { cols: 16, rows: 11, timeBonus: 20, generar: () => getParejaEspecifica(['Q', 'O'], ['E', 'F'], ['M', 'N'], ['P', 'R'], ['6', '9'], ['3', '8'], ['5', 'S']) }  
     };
 
     let nivelUsuario = {{ nivel_inicial }}; 
@@ -174,7 +317,6 @@
     const targetEl = document.getElementById('target-letter');
     const timerEl = document.getElementById('timer'); 
 
-    // --- GENERADORES ---
     function getParejaDiferente() {
         const keys = ['CURVAS', 'RECTAS', 'DIAGONALES']; 
         let fam1, fam2, intruso, fondo, intentos = 0;
@@ -218,7 +360,6 @@
         timerEl.innerText = tiempoActual.toFixed(1) + 's';
     }
 
-    // --- LÓGICA DEL JUEGO ---
     function iniciarRonda() {
         if (rondaActual > maxRondas) {
             finalizarJuego();
@@ -292,11 +433,26 @@
         }
     }
 
+    // --- NUEVO FLUJO DE FIN DE JUEGO ---
+
     function finalizarJuego() {
         clearInterval(timerInterval);
-        const modal = new bootstrap.Modal(document.getElementById('modalFinJuego'));
-        document.getElementById('puntos-finales').innerText = puntosTotales;
         
+        // 1. Mostrar Modal de Autopercepción PRIMERO
+        const modalProm = new bootstrap.Modal(document.getElementById('modalAutopercepcion'));
+        modalProm.show();
+    }
+
+    function enviarAutopercepcion() {
+        // 2. Ocultar el Modal PROM
+        const modalPromEl = document.getElementById('modalAutopercepcion');
+        const modalPromInstance = bootstrap.Modal.getInstance(modalPromEl);
+        modalPromInstance.hide();
+
+        // 3. Preparar y mostrar el Modal de Resultados (Medallas)
+        const modalResultados = new bootstrap.Modal(document.getElementById('modalFinJuego'));
+        
+        document.getElementById('puntos-finales').innerText = puntosTotales;
         const displayTiempo = document.getElementById('tiempo-final-display');
         if(displayTiempo) displayTiempo.innerText = Math.round(tiempoTotalAcumulado);
 
@@ -317,17 +473,21 @@
             mensaje.className = "text-danger";
         }
         
-        modal.show();
-        guardarSesion(puntosTotales);
+        modalResultados.show();
+        
+        // 4. Guardar datos en la Base de Datos incluyendo la dificultad y ánimo
+        guardarSesion(puntosTotales, dificultadSeleccionada, animoSeleccionado);
     }
 
-    function guardarSesion(puntos) {
+    function guardarSesion(puntos, dificultad, animo) {
         const datos = {
             juego: "Encuentra la Letra",
             nivel: nivelUsuario,
             puntos: puntos,
             tiempo: Math.round(tiempoTotalAcumulado),
-            completado: true
+            completado: true,
+            dificultad_percibida: dificultad, // <-- Añadido al paquete de envío
+            estado_animo: animo               // <-- Añadido al paquete de envío
         };
 
         fetch('/api/guardar-progreso/', {
@@ -339,12 +499,10 @@
             body: JSON.stringify(datos)
         })
         .then(response => {
-            if (response.ok) console.log("¡Guardado con éxito!");
+            if (response.ok) console.log("¡Guardado con éxito con autopercepción!");
             else console.error("Error al guardar");
         });
     }
-
-    document.addEventListener('DOMContentLoaded', iniciarRonda);
 
 </script>
 {% endblock %}

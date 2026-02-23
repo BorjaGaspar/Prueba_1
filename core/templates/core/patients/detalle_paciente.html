@@ -41,11 +41,16 @@
                 </div>
             </div>
             
-            <div>
-                <a href="{% url 'dashboard_medico' %}" class="btn btn-outline-secondary mb-2 d-block">
+            <div style="min-width: 200px;">
+                <a href="{% url 'dashboard_medico' %}" class="btn btn-outline-secondary mb-2 d-block w-100">
                     <i class="bi bi-arrow-left me-2"></i> Volver
                 </a>
-                <button class="btn btn-primary d-block w-100"><i class="bi bi-file-earmark-pdf me-2"></i> Informe</button>
+                
+                <a href="{% url 'analisis_paciente' paciente.id %}" class="btn btn-success text-white mb-2 d-block w-100 fw-bold shadow-sm">
+                    <i class="bi bi-graph-up-arrow me-2"></i> Análisis por Ejercicios
+                </a>
+                
+                <button class="btn btn-primary d-block w-100"><i class="bi bi-file-earmark-pdf me-2"></i> Informe Médico</button>
             </div>
         </div>
 
@@ -97,7 +102,7 @@
                 </div>
             </div>
         </form>
-        </div>
+    </div>
 </div>
 
 <div class="row mb-4">
