@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from core import views  # <--- ESTA ES LA IMPORTANTE (La única que debes tener)
+from core import views  
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,10 +30,14 @@ urlpatterns = [
     path('terapia/calculadora/', views.jugar_calculadora, name='jugar_calculadora'),
     path('terapia/encuentra-letra/', views.jugar_encuentra_letra, name='jugar_encuentra_letra'),
     path('api/guardar-progreso/', views.guardar_progreso, name='guardar_progreso'),
+    path('terapia/prueba-voz/', views.jugar_prueba_voz, name='jugar_prueba_voz'),
+     # URL de la API que recibe el audio y usa Whisper (MUY IMPORTANTE)
+    path('api/transcribir-audio/', views.transcribir_audio, name='transcribir_audio'),
 
     
     # PANEL MÉDICO 
     path('paciente/<int:pk>/', views.detalle_paciente, name='detalle_paciente'),
+    path('medico/paciente/<int:pk>/analisis/', views.analisis_paciente, name='analisis_paciente'),
     path('evaluacion/', views.sala_evaluacion, name='sala_evaluacion'),
     path('forzar-evaluacion/<int:pk>/', views.forzar_evaluacion, name='forzar_evaluacion'),
     path('medico/dashboard/', views.dashboard_medico, name='dashboard_medico'),
