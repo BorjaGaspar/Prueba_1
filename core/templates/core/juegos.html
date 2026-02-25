@@ -5,21 +5,21 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold text-dark" id="titulo-seccion">Sala de Terapia</h2>
     
-    <button id="btn-volver" class="btn btn-outline-secondary d-none" onclick="irAtras()">
+    <button id="btn-volver" class="btn btn-outline-dark d-none rounded-pill px-4 fw-bold" onclick="irAtras()">
         <i class="bi bi-arrow-left me-2"></i> Volver
     </button>
 </div>
 
 <div id="pantalla-inicio" class="row animate__animated animate__fadeIn">
     <div class="col-md-6 mb-4">
-        <div class="card h-100 border-0 shadow-sm p-4 bg-light text-muted" style="opacity: 0.7;">
+        <div class="card h-100 border-0 shadow-sm p-4 bg-light text-muted" style="opacity: 0.8; border-radius: 16px;">
             <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
-                <div class="bg-white rounded-circle p-4 mb-3 shadow-sm">
+                <div class="bg-white rounded-circle p-3 mb-3 shadow-sm">
                     <i class="bi bi-stars display-4 text-secondary"></i>
                 </div>
-                <h3 class="fw-bold">Actividades Sugeridas</h3>
-                <p>Tu rutina personalizada de hoy.</p>
-                <button class="btn btn-secondary rounded-pill px-4 mt-3" disabled>
+                <h4 class="fw-bold text-dark">Actividades Sugeridas</h4>
+                <p class="text-muted small mb-3">Tu rutina personalizada de hoy.</p>
+                <button class="btn btn-secondary rounded-pill px-4 fw-bold" disabled>
                     <i class="bi bi-lock-fill me-2"></i> Próximamente
                 </button>
             </div>
@@ -27,14 +27,14 @@
     </div>
 
     <div class="col-md-6 mb-4">
-        <div class="card h-100 border-0 shadow-sm p-4 bg-white border-bottom border-5 border-success cursor-pointer transform-hover" onclick="mostrarCategorias()">
+        <div class="card h-100 border-0 shadow-sm p-4 bg-white border-bottom border-5 border-success cursor-pointer transform-hover" style="border-radius: 16px;" onclick="mostrarPilares()">
             <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
-                <div class="bg-success-subtle rounded-circle p-4 mb-3">
+                <div class="bg-success-subtle rounded-circle p-3 mb-3">
                     <i class="bi bi-grid-fill display-4 text-success"></i>
                 </div>
-                <h3 class="fw-bold text-dark">Seleccionar Actividades</h3>
-                <p class="text-muted">Explora el catálogo completo de ejercicios.</p>
-                <button class="btn btn-success rounded-pill px-4 mt-3">
+                <h4 class="fw-bold text-dark">Seleccionar Actividades</h4>
+                <p class="text-muted small mb-3">Explora el catálogo completo de ejercicios.</p>
+                <button class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">
                     Entrar <i class="bi bi-arrow-right ms-2"></i>
                 </button>
             </div>
@@ -42,238 +42,360 @@
     </div>
 </div>
 
-<div id="pantalla-categorias" class="row d-none animate__animated animate__fadeIn">
+<div id="pantalla-pilares" class="row d-none animate__animated animate__fadeIn">
+    
     <div class="col-md-4 mb-4">
-        <div class="card border-0 shadow-sm h-100 hover-elevate" onclick="mostrarJuegos('Atención')">
+        <div class="card border-0 shadow-sm h-100 hover-elevate rounded-4 cursor-pointer" onclick="mostrarSubcategorias('Cognitivo')">
             <div class="card-body p-4 text-center">
-                <i class="bi bi-eye-fill display-1 text-primary mb-3"></i>
-                <h4 class="fw-bold">Atención</h4>
-                <p class="text-muted small">Ejercicios de concentración y enfoque visual.</p>
+                <i class="bi bi-eye-fill text-primary mb-3 d-block display-1"></i>
+                <h4 class="fw-bold text-dark mb-2">Cognitivo</h4>
+                <p class="text-muted small mb-0">Atención, memoria, cálculo y funciones ejecutivas.</p>
             </div>
         </div>
     </div>
 
     <div class="col-md-4 mb-4">
-        <div class="card border-0 shadow-sm h-100 hover-elevate" onclick="mostrarJuegos('Lenguaje')">
+        <div class="card border-0 shadow-sm h-100 hover-elevate rounded-4 cursor-pointer" onclick="mostrarSubcategorias('Lenguaje')">
             <div class="card-body p-4 text-center">
-                <i class="bi bi-chat-quote-fill display-1 text-warning mb-3"></i>
-                <h4 class="fw-bold">Lenguaje</h4>
-                <p class="text-muted small">Vocabulario, comprensión y fluidez verbal.</p>
+                <i class="bi bi-chat-quote-fill text-warning mb-3 d-block display-1"></i>
+                <h4 class="fw-bold text-dark mb-2">Lenguaje</h4>
+                <p class="text-muted small mb-0">Habla, comprensión, fluidez verbal y escritura.</p>
             </div>
         </div>
     </div>
 
     <div class="col-md-4 mb-4">
-        <div class="card border-0 shadow-sm h-100 hover-elevate" onclick="mostrarJuegos('Motor')">
+        <div class="card border-0 shadow-sm h-100 hover-elevate rounded-4 cursor-pointer" onclick="mostrarSubcategorias('Motor')">
             <div class="card-body p-4 text-center">
-                <i class="bi bi-hand-index-thumb-fill display-1 text-danger mb-3"></i>
-                <h4 class="fw-bold">Motor</h4>
-                <p class="text-muted small">Coordinación, precisión y tiempos de reacción.</p>
+                <i class="bi bi-hand-index-thumb-fill text-danger mb-3 d-block display-1"></i>
+                <h4 class="fw-bold text-dark mb-2">Motor</h4>
+                <p class="text-muted small mb-0">Coordinación, precisión y tiempos de reacción.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="pantalla-subcategorias" class="d-none animate__animated animate__fadeIn">
+    <h5 class="mb-4 text-muted">Has elegido <strong class="text-dark" id="nombre-pilar">--</strong>. ¿Qué quieres entrenar?</h5>
+    
+    <div id="subcats-Cognitivo" class="row d-none grupo-subcats">
+        <div class="col-md-4 mb-4">
+            <div class="card border-3 border-primary shadow-sm h-100 hover-elevate cursor-pointer rounded-4" onclick="mostrarJuegos('Atención')">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-bullseye display-4 text-primary mb-3"></i>
+                    <h5 class="fw-bold text-dark mb-1">Atención</h5>
+                    <p class="small text-muted mb-0">Sostenida y Selectiva</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card border-3 border-success shadow-sm h-100 hover-elevate cursor-pointer rounded-4" onclick="mostrarJuegos('Memoria')">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-memory display-4 text-success mb-3"></i>
+                    <h5 class="fw-bold text-dark mb-1">Memoria</h5>
+                    <p class="small text-muted mb-0">Trabajo y Episódica</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card border-3 border-warning shadow-sm h-100 hover-elevate cursor-pointer rounded-4" onclick="mostrarJuegos('Ejecutivas')">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-diagram-3-fill display-4 text-warning mb-3"></i>
+                    <h5 class="fw-bold text-dark mb-1">Lógica</h5>
+                    <p class="small text-muted mb-0">Funciones Ejecutivas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card border-3 border-danger shadow-sm h-100 hover-elevate cursor-pointer rounded-4" onclick="mostrarJuegos('Procesamiento')">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-lightning-charge-fill display-4 text-danger mb-3"></i>
+                    <h5 class="fw-bold text-dark mb-1">Velocidad</h5>
+                    <p class="small text-muted mb-0">Agilidad mental rápida</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card border-3 border-info shadow-sm h-100 hover-elevate cursor-pointer rounded-4" onclick="mostrarJuegos('Visuoespacial')">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-box-fill display-4 text-info mb-3"></i>
+                    <h5 class="fw-bold text-dark mb-1">Visuoespacial</h5>
+                    <p class="small text-muted mb-0">Percepción de objetos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="subcats-Lenguaje" class="row d-none grupo-subcats">
+        <div class="col-md-4 mb-4">
+            <div class="card border-3 border-danger shadow-sm h-100 hover-elevate cursor-pointer rounded-4" onclick="mostrarJuegos('Habla')">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-mic-fill display-4 text-danger mb-3"></i>
+                    <h5 class="fw-bold text-dark mb-1">Habla</h5>
+                    <p class="small text-muted mb-0">Articulación y voz</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card border-3 border-primary shadow-sm h-100 hover-elevate cursor-pointer rounded-4" onclick="mostrarJuegos('Comprensión')">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-ear-fill display-4 text-primary mb-3"></i>
+                    <h5 class="fw-bold text-dark mb-1">Comprensión</h5>
+                    <p class="small text-muted mb-0">Entender mensajes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card border-3 border-warning shadow-sm h-100 hover-elevate cursor-pointer rounded-4" onclick="mostrarJuegos('Lectoescritura')">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-book-fill display-4 text-warning mb-3"></i>
+                    <h5 class="fw-bold text-dark mb-1">Lectura</h5>
+                    <p class="small text-muted mb-0">Leer y escribir textos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="subcats-Motor" class="row d-none grupo-subcats">
+        <div class="col-md-4 mb-4">
+            <div class="card border-3 border-success shadow-sm h-100 hover-elevate cursor-pointer rounded-4" onclick="mostrarJuegos('Fuerza')">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-person-arms-up display-4 text-success mb-3"></i>
+                    <h5 class="fw-bold text-dark mb-1">Movimiento</h5>
+                    <p class="small text-muted mb-0">Fuerza y rango (ROM)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card border-3 border-primary shadow-sm h-100 hover-elevate cursor-pointer rounded-4" onclick="mostrarJuegos('Coordinacion')">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-crosshair display-4 text-primary mb-3"></i>
+                    <h5 class="fw-bold text-dark mb-1">Coordinación</h5>
+                    <p class="small text-muted mb-0">Precisión fina</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card border-3 border-warning shadow-sm h-100 hover-elevate cursor-pointer rounded-4" onclick="mostrarJuegos('Equilibrio')">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-person-walking display-4 text-warning mb-3"></i>
+                    <h5 class="fw-bold text-dark mb-1">Equilibrio</h5>
+                    <p class="small text-muted mb-0">Marcha y estabilidad</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <div id="pantalla-lista-juegos" class="d-none animate__animated animate__fadeIn">
-    <h4 class="mb-4 text-muted">Ejercicios disponibles de <span id="nombre-categoria" class="fw-bold text-dark">--</span>:</h4>
+    <h5 class="mb-4 text-muted border-bottom pb-2">Ejercicios de <strong id="nombre-subcategoria" class="text-dark">--</strong></h5>
     
-    <div id="lista-juegos-comunes" class="row">
-        {% for i in "123" %}
+    <div id="juegos-Atención" class="row d-none grupo-juegos">
         <div class="col-md-4 mb-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body p-5 text-center bg-light rounded">
-                    <i class="bi bi-puzzle display-4 text-secondary opacity-50 mb-3"></i>
-                    <h5 class="fw-bold">Juego {{ i }} <span class="nombre-cat-dinamico"></span></h5>
-                    <button class="btn btn-sm btn-outline-dark mt-3" disabled>Disponible pronto</button>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <div id="lista-juegos-atencion" class="row d-none">
-        <div class="col-md-4 mb-4">
-            <div class="card border-0 shadow-sm h-100 transform-hover">
-                <div class="card-body p-4 text-center bg-white rounded border-top border-5 border-warning">
-                    <div class="mb-3">
-                        <i class="bi bi-search display-4 text-warning"></i>
-                    </div>
-                    <h5 class="fw-bold">Encuentra la Letra</h5>
-                    <p class="text-muted small">Atención Selectiva</p>
-                    
-                    <a href="{% url 'jugar_encuentra_letra' %}" class="btn btn-outline-warning rounded-pill px-4 w-100 mt-2 text-dark">
-                        <i class="bi bi-play-fill me-2"></i> JUGAR
+            <div class="card border-0 shadow-sm h-100 transform-hover rounded-4">
+                <div class="card-body p-4 text-center bg-white rounded-4 border-top border-5 border-primary">
+                    <i class="bi bi-search display-4 text-primary mb-3 d-block"></i>
+                    <h5 class="fw-bold text-dark">Encuentra la Letra</h5>
+                    <p class="text-muted small">Localiza al intruso rápidamente.</p>
+                    <a href="{% url 'jugar_encuentra_letra' %}" class="btn btn-primary rounded-pill px-4 w-100 mt-2 fw-bold shadow-sm">
+                        JUGAR <i class="bi bi-play-circle-fill ms-1"></i>
                     </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-4">
-            <div class="card border-0 shadow-sm h-100 opacity-50">
-                <div class="card-body p-5 text-center bg-light">
-                    <i class="bi bi-eye display-4 text-secondary opacity-50 mb-3"></i>
-                    <h5 class="fw-bold">Próximamente</h5>
-                    <button class="btn btn-sm btn-outline-dark mt-3" disabled>En desarrollo</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="lista-juegos-lenguaje" class="row d-none">
-        
+    <div id="juegos-Memoria" class="row d-none grupo-juegos">
         <div class="col-md-4 mb-4">
-            <div class="card border-0 shadow-sm h-100 transform-hover">
-                <div class="card-body p-4 text-center bg-white rounded border-top border-5 border-success">
-                    <div class="mb-3">
-                        <i class="bi bi-cpu-fill display-4 text-success"></i>
-                    </div>
-                    <h5 class="fw-bold">Juego 1: Memoria</h5>
-                    <p class="text-muted small">Versión Web (Antigua)</p>
-                    
-                    <a href="{% url 'jugar_moca_5' %}" class="btn btn-outline-success rounded-pill px-4 w-100 mt-2">
-                        <i class="bi bi-play-fill me-2"></i> JUGAR
+            <div class="card border-0 shadow-sm h-100 transform-hover rounded-4">
+                <div class="card-body p-4 text-center bg-white rounded-4 border-top border-5 border-success">
+                    <i class="bi bi-grid-3x3-gap-fill display-4 text-success mb-3 d-block"></i>
+                    <h5 class="fw-bold text-dark">Memoria Básica</h5>
+                    <p class="text-muted small">Versión web clásica de cartas.</p>
+                    <a href="{% url 'jugar_moca_5' %}" class="btn btn-success text-white rounded-pill px-4 w-100 mt-2 fw-bold shadow-sm">
+                        JUGAR <i class="bi bi-play-circle-fill ms-1"></i>
                     </a>
                 </div>
             </div>
         </div>
-
         <div class="col-md-4 mb-4">
-            <div class="card border-0 shadow-sm h-100 transform-hover">
-                <div class="card-body p-4 text-center bg-white rounded border-top border-5 border-primary">
-                    <div class="mb-3">
-                        <i class="bi bi-joystick display-4 text-primary"></i>
-                    </div>
-                    <h5 class="fw-bold">Juego 2: Memoria MoCA</h5>
-                    <p class="text-muted small">Versión Definitiva Unity</p>
-                    
-                    <a href="{% url 'jugar_moca_5_definitivo' %}" class="btn btn-primary rounded-pill px-4 w-100 mt-2 shadow">
-                        <i class="bi bi-rocket-takeoff-fill me-2"></i> JUGAR AHORA
+            <div class="card border-0 shadow-sm h-100 transform-hover rounded-4 bg-primary text-white">
+                <div class="card-body p-4 text-center rounded-4 border-top border-5 border-light">
+                    <i class="bi bi-joystick display-4 text-white mb-3 d-block"></i>
+                    <h5 class="fw-bold text-white">Memoria 3D</h5>
+                    <p class="text-white-50 small">Entorno virtual interactivo (Unity).</p>
+                    <a href="{% url 'jugar_moca_5_definitivo' %}" class="btn btn-light text-primary rounded-pill px-4 w-100 mt-2 fw-bold shadow">
+                        INICIAR UNITY <i class="bi bi-rocket-takeoff ms-1"></i>
                     </a>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-4 mb-4">
-            <div class="card border-0 shadow-sm h-100 transform-hover">
-                <div class="card-body p-4 text-center bg-white rounded border-top border-5 border-info">
-                    <div class="mb-3">
-                        <i class="bi bi-snow2 display-4 text-info"></i>
-                    </div>
-                    <h5 class="fw-bold">Juego 3: Elsa</h5>
-                    <p class="text-muted small">Ejercicio Cognitivo</p>
-                    
-                    <a href="{% url 'jugar_elsa' %}" class="btn btn-info text-white rounded-pill px-4 w-100 mt-2 shadow-sm">
-                        <i class="bi bi-play-fill me-2"></i> JUGAR
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-4">
-            <div class="card border-0 shadow-sm h-100 transform-hover">
-                <div class="card-body p-4 text-center bg-white rounded border-top border-5 border-warning">
-                    <div class="mb-3">
-                        <i class="bi bi-calculator-fill display-4 text-warning"></i>
-                    </div>
-                    <h5 class="fw-bold">Juego 4: Calculadora</h5>
-                    <p class="text-muted small">Cálculo y Agilidad Mental</p>
-                    
-                    <a href="{% url 'jugar_calculadora' %}" class="btn btn-warning text-dark rounded-pill px-4 w-100 mt-2 shadow-sm">
-                        <i class="bi bi-play-circle-fill me-2"></i> JUGAR
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-4">
-            <div class="card border-0 shadow-sm h-100 transform-hover">
-                <div class="card-body p-4 text-center bg-white rounded border-top border-5 border-danger">
-                    <div class="mb-3">
-                        <i class="bi bi-mic-fill display-4 text-danger"></i>
-                    </div>
-                    <h5 class="fw-bold">Juego 5: Laboratorio Voz</h5>
-                    <p class="text-muted small">Reconocimiento con IA (Whisper)</p>
-                    
-                    <a href="{% url 'jugar_prueba_voz' %}" class="btn btn-danger text-white rounded-pill px-4 w-100 mt-2 shadow-sm">
-                        <i class="bi bi-play-circle-fill me-2"></i> PROBAR
-                    </a>
-                </div>
-            </div>
-        </div>
-
     </div>
+
+    <div id="juegos-Ejecutivas" class="row d-none grupo-juegos">
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm h-100 transform-hover rounded-4">
+                <div class="card-body p-4 text-center bg-white rounded-4 border-top border-5 border-warning">
+                    <i class="bi bi-calculator-fill display-4 text-warning mb-3 d-block"></i>
+                    <h5 class="fw-bold text-dark">Calculadora</h5>
+                    <p class="text-muted small">Resuelve problemas numéricos.</p>
+                    <a href="{% url 'jugar_calculadora' %}" class="btn btn-warning text-dark rounded-pill px-4 w-100 mt-2 fw-bold shadow-sm">
+                        JUGAR <i class="bi bi-play-circle-fill ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="juegos-Comprensión" class="row d-none grupo-juegos">
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm h-100 transform-hover rounded-4">
+                <div class="card-body p-4 text-center bg-white rounded-4 border-top border-5 border-info">
+                    <i class="bi bi-snow2 display-4 text-info mb-3 d-block"></i>
+                    <h5 class="fw-bold text-dark">Elsa (Comprensión)</h5>
+                    <p class="text-muted small">Identifica conceptos y palabras.</p>
+                    <a href="{% url 'jugar_elsa' %}" class="btn btn-info text-white rounded-pill px-4 w-100 mt-2 fw-bold shadow-sm">
+                        JUGAR <i class="bi bi-play-circle-fill ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="juegos-Habla" class="row d-none grupo-juegos">
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm h-100 transform-hover rounded-4">
+                <div class="card-body p-4 text-center bg-white rounded-4 border-top border-5 border-danger">
+                    <i class="bi bi-mic-fill display-4 text-danger mb-3 d-block"></i>
+                    <h5 class="fw-bold text-dark">Micrófono IA</h5>
+                    <p class="text-muted small">Prueba de voz y pronunciación.</p>
+                    <a href="{% url 'jugar_prueba_voz' %}" class="btn btn-danger text-white rounded-pill px-4 w-100 mt-2 fw-bold shadow-sm">
+                        PROBAR VOZ <i class="bi bi-mic ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="juegos-Fuerza" class="row d-none grupo-juegos">
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm h-100 rounded-4 opacity-75">
+                <div class="card-body p-4 text-center bg-light rounded-4 border-top border-5 border-secondary">
+                    <i class="bi bi-camera-video display-4 text-secondary mb-3 d-block opacity-50"></i>
+                    <h5 class="fw-bold text-dark">Cámara de Movimiento</h5>
+                    <p class="text-muted small">Control gestual y brazos.</p>
+                    <button class="btn btn-secondary rounded-pill px-4 w-100 mt-2 fw-bold shadow-sm" disabled>
+                        MANTENIMIENTO <i class="bi bi-tools ms-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="juegos-Proximamente" class="row d-none grupo-juegos">
+        <div class="col-md-6 mx-auto mb-4">
+            <div class="card border-0 shadow-sm h-100 rounded-4 bg-light">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-cone-striped display-3 text-secondary mb-3 d-block opacity-50"></i>
+                    <h4 class="fw-bold text-dark">En desarrollo</h4>
+                    <p class="text-muted small">Los ejercicios para esta área están siendo validados clínicamente. Pronto estarán disponibles.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <style>
     .cursor-pointer { cursor: pointer; }
-    .hover-elevate:hover { transform: translateY(-5px); transition: 0.3s; cursor: pointer; background-color: #f8f9fa; }
+    .hover-elevate { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .hover-elevate:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; cursor: pointer; }
+    .transform-hover { transition: transform 0.2s; }
+    .transform-hover:hover { transform: scale(1.03); }
 </style>
 
 <script>
-    // Variables de las pantallas
+    // Referencias a pantallas
     const pInicio = document.getElementById('pantalla-inicio');
-    const pCategorias = document.getElementById('pantalla-categorias');
+    const pPilares = document.getElementById('pantalla-pilares');
+    const pSubcats = document.getElementById('pantalla-subcategorias');
     const pJuegos = document.getElementById('pantalla-lista-juegos');
     const btnVolver = document.getElementById('btn-volver');
     const titulo = document.getElementById('titulo-seccion');
 
-    // Contenedores de listas
-    const listaComun = document.getElementById('lista-juegos-comunes');     // Para Motor
-    const listaLenguaje = document.getElementById('lista-juegos-lenguaje'); // Para Lenguaje
-    const listaAtencion = document.getElementById('lista-juegos-atencion'); // Para Atención (NUEVO)
-    
+    // Máquina de estados: 'inicio' -> 'pilares' -> 'subcategorias' -> 'juegos'
     let estado = 'inicio'; 
+    let pilarActual = '';
 
-    function mostrarCategorias() {
+    // PASO 1: De Inicio a Pilares
+    function mostrarPilares() {
         pInicio.classList.add('d-none');
-        pCategorias.classList.remove('d-none');
+        pPilares.classList.remove('d-none');
+        pSubcats.classList.add('d-none');
         pJuegos.classList.add('d-none');
         
-        titulo.innerText = "Selecciona un Área";
+        titulo.innerText = "Catálogo Clínico";
         btnVolver.classList.remove('d-none');
-        estado = 'categorias';
+        estado = 'pilares';
     }
 
-    function mostrarJuegos(categoria) {
-        pInicio.classList.add('d-none');
-        pCategorias.classList.add('d-none');
+    // PASO 2: De Pilares a Subcategorías (Carpetas)
+    function mostrarSubcategorias(pilar) {
+        pilarActual = pilar;
+        pPilares.classList.add('d-none');
+        pSubcats.classList.remove('d-none');
+        
+        titulo.innerText = "Área de Rehabilitación";
+        document.getElementById('nombre-pilar').innerText = pilar;
+
+        // Ocultar todas las subcarpetas primero
+        document.querySelectorAll('.grupo-subcats').forEach(el => el.classList.add('d-none'));
+        
+        // Mostrar solo las del pilar elegido
+        const subcatDiv = document.getElementById('subcats-' + pilar);
+        if(subcatDiv) subcatDiv.classList.remove('d-none');
+
+        estado = 'subcategorias';
+    }
+
+    // PASO 3: De Subcategorías a Juegos finales
+    function mostrarJuegos(subcategoria) {
+        pSubcats.classList.add('d-none');
         pJuegos.classList.remove('d-none');
 
-        // Actualizamos textos
-        titulo.innerText = "Área de " + categoria;
-        document.getElementById('nombre-categoria').innerText = categoria;
-        
-        // 1. OCULTAR TODO PRIMERO
-        listaComun.classList.add('d-none');
-        listaLenguaje.classList.add('d-none');
-        listaAtencion.classList.add('d-none');
+        titulo.innerText = "Ejercicios";
+        document.getElementById('nombre-subcategoria').innerText = subcategoria;
 
-        // 2. MOSTRAR SEGÚN LA CATEGORÍA ELEGIDA
-        if (categoria === 'Lenguaje') {
-            listaLenguaje.classList.remove('d-none');
-        } 
-        else if (categoria === 'Atención') {
-            listaAtencion.classList.remove('d-none');
-        } 
-        else {
-            // Para Motor u otros, mostramos la lista genérica
-            listaComun.classList.remove('d-none');
-            
-            // Actualizamos títulos dinámicos solo para la lista común
-            let titulosJuegos = document.querySelectorAll('.nombre-cat-dinamico');
-            titulosJuegos.forEach(el => el.innerText = categoria);
+        // Ocultar todas las listas de juegos
+        document.querySelectorAll('.grupo-juegos').forEach(el => el.classList.add('d-none'));
+
+        // Buscar si existe el div con los juegos de esa subcategoría
+        const juegosDiv = document.getElementById('juegos-' + subcategoria);
+        
+        if (juegosDiv) {
+            juegosDiv.classList.remove('d-none');
+        } else {
+            // Si no existen juegos programados para esa carpeta, mostramos el cartel de "En desarrollo"
+            document.getElementById('juegos-Proximamente').classList.remove('d-none');
         }
 
         estado = 'juegos';
     }
 
+    // NAVEGACIÓN HACIA ATRÁS
     function irAtras() {
         if (estado === 'juegos') {
-            mostrarCategorias();
-        } else if (estado === 'categorias') {
-            pInicio.classList.remove('d-none');
-            pCategorias.classList.add('d-none');
             pJuegos.classList.add('d-none');
+            mostrarSubcategorias(pilarActual);
+        } 
+        else if (estado === 'subcategorias') {
+            pSubcats.classList.add('d-none');
+            mostrarPilares();
+        } 
+        else if (estado === 'pilares') {
+            pPilares.classList.add('d-none');
+            pInicio.classList.remove('d-none');
+            
             titulo.innerText = "Sala de Terapia";
             btnVolver.classList.add('d-none');
             estado = 'inicio';

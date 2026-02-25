@@ -89,3 +89,18 @@ class SesionDeJuego(models.Model):
 
     class Meta:
         ordering = ['-fecha']
+
+# ================================================================
+# TABLA 3: NOTAS DEL ESPECIALISTA (HISTORIAL CLÍNICO)
+# ================================================================
+class NotaEspecialista(models.Model):
+    paciente = models.ForeignKey(PerfilPaciente, on_delete=models.CASCADE, related_name='notas')
+    medico = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='notas_escritas')
+    texto = models.TextField(verbose_name="Contenido de la nota")
+    fecha = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-fecha'] # Esto hace que se ordenen automáticamente de más nueva a más antigua
+
+    def __str__(self):
+        return f"Nota para {self.paciente.usuario.username} - {self.fecha.strftime('%d/%m/%Y')}"

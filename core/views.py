@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
 from .forms import RegistroUsuarioForm
-from .models import PerfilPaciente, SesionDeJuego
+from .models import PerfilPaciente, SesionDeJuego, NotaEspecialista
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -98,34 +98,40 @@ def dashboard_medico(request):
 def detalle_paciente(request, pk):
     perfil_paciente = get_object_or_404(PerfilPaciente, pk=pk)
     
-    # --- LÓGICA DE ACTUALIZACIÓN DE NIVELES (MÉDICO) ---
-    # Esta parte recibe los datos del formulario en el HTML del médico
-    if request.method == 'POST' and 'actualizar_niveles' in request.POST:
-        try:
-            # Capturamos los 3 niveles por separado
-            perfil_paciente.nivel_cognitivo = int(request.POST.get('nivel_cognitivo', 1))
-            perfil_paciente.nivel_lenguaje = int(request.POST.get('nivel_lenguaje', 1))
-            perfil_paciente.nivel_motor = int(request.POST.get('nivel_motor', 1))
+    if request.method == 'POST':
+        # 1. Si el médico actualiza los niveles
+        if 'actualizar_niveles' in request.POST:
+            try:
+                perfil_paciente.nivel_cognitivo = int(request.POST.get('nivel_cognitivo', 1))
+                perfil_paciente.nivel_lenguaje = int(request.POST.get('nivel_lenguaje', 1))
+                perfil_paciente.nivel_motor = int(request.POST.get('nivel_motor', 1))
+                perfil_paciente.nivel_asignado = perfil_paciente.nivel_cognitivo
+                perfil_paciente.save()
+                messages.success(request, "Niveles actualizados correctamente.")
+            except ValueError:
+                messages.error(request, "Error al actualizar los niveles.")
+            return redirect('detalle_paciente', pk=pk)
             
-            # Actualizamos el global como referencia (opcional, igualamos al cognitivo por defecto)
-            perfil_paciente.nivel_asignado = perfil_paciente.nivel_cognitivo
-            
-            perfil_paciente.save()
-            messages.success(request, "Niveles del paciente actualizados correctamente.")
-        except ValueError:
-            messages.error(request, "Error al actualizar los niveles. Verifique los datos.")
-        return redirect('detalle_paciente', pk=pk)
-    # ----------------------------------------------------
+        # 2. Si el médico guarda una nota nueva
+        elif 'guardar_nota' in request.POST:
+            texto_nota = request.POST.get('texto_nota', '').strip()
+            if texto_nota:
+                NotaEspecialista.objects.create(
+                    paciente=perfil_paciente,
+                    medico=request.user,
+                    texto=texto_nota
+                )
+                messages.success(request, "Nota clínica guardada en el historial.")
+            return redirect('detalle_paciente', pk=pk)
 
-    sesiones = SesionDeJuego.objects.filter(paciente=perfil_paciente).order_by('fecha')
+    # Obtenemos todas las notas del paciente
+    notas = perfil_paciente.notas.all()
     
-    fechas = [sesion.fecha.strftime("%d/%m") for sesion in sesiones]
-    puntos = [sesion.puntos for sesion in sesiones]
+    # Hemos eliminado la lógica de la gráfica general de puntos y fechas
     
     context = {
         'paciente': perfil_paciente,
-        'fechas': fechas,
-        'puntos': puntos,
+        'notas': notas,
     }
     return render(request, 'core/patients/detalle_paciente.html', context)
 
