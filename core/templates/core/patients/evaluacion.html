@@ -657,6 +657,105 @@
                                 Continuar <i class="bi bi-arrow-right ms-2"></i>
                             </button>
                         </div>
+
+                        <div id="paso-6-instrucciones-restas"
+                            class="d-none text-center py-3 animate__animated animate__fadeIn">
+                            <button
+                                onclick="leerTexto('Ahora me gustaría que le restara 7 al numero 100, y que continuara restando siete a la cifra de su respuesta anterior hasta que le pida que pare.')"
+                                class="btn btn-light rounded-circle shadow-sm mb-4 btn-altavoz"
+                                style="width: 90px; height: 90px; border: 3px solid #e9ecef;">
+                                <i class="bi bi-volume-up-fill text-primary" style="font-size: 3rem;"></i>
+                            </button>
+                            <h2 class="fw-bold mb-3 text-dark">6.3 Atención: Cálculo Mental</h2>
+                            <div class="fs-5 text-muted mb-4 px-md-4" style="line-height: 1.6;">
+                                Ahora me gustaría que le restara <strong>7</strong> deal numero
+                                <strong>100</strong>.<br><br>
+                                Luego, continúe restando <strong>7</strong> a su respuesta anterior hasta que termine
+                                las 5 cajas blancas. Deberá hacerlo mentalmente.
+                            </div>
+                            <button onclick="comenzarAtencionRestas()"
+                                class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-sm"
+                                style="font-size: 1.2rem;">
+                                <i class="bi bi-check-circle-fill me-2"></i> Entendido, empezar
+                            </button>
+                        </div>
+
+                        <div id="paso-6-juego-restas" class="d-none animate__animated animate__fadeIn text-center">
+                            <h4 class="fw-bold mb-3 text-dark">Reste 7 de su última respuesta</h4>
+
+                            <div class="d-flex justify-content-center align-items-center gap-2 mb-4 flex-wrap">
+                                <span class="badge bg-secondary fs-4 shadow-sm">100</span>
+                                <i class="bi bi-arrow-right text-muted fs-4"></i>
+                                <span id="caja-resta-1"
+                                    class="border border-2 rounded px-3 py-2 fs-4 fw-bold text-primary bg-light"
+                                    style="min-width: 60px;">_</span>
+                                <i class="bi bi-arrow-right text-muted fs-4"></i>
+                                <span id="caja-resta-2"
+                                    class="border border-2 rounded px-3 py-2 fs-4 fw-bold text-primary bg-light"
+                                    style="min-width: 60px;">_</span>
+                                <i class="bi bi-arrow-right text-muted fs-4"></i>
+                                <span id="caja-resta-3"
+                                    class="border border-2 rounded px-3 py-2 fs-4 fw-bold text-primary bg-light"
+                                    style="min-width: 60px;">_</span>
+                                <i class="bi bi-arrow-right text-muted fs-4"></i>
+                                <span id="caja-resta-4"
+                                    class="border border-2 rounded px-3 py-2 fs-4 fw-bold text-primary bg-light"
+                                    style="min-width: 60px;">_</span>
+                                <i class="bi bi-arrow-right text-muted fs-4"></i>
+                                <span id="caja-resta-5"
+                                    class="border border-2 rounded px-3 py-2 fs-4 fw-bold text-primary bg-light"
+                                    style="min-width: 60px;">_</span>
+                            </div>
+
+                            <div class="mx-auto" style="max-width: 350px;">
+                                <div class="bg-white border border-3 border-primary rounded-3 py-2 mb-3 mx-auto text-primary fw-bold shadow-sm d-flex justify-content-between align-items-center px-4"
+                                    style="font-size: 2.5rem;">
+                                    <span class="text-muted fs-4 me-2">-7 =</span>
+                                    <span id="display-numero-actual-resta" style="letter-spacing: 5px;">_ _</span>
+                                    <button class="btn btn-outline-danger btn-sm border-0"
+                                        onclick="borrarTeclaResta()"><i class="bi bi-backspace-fill fs-4"></i></button>
+                                </div>
+
+                                <div class="row g-2 justify-content-center mx-auto" style="max-width: 300px;">
+                                    <div class="col-4"><button
+                                            class="btn btn-outline-dark w-100 fs-2 py-3 fw-bold shadow-sm"
+                                            onclick="pulsarTeclaResta(1)">1</button></div>
+                                    <div class="col-4"><button
+                                            class="btn btn-outline-dark w-100 fs-2 py-3 fw-bold shadow-sm"
+                                            onclick="pulsarTeclaResta(2)">2</button></div>
+                                    <div class="col-4"><button
+                                            class="btn btn-outline-dark w-100 fs-2 py-3 fw-bold shadow-sm"
+                                            onclick="pulsarTeclaResta(3)">3</button></div>
+                                    <div class="col-4"><button
+                                            class="btn btn-outline-dark w-100 fs-2 py-3 fw-bold shadow-sm"
+                                            onclick="pulsarTeclaResta(4)">4</button></div>
+                                    <div class="col-4"><button
+                                            class="btn btn-outline-dark w-100 fs-2 py-3 fw-bold shadow-sm"
+                                            onclick="pulsarTeclaResta(5)">5</button></div>
+                                    <div class="col-4"><button
+                                            class="btn btn-outline-dark w-100 fs-2 py-3 fw-bold shadow-sm"
+                                            onclick="pulsarTeclaResta(6)">6</button></div>
+                                    <div class="col-4"><button
+                                            class="btn btn-outline-dark w-100 fs-2 py-3 fw-bold shadow-sm"
+                                            onclick="pulsarTeclaResta(7)">7</button></div>
+                                    <div class="col-4"><button
+                                            class="btn btn-outline-dark w-100 fs-2 py-3 fw-bold shadow-sm"
+                                            onclick="pulsarTeclaResta(8)">8</button></div>
+                                    <div class="col-4"><button
+                                            class="btn btn-outline-dark w-100 fs-2 py-3 fw-bold shadow-sm"
+                                            onclick="pulsarTeclaResta(9)">9</button></div>
+                                    <div class="col-4 offset-4"><button
+                                            class="btn btn-outline-dark w-100 fs-2 py-3 fw-bold shadow-sm"
+                                            onclick="pulsarTeclaResta(0)">0</button></div>
+                                    <div class="col-12 mt-3">
+                                        <button id="btn-confirmar-resta"
+                                            class="btn btn-success w-100 fs-4 py-3 shadow-sm fw-bold disabled"
+                                            onclick="confirmarResta()">Confirmar Respuesta <i
+                                                class="bi bi-check-lg ms-2"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="paso-7" class="paso-test d-none">
@@ -867,7 +966,8 @@
         atencion_numeros_dir: 0,
         atencion_numeros_inv: 0,
         atencion_letras_errores: 0,
-        atencion_letras_score: 0
+        atencion_letras_score: 0,
+        atencion_restas_score: 0
     };
 
     const nombresSecciones = [
@@ -986,6 +1086,8 @@
                     document.getElementById('paso-6-juego-inv').classList.add('d-none');
                     document.getElementById('paso-6-instrucciones-letras').classList.add('d-none');
                     document.getElementById('paso-6-juego-letras').classList.add('d-none');
+                    document.getElementById('paso-6-instrucciones-restas').classList.add('d-none');
+                    document.getElementById('paso-6-juego-restas').classList.add('d-none');
                 } else {
                     // Para los pasos del 1 al 5, mantenemos tu lógica automática
                     document.getElementById(`paso-${pasoActual}-instrucciones`).classList.remove('d-none');
@@ -1086,13 +1188,14 @@
         if (pasoActual === 6) {
             // Consolidamos la puntuación de atención que llevamos hasta ahora:
             // 1pto números directo + 1pto números inverso + 1pto letras
-            // (Nota: faltan las restas, que las sumaremos en la siguiente sub-parte)
+            // Restas
             datosMoCA.score_atencion = (datosMoCA.atencion_numeros_dir || 0) +
                 (datosMoCA.atencion_numeros_inv || 0) +
-                (datosMoCA.atencion_letras_score || 0);
+                (datosMoCA.atencion_letras_score || 0) +
+                (datosMoCA.atencion_restas_score || 0);
 
             console.log("--- PUNTUACIÓN ATENCIÓN (PARCIAL) ---");
-            console.log("Total Atención:", datosMoCA.score_atencion, "/ 3 puntos posibles hasta ahora.");
+            console.log("Total Atención:", datosMoCA.score_atencion, "/ 6 puntos posibles.");
         }
     }
 
@@ -1725,48 +1828,69 @@
     const secuenciaLetras = ["F", "B", "A", "C", "M", "N", "A", "A", "J", "K", "L", "B", "A", "F", "A", "K", "D", "E", "A", "A", "A", "J", "A", "M", "O", "F", "A", "A", "B"];
     let indiceLetraActual = 0;
     let erroresLetras = 0;
+
+    // Variables de control estricto por turno
     let intervaloLetras;
-    let tiempoAparicionA = 0;
-    let aPendiente = false;
-    let aPulsada = false;
+    let pulsacionHechaEnEsteTurno = false;
+    let letraMostradaActual = "";
 
     function comenzarAtencionLetras() {
-        window.speechSynthesis.cancel();
         document.getElementById('paso-6-instrucciones-letras').classList.add('d-none');
         document.getElementById('paso-6-juego-letras').classList.remove('d-none');
-        indiceLetraActual = 0; erroresLetras = 0; aPendiente = false;
+
+        indiceLetraActual = 0;
+        erroresLetras = 0;
+
         document.getElementById('btn-pulsar-a').classList.remove('disabled');
         document.getElementById('display-letra').innerText = "3";
+
         setTimeout(() => document.getElementById('display-letra').innerText = "2", 1000);
         setTimeout(() => document.getElementById('display-letra').innerText = "1", 2000);
+
         setTimeout(() => {
-            siguienteLetra();
-            intervaloLetras = setInterval(siguienteLetra, 1000);
+            siguienteLetraSegura();
+            intervaloLetras = setInterval(siguienteLetraSegura, 1000);
         }, 3000);
     }
 
-    function siguienteLetra() {
+    function siguienteLetraSegura() {
+        let display = document.getElementById('display-letra');
+
+        // 1. Evaluar lo que pasó en el turno ANTERIOR (si hubo uno)
+        if (letraMostradaActual !== "") {
+            if (letraMostradaActual === "A" && !pulsacionHechaEnEsteTurno) {
+                // Omisión: Era una A y se la pasó sin pulsar
+                erroresLetras++;
+            } else if (letraMostradaActual !== "A" && pulsacionHechaEnEsteTurno) {
+                // Comisión: No era una A pero pulsó
+                erroresLetras++;
+            }
+        }
+
+        // 2. Comprobar si hemos terminado la secuencia entera
         if (indiceLetraActual >= secuenciaLetras.length) {
             clearInterval(intervaloLetras);
+            letraMostradaActual = ""; // Ya no evaluamos más
+
             setTimeout(() => {
-                document.getElementById('display-letra').innerText = "FIN";
+                display.innerText = "FIN";
                 document.getElementById('btn-pulsar-a').classList.add('disabled');
                 document.getElementById('btn-continuar-letras').classList.remove('d-none');
-            }, 1500);
+            }, 500); // Breve margen para no ser muy bruscos
             return;
         }
-        let letra = secuenciaLetras[indiceLetraActual];
-        let display = document.getElementById('display-letra');
-        display.style.opacity = 0;
-        setTimeout(() => { display.innerText = letra; display.style.opacity = 1; }, 100);
 
-        if (letra === "A") {
-            tiempoAparicionA = Date.now();
-            aPendiente = true; aPulsada = false;
-            setTimeout(() => {
-                if (aPendiente && !aPulsada) { erroresLetras++; aPendiente = false; }
-            }, 1500);
-        }
+        // 3. Iniciar el NUEVO turno
+        letraMostradaActual = secuenciaLetras[indiceLetraActual];
+        pulsacionHechaEnEsteTurno = false; // Resetear bandera del botón
+
+        // Efecto visual rápido de parpadeo suave
+        display.style.opacity = 0;
+        setTimeout(() => {
+            display.innerText = letraMostradaActual;
+            display.style.opacity = 1;
+        }, 100);
+
         indiceLetraActual++;
     }
 
@@ -1788,24 +1912,132 @@
             osc.stop(ctx.currentTime + 0.1);
         } catch (e) { }
 
+        // Animación visual
         btn.style.transform = "scale(0.95)";
         setTimeout(() => btn.style.transform = "scale(1)", 100);
-        let tiempoActual = Date.now();
-        if (aPendiente && !aPulsada && (tiempoActual - tiempoAparicionA <= 1500)) {
-            aPulsada = true; aPendiente = false;
-        } else {
-            erroresLetras++;
-        }
+
+        // Marcar que se ha pulsado en ESTE preciso turno (independientemente de qué letra sea, ya lo evaluará el setInterval)
+        pulsacionHechaEnEsteTurno = true;
     }
 
     function finalizarLetras() {
+        // 1. Guardamos los resultados de las letras
         datosMoCA.atencion_letras_errores = erroresLetras;
         datosMoCA.atencion_letras_score = (erroresLetras <= 1) ? 1 : 0;
-        datosMoCA.score_atencion = datosMoCA.atencion_numeros_dir + datosMoCA.atencion_numeros_inv + datosMoCA.atencion_letras_score;
+
+        console.log("Errores Letras:", erroresLetras, "| Puntos:", datosMoCA.atencion_letras_score);
+
+        // 2. Ocultamos el juego de las letras
+        document.getElementById('paso-6-juego-letras').classList.add('d-none');
+
+        // 3. Mostramos las instrucciones de las restas (siguiente sub-juego)
+        document.getElementById('paso-6-instrucciones-restas').classList.remove('d-none');
+    }
+
+    // =========================================================
+    // LÓGICA DEL JUEGO 6.3: ATENCIÓN (RESTAS DE 7 EN 7)
+    // =========================================================
+    let restasRespuestas = [];
+    let numeroEnPantallaResta = "";
+    let numeroAnteriorEvaluacion = 100; // El punto de partida clínico
+    let restasCorrectasContador = 0;
+
+    function comenzarAtencionRestas() {
+        window.speechSynthesis.cancel();
+        document.getElementById('paso-6-instrucciones-restas').classList.add('d-none');
+        document.getElementById('paso-6-juego-restas').classList.remove('d-none');
+
+        restasRespuestas = [];
+        numeroEnPantallaResta = "";
+        numeroAnteriorEvaluacion = 100;
+        restasCorrectasContador = 0;
+
+        for (let i = 1; i <= 5; i++) {
+            document.getElementById(`caja-resta-${i}`).innerText = "_";
+            document.getElementById(`caja-resta-${i}`).classList.remove('border-success', 'border-danger');
+        }
+        actualizarDisplayResta();
+    }
+
+    function pulsarTeclaResta(num) {
+        // Máximo 3 dígitos (por si acaso pulsan 100 y algo)
+        if (numeroEnPantallaResta.length < 3) {
+            numeroEnPantallaResta += num.toString();
+            actualizarDisplayResta();
+        }
+    }
+
+    function borrarTeclaResta() {
+        if (numeroEnPantallaResta.length > 0) {
+            numeroEnPantallaResta = numeroEnPantallaResta.slice(0, -1);
+            actualizarDisplayResta();
+        }
+    }
+
+    function actualizarDisplayResta() {
+        let display = document.getElementById('display-numero-actual-resta');
+        let btnConfirmar = document.getElementById('btn-confirmar-resta');
+
+        if (numeroEnPantallaResta === "") {
+            display.innerText = "_ _";
+            btnConfirmar.classList.add('disabled');
+        } else {
+            display.innerText = numeroEnPantallaResta;
+            btnConfirmar.classList.remove('disabled');
+        }
+    }
+
+    function confirmarResta() {
+        if (numeroEnPantallaResta === "") return;
+
+        let respuestaPaciente = parseInt(numeroEnPantallaResta);
+        restasRespuestas.push(respuestaPaciente);
+        let turnoActual = restasRespuestas.length; // 1 a 5
+
+        // 1. Mostrar el número en la caja de arriba correspondiente
+        let caja = document.getElementById(`caja-resta-${turnoActual}`);
+        caja.innerText = respuestaPaciente;
+
+        // 2. Lógica Clínica MoCA: Evaluar independiente del error anterior
+        // ¿La respuesta dada es exactamente el número anterior menos 7?
+        if (respuestaPaciente === (numeroAnteriorEvaluacion - 7)) {
+            restasCorrectasContador++;
+            console.log(`Resta ${turnoActual}: BIEN (${numeroAnteriorEvaluacion} - 7 = ${respuestaPaciente})`);
+        } else {
+            console.log(`Resta ${turnoActual}: MAL (Debió ser ${numeroAnteriorEvaluacion - 7}, pero puso ${respuestaPaciente})`);
+        }
+
+        // 3. Preparar la siguiente iteración: El paciente ahora partirá de su propio error o acierto
+        numeroAnteriorEvaluacion = respuestaPaciente;
+        numeroEnPantallaResta = "";
+        actualizarDisplayResta();
+
+        // 4. Si hemos llegado a 5 respuestas, terminamos
+        if (turnoActual === 5) {
+            finalizarPaso6Atencion();
+        }
+    }
+
+    function finalizarPaso6Atencion() {
+        // Puntuación clínica oficial de restas:
+        // 4 o 5 bien = 3 pts | 2 o 3 bien = 2 pts | 1 bien = 1 pt | 0 = 0 pts
+        let puntosRestas = 0;
+        if (restasCorrectasContador >= 4) puntosRestas = 3;
+        else if (restasCorrectasContador >= 2) puntosRestas = 2;
+        else if (restasCorrectasContador === 1) puntosRestas = 1;
+
+        datosMoCA.atencion_restas_score = puntosRestas;
+
+        console.log("--- RESUMEN RESTAS ---");
+        console.log("Restas correctas:", restasCorrectasContador);
+        console.log("Puntos ganados:", puntosRestas);
+
+        // ¡POR FIN! Terminamos el gigantesco paso 6 de Atención
         document.getElementById('controles-navegacion').classList.remove('d-none');
         document.getElementById('controles-navegacion').classList.add('d-flex');
         siguientePaso();
     }
+
 
     // Permitir avanzar pulsando la tecla "Enter"
     document.addEventListener("DOMContentLoaded", function () {
