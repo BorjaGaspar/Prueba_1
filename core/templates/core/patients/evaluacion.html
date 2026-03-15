@@ -3229,11 +3229,44 @@
 
     // --- ENVÍO FINAL AL BACKEND ---
     function enviarResultadosAlServidor() {
-        console.log("JSON Final del MoCA:", datosMoCA);
-        setTimeout(() => {
-            let btnBypass = document.querySelector('button[name="resultado_simulado"][value="3"]');
-            if (btnBypass) btnBypass.click();
-        }, 2000);
+        console.log("Iniciando envío de JSON al servidor...", datosMoCA);
+
+        // 1. Mostrar pantalla de carga (Paso 12)
+        document.getElementById('paso-11').classList.add('d-none');
+        document.getElementById('paso-12').classList.remove('d-none');
+
+        // 2. Obtener el token de seguridad CSRF de Django
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // 3. Enviar los datos por POST a la nueva URL
+        fetch('/api/guardar-moca/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(datosMoCA)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log("¡Éxito!", data.mensaje);
+                    // 4. Redirigir a la pantalla de terapia (/terapia/)
+                    window.location.href = '/terapia/';
+                } else {
+                    console.error("Error del servidor:", data.mensaje);
+                    alert("Hubo un problema al guardar los resultados. El equipo técnico ha sido notificado.");
+                    // Fallback de seguridad en caso de error de conexión
+                    document.getElementById('paso-12').innerHTML = `
+                    <h3 class='text-danger mb-3'><i class='bi bi-x-circle'></i> Error de conexión</h3>
+                    <p>No pudimos guardar su evaluación. Inténtelo de nuevo más tarde.</p>
+                `;
+                }
+            })
+            .catch(error => {
+                console.error("Error de red:", error);
+                alert("No se pudo conectar con el servidor.");
+            });
     }
 </script>
 {% endblock %}

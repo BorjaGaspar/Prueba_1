@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
 from .forms import RegistroUsuarioForm
-from .models import PerfilPaciente, SesionDeJuego, NotaEspecialista
+from .models import PerfilPaciente, SesionDeJuego, NotaEspecialista, EvaluacionMoCA
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -12,6 +12,7 @@ import whisper
 import os
 import tempfile
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 
 # --- CONFIGURACIÓN WHISPER ---
 MODELO_WHISPER = None
@@ -428,3 +429,84 @@ def analisis_paciente(request, pk):
         'datos_juegos_json': json.dumps(datos_por_juego)
     }
     return render(request, 'core/patients/analisis_paciente.html', context)
+
+@login_required
+def guardar_moca(request):
+    if request.method == 'POST':
+        try:
+            # 1. Recibir y decodificar el JSON del frontend
+            datos = json.loads(request.body)
+            perfil = request.user.perfil
+
+            # 2. Guardar en el Historial Clínico (Tabla EvaluacionMoCA)
+            evaluacion = EvaluacionMoCA.objects.create(
+                paciente=perfil,
+                score_visuoespacial=datos.get('score_visuoespacial', 0),
+                score_identificacion=datos.get('score_identificacion', 0),
+                score_atencion=datos.get('score_atencion', 0),
+                score_lenguaje=datos.get('score_lenguaje', 0),
+                score_abstraccion=datos.get('score_abstraccion', 0),
+                score_recuerdo=datos.get('score_recuerdo', 0),
+                score_orientacion=datos.get('score_orientacion', 0),
+                score_total=datos.get('score_total', 0),
+
+                # Archivos Base64 (Audios y Dibujos)
+                dibujo_cubo_b64=datos.get('dibujo_cubo_b64'),
+                dibujo_reloj_b64=datos.get('dibujo_reloj_b64'),
+                audio_frase1_b64=datos.get('audio_frase1_b64'),
+                audio_frase2_b64=datos.get('audio_frase2_b64'),
+                audio_fluidez_b64=datos.get('audio_fluidez_b64'),
+                audio_tren_b64=datos.get('audio_tren_b64'),
+                audio_reloj_b64=datos.get('audio_reloj_b64'),
+                audio_recuerdo_b64=datos.get('audio_recuerdo_b64'),
+
+                # Transcripciones IA
+                transcripcion_frase1=datos.get('transcripcion_frase1'),
+                transcripcion_frase2=datos.get('transcripcion_frase2'),
+                transcripcion_fluidez=datos.get('transcripcion_fluidez'),
+                abstraccion_tren_respuesta=datos.get('abstraccion_tren_respuesta'),
+                abstraccion_reloj_respuesta=datos.get('abstraccion_reloj_respuesta'),
+                transcripcion_recuerdo=datos.get('transcripcion_recuerdo'),
+
+                # JSON de respaldo
+                datos_completos_raw=datos
+            )
+
+            # 3. Actualizar el Perfil del Paciente (Adaptive Learning)
+            perfil.puntuacion_total_moca = evaluacion.score_total
+            perfil.score_visuoespacial = evaluacion.score_visuoespacial
+            perfil.score_identificacion = evaluacion.score_identificacion
+            perfil.score_atencion = evaluacion.score_atencion
+            perfil.score_lenguaje = evaluacion.score_lenguaje
+            perfil.score_abstraccion = evaluacion.score_abstraccion
+            perfil.score_recuerdo = evaluacion.score_recuerdo
+            perfil.score_orientacion = evaluacion.score_orientacion
+            perfil.test_completado = True
+            
+            # LÓGICA DE ASIGNACIÓN DE NIVELES (Personalizable)
+            # Ejemplo básico cognitivo:
+            if evaluacion.score_total >= 26:
+                perfil.nivel_cognitivo = 5
+            elif evaluacion.score_total >= 24:
+                perfil.nivel_cognitivo = 4
+            elif evaluacion.score_total >= 18:
+                perfil.nivel_cognitivo = 3
+            elif evaluacion.score_total >= 10:
+                perfil.nivel_cognitivo = 2
+            else:
+                perfil.nivel_cognitivo = 1
+                
+            # Ejemplo de lenguaje: si falla todo lo verbal, baja el nivel de lenguaje
+            if evaluacion.score_lenguaje == 0:
+                perfil.nivel_lenguaje = 1
+            else:
+                perfil.nivel_lenguaje = perfil.nivel_cognitivo # O la regla que prefieras
+
+            perfil.save()
+
+            return JsonResponse({'status': 'success', 'mensaje': 'Evaluación guardada correctamente y niveles actualizados.'})
+
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'mensaje': str(e)}, status=400)
+
+    return JsonResponse({'status': 'error', 'mensaje': 'Método no permitido'}, status=405)
