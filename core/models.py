@@ -11,6 +11,8 @@ class PerfilPaciente(models.Model):
     # --- DATOS GENERALES ---
     es_medico = models.BooleanField(default=False, verbose_name="¿Es Médico?")
     medico_asignado = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='pacientes_supervisados')
+    lugar_habitual = models.CharField(max_length=100, blank=True, null=True, verbose_name="Lugar Habitual (Ej. Casa, Hospital)")
+    ciudad_residencia = models.CharField(max_length=100, blank=True, null=True, verbose_name="Ciudad de Residencia")
     
     # --- DATOS FÍSICOS ---
     edad = models.IntegerField(null=True, blank=True)
@@ -104,3 +106,49 @@ class NotaEspecialista(models.Model):
 
     def __str__(self):
         return f"Nota para {self.paciente.usuario.username} - {self.fecha.strftime('%d/%m/%Y')}"
+
+# ================================================================
+# TABLA 4: HISTORIAL DE EVALUACIONES MOCA (STORE & FORWARD)
+# ================================================================
+class EvaluacionMoCA(models.Model):
+    paciente = models.ForeignKey(PerfilPaciente, on_delete=models.CASCADE, related_name='evaluaciones_moca')
+    fecha_evaluacion = models.DateTimeField(default=timezone.now, verbose_name="Fecha de realización")
+
+    # --- PUNTUACIONES PRINCIPALES (Los 7 dominios) ---
+    score_visuoespacial = models.IntegerField(default=0)
+    score_identificacion = models.IntegerField(default=0)
+    score_atencion = models.IntegerField(default=0)
+    score_lenguaje = models.IntegerField(default=0)
+    score_abstraccion = models.IntegerField(default=0)
+    score_recuerdo = models.IntegerField(default=0)
+    score_orientacion = models.IntegerField(default=0)
+    score_total = models.IntegerField(default=0, verbose_name="Nota Final (0-30)")
+
+    # --- AUDITORÍA CLÍNICA: ARCHIVOS MULTIMEDIA (Base64) ---
+    # Usamos TextField porque las cadenas Base64 de imágenes y audios son inmensas
+    dibujo_cubo_b64 = models.TextField(blank=True, null=True)
+    dibujo_reloj_b64 = models.TextField(blank=True, null=True)
+    audio_frase1_b64 = models.TextField(blank=True, null=True)
+    audio_frase2_b64 = models.TextField(blank=True, null=True)
+    audio_fluidez_b64 = models.TextField(blank=True, null=True)
+    audio_tren_b64 = models.TextField(blank=True, null=True)
+    audio_reloj_b64 = models.TextField(blank=True, null=True)
+    audio_recuerdo_b64 = models.TextField(blank=True, null=True)
+
+    # --- AUDITORÍA CLÍNICA: TRANSCRIPCIONES IA Y TEXTOS ---
+    transcripcion_frase1 = models.TextField(blank=True, null=True)
+    transcripcion_frase2 = models.TextField(blank=True, null=True)
+    transcripcion_fluidez = models.TextField(blank=True, null=True)
+    abstraccion_tren_respuesta = models.TextField(blank=True, null=True)
+    abstraccion_reloj_respuesta = models.TextField(blank=True, null=True)
+    transcripcion_recuerdo = models.TextField(blank=True, null=True)
+
+    # --- RESPALDO DE SEGURIDAD (RAW DATA) ---
+    # Aquí guardaremos el objeto JavaScript íntegro para conservar los sub-intentos y tiempos
+    datos_completos_raw = models.JSONField(blank=True, null=True, verbose_name="JSON Íntegro del Frontend")
+
+    class Meta:
+        ordering = ['-fecha_evaluacion'] # Ordena de más reciente a más antiguo
+
+    def __str__(self):
+        return f"MoCA | {self.paciente.usuario.username} | Puntuación: {self.score_total}/30 | {self.fecha_evaluacion.strftime('%d/%m/%Y')}"

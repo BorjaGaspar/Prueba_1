@@ -15,6 +15,9 @@ urlpatterns = [
     path('api/transcribir-audio/', views.transcribir_audio, name='transcribir_audio'),
     path('api/guardar-progreso/', views.guardar_progreso, name='guardar_progreso'),
 
+    #API MocaTest
+    path('api/guardar-moca/', views.guardar_moca, name='guardar_moca'),
+
     # RUTAS DE AUTENTICACIÓN
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/registro/', views.registro, name='registro'),
