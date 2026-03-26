@@ -35,6 +35,7 @@ urlpatterns = [
     path('terapia/prueba-voz/', views.jugar_prueba_voz, name='jugar_prueba_voz'),
     path('terapia/identificacion-elsa/', views.jugar_identificacion_elsa_unity, name='jugar_identificacion_elsa_unity'),
     path('buzon/', views.buzon_paciente, name='buzon_paciente'),
+    path('terapia/encuentra-bolita/', views.jugar_encuentra_bolita, name='jugar_encuentra_bolita'),
      # URL de la API que recibe el audio y usa Whisper (MUY IMPORTANTE)
     path('api/transcribir-audio/', views.transcribir_audio, name='transcribir_audio'),
 
