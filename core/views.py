@@ -378,6 +378,24 @@ def jugar_encuentra_letra(request):
     return render(request, 'core/games/cognitivo/atencion/juego_encuentra_letra.html', context)
 
 @login_required
+def jugar_encuentra_bolita(request):
+    try:
+        # Obtenemos el perfil del paciente usando su reverse relation correcta
+        perfil = request.user.perfil 
+        nivel_actual = perfil.nivel_cognitivo if perfil else 1
+    except:
+        # Si entra un médico o un usuario sin perfil de paciente
+        nivel_actual = 1
+        
+    # Le pasamos su nivel cognitivo actual al juego
+    context = {
+        'nivel_inicial': nivel_actual
+    }
+    
+    # Renderizamos el HTML pasándole el nivel
+    return render(request, 'core/games/cognitivo/atencion/EncuentraLaBolita.html', context)
+
+@login_required
 def jugar_prueba_voz(request):
     # Una vista simple para probar el micrófono y Whisper
     return render(request, 'core/games/Lenguaje/juego_prueba_voz.html')
