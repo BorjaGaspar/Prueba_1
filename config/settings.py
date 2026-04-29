@@ -126,6 +126,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'home'
 # Redirección tras cerrar sesión
 LOGOUT_REDIRECT_URL = 'home'
+# Dominios de confianza para peticiones CSRF (obligatorio en Django 4+ con HTTPS/proxy)
+CSRF_TRUSTED_ORIGINS = ['https://test.evidagroup.es']
+
 # --- CONFIGURACIÓN PARA UNITY WEBGL ---
 import mimetypes
 mimetypes.add_type("application/wasm", ".wasm", True)

@@ -1,0 +1,26 @@
+services:
+  web:
+    container_name: CONTAINER_SAMIRADTX
+    build: .
+    # En producción se ejecutan las migraciones antes de arrancar el servidor
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    # Volumen para persistir la base de datos SQLite y el código
+    volumes:
+      - .:/app
+    # Sin puertos expuestos directamente — solo acceso vía nginx (172.27.0.2:8000)
+    # ports:  ← COMENTADO intencionalmente por seguridad (igual que wearia, smartjan, etc.)
+    environment:
+      - DEBUG=False
+      - ALLOWED_HOSTS=test.evidagroup.es,localhost,127.0.0.1,172.27.0.2
+    restart: unless-stopped
+    networks:
+      samiradtx_network:
+        ipv4_address: 172.27.0.2
+
+networks:
+  samiradtx_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.27.0.0/16
+          gateway: 172.27.0.1
