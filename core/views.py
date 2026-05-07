@@ -721,3 +721,13 @@ def guardar_moca(request):
             return JsonResponse({'status': 'error', 'mensaje': str(e)}, status=400)
 
     return JsonResponse({'status': 'error', 'mensaje': 'Método no permitido'}, status=405)
+
+@login_required
+def jugar_SecuenciaMusical(request):
+    if hasattr(request.user, 'perfil'):
+        paciente = request.user.perfil
+    else:
+        # Fallback por si la relación no es directa
+        from .models import PerfilPaciente
+        paciente = PerfilPaciente.objects.get(usuario=request.user)
+    return render(request, 'core/games/cognitivo/memoria/SecuenciaMusical.html', {'nivel_inicial': paciente.nivel_cognitivo})

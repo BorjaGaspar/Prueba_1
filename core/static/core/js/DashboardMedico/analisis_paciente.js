@@ -111,8 +111,8 @@ function cargarNivel(nivel) {
     const tituloGraficaTiempos = document.getElementById('titulo-grafica-tiempos');
     const overlayTiemposDisabled = document.getElementById('overlay-tiempos-disabled');
 
-    // Si el juego es VASOS, atenuamos las tarjetas y mostramos los avisos
-    if (juegoActivo === 'VASOS') {
+    // Si el juego es VASOS, Encuentra la Bolita o Música y Colores atenuamos las tarjetas y mostramos los avisos
+    if (juegoActivo === 'VASOS' || juegoActivo === 'Encuentra la Bolita' || juegoActivo === 'Música y Colores') {
         // Apagar métrica superior
         tarjetaTiempoMedio.classList.replace('border-info', 'border-secondary');
         tarjetaTiempoMedio.style.opacity = '0.6';

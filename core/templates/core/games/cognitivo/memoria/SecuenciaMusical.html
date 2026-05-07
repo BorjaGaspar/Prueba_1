@@ -1,0 +1,127 @@
+{% extends 'core/layouts/base_private.html' %}
+{% load static %} 
+
+{% block content %}
+<style>
+    .boton-ritmo { 
+        transition: all 0.2s; 
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        border: 4px solid rgba(0,0,0,0.1) !important; 
+    }
+    #contenedor-tu-juego { min-height: 150px; }
+    #mensaje-turno {
+        height: 40px; 
+        margin-top: 2rem !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .carita-btn { font-size: 3rem; cursor: pointer; transition: transform 0.2s; border: none; background: none; filter: grayscale(100%); opacity: 0.5; }
+    .carita-btn.active { filter: grayscale(0%); opacity: 1; transform: scale(1.2); }
+    .btn-prom-dif { font-size: 1.2rem; border-radius: 15px; transition: 0.3s; }
+    .btn-prom-dif.active { background-color: #0d6efd; color: white; }
+</style>
+
+<div class="container-fluid py-2 d-flex flex-column" style="height: 92vh; max-height: 95vh;"> 
+    
+    <div id="pantalla-instrucciones" class="card shadow-lg border-0 mx-auto w-100 my-auto" style="max-width: 800px; border-radius: 20px;">
+        <div class="card-body p-5 text-center">
+            <button id="btn-leer-instrucciones" class="btn btn-primary rounded-circle mb-4 shadow" style="width: 80px; height: 80px;">
+                <i class="bi bi-volume-up-fill" style="font-size: 2.5rem;"></i>
+            </button>
+            <h2 class="fw-bold mb-4 display-6 text-dark">Música y Colores</h2>
+            <div id="texto-instrucciones" class="fs-4 text-muted mb-5 px-3" style="line-height: 1.6;">
+                Debes completar 5 secuencias correctas memorizando el orden de los sonidos y colores. <br><br>
+                <strong>Acierto:</strong> +200 puntos | <strong>Fallo:</strong> -100 puntos.
+            </div>
+            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                <button class="btn btn-light btn-lg px-4 py-3 rounded-pill border shadow-sm fw-bold text-secondary" data-bs-toggle="modal" data-bs-target="#modalVideoAyuda">
+                    <i class="bi bi-camera-video me-2 fs-5"></i> No lo entiendo muy bien
+                </button>
+                <button class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow fw-bold text-white" onclick="comenzarJuego()" style="font-size: 1.2rem;">
+                    <i class="bi bi-play-fill me-2 fs-4"></i> ¡Empezar a Jugar!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pantalla-juego" style="display: none; height: 100%; flex-direction: column;">
+        <div class="d-flex justify-content-between align-items-center mb-1 px-3" style="max-width: 1200px; margin: 0 auto; width: 100%;">
+            <div>
+                <h4 class="fw-bold mb-0">Música y Colores</h4>
+                <p class="text-muted mb-0 small">Ronda: <span id="display-ronda" class="fw-bold text-primary">1</span>/5</p>
+            </div>
+            <div class="d-flex gap-3 text-end">
+                <div>
+                    <span class="text-muted small">Nivel</span>
+                    <div class="fw-bold text-primary h5 mb-0" id="display-nivel">{{ nivel_inicial }}</div>
+                </div>
+                <div>
+                    <span class="text-muted small">Puntos</span>
+                    <div class="fw-bold text-success h5 mb-0" id="score">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mx-auto d-flex justify-content-center align-items-center flex-grow-1" style="width: 100%; max-width: 1300px; background-color: #fff;"> 
+            <div class="card-body p-1 text-center w-100 h-100 d-flex flex-column justify-content-center">
+                <div id="contenedor-tu-juego" class="d-flex justify-content-center align-items-center gap-3 flex-wrap"></div>
+                <div id="mensaje-turno" class="h3 fw-bold text-secondary">Atención...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalAutopercepcion" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-body p-5 text-center">
+                <h3 class="fw-bold mb-4">¿Cómo te has sentido?</h3>
+                <h5 class="fw-bold text-secondary mb-3">¿Qué tan difícil te ha parecido el ejercicio?</h5>
+                <div class="d-flex justify-content-center gap-2 mb-5 flex-wrap">
+                    <button class="btn btn-outline-success btn-prom-dif fw-bold" onclick="seleccionarDificultad(1, this)">Muy Fácil</button>
+                    <button class="btn btn-outline-info btn-prom-dif fw-bold" onclick="seleccionarDificultad(2, this)">Fácil</button>
+                    <button class="btn btn-outline-warning btn-prom-dif fw-bold" onclick="seleccionarDificultad(3, this)">Normal</button>
+                    <button class="btn btn-outline-danger btn-prom-dif fw-bold opacity-75" onclick="seleccionarDificultad(4, this)">Difícil</button>
+                    <button class="btn btn-outline-danger btn-prom-dif fw-bold" onclick="seleccionarDificultad(5, this)">Muy Difícil</button>
+                </div>
+                <h5 class="fw-bold text-secondary mb-3">Mi estado de ánimo es...</h5>
+                <div class="d-flex justify-content-center gap-3 mb-5">
+                    <button class="carita-btn" onclick="seleccionarAnimo(1, this)">😢</button>
+                    <button class="carita-btn" onclick="seleccionarAnimo(2, this)">🙁</button>
+                    <button class="carita-btn" onclick="seleccionarAnimo(3, this)">😐</button>
+                    <button class="carita-btn" onclick="seleccionarAnimo(4, this)">🙂</button>
+                    <button class="carita-btn" onclick="seleccionarAnimo(5, this)">😄</button>
+                </div>
+                <button id="btn-continuar-prom" class="btn btn-success btn-lg w-100 rounded-pill fw-bold" disabled onclick="enviarAutopercepcion()">Ver Resultados</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalFinJuego" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center p-4 rounded-4 border-0 shadow-lg">
+            <div class="modal-header border-0 justify-content-center">
+                <h2 class="modal-title fw-bold">¡Resumen de la Sesión!</h2>
+            </div>
+            <div class="modal-body">
+                <div id="medalla-icon" class="display-1 mb-3">🏅</div>
+                <h3 id="mensaje-final">¡Buen trabajo!</h3>
+                <p class="lead">Puntuación Final: <strong id="puntos-finales" class="text-primary">0</strong></p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <a href="{% url 'juegos' %}" class="btn btn-light rounded-pill px-4 border fw-bold">Volver al Menú</a>
+                <button onclick="location.reload()" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Jugar otra vez</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const NIVEL_DEL_SISTEMA = {{ nivel_inicial }};
+    const TOKEN_DJANGO = '{{ csrf_token }}';
+</script>
+<script src="{% static 'core/js/games/cognitivo/memoria/SecuenciaMusical.js' %}"></script>
+{% endblock %}
