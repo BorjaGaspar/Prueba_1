@@ -1,4 +1,7 @@
 venv/
-*.pyc
 __pycache__/
-.DS_Store
+*.pyc
+.git/
+db.sqlite3
+*.log
+.env
