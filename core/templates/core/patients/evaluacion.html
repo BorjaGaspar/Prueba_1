@@ -1,6 +1,404 @@
 {% extends 'core/layouts/base_private.html' %}
 {% load static %}
-{% block sidebar %}{% endblock %}
+{% block sidebar %}
+<style>
+    /* === LAYOUT: sin sidebar, centrado === */
+    main.lg\:ml-80 {
+        margin-left: 0 !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+    }
+
+    /* ================================================================
+       ESTÉTICA SAMIRA DTx — Referencia de diseño
+       Fondo claro · Tarjeta negra · Acento dorado · Lexend Black
+       ================================================================ */
+
+    /* --- Página: fondo claro con grid sutil --- */
+    .col-12.bg-light.min-vh-100 {
+        background-color: #f0f2f5 !important;
+        background-image:
+            linear-gradient(to right, #e5e7eb 1px, transparent 1px),
+            linear-gradient(to bottom, #e5e7eb 1px, transparent 1px) !important;
+        background-size: 4rem 4rem !important;
+    }
+
+    /* --- Tarjeta principal: NEGRA con borde dorado --- */
+    .card {
+        background-color: #000000 !important;
+        border: 2px solid #FFD700 !important;
+        border-radius: 32px !important;
+        box-shadow: 0 20px 40px -15px rgba(0,0,0,0.3) !important;
+    }
+    .card-body {
+        background-color: #000000 !important;
+    }
+
+    /* --- Barra de progreso (FUERA de la card, fondo claro) --- */
+    #contenedor-progreso h5 {
+        color: #000000 !important;
+        font-weight: 900 !important;
+        font-size: 1.8rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: -0.02em !important;
+    }
+    #contenedor-progreso .text-muted {
+        color: #000000 !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.1em !important;
+    }
+    .progress {
+        background-color: #e5e7eb !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 9999px !important;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1) !important;
+    }
+    .progress-bar {
+        background: linear-gradient(to right, #FFD700, #F6E05E) !important;
+        box-shadow: 0 0 10px rgba(255,215,0,0.5) !important;
+    }
+
+    /* --- Tipografía DENTRO de la card (fondo negro) --- */
+    .card h1, .card h2, .card h3 {
+        color: #FFD700 !important;
+        font-weight: 900 !important;
+        text-transform: uppercase !important;
+        letter-spacing: -0.02em !important;
+    }
+    .card h1 { font-size: 2.8rem !important; }
+    .card h2 { font-size: 2.2rem !important; }
+    .card h3 { font-size: 1.8rem !important; }
+    .card h4 {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        font-size: 1.5rem !important;
+    }
+    .card h5 {
+        color: #FFD700 !important;
+        font-weight: 700 !important;
+    }
+    .card .text-dark  { color: #FFD700 !important; }
+    .card .text-muted { color: #ffffff !important; }
+    .card .text-primary { color: #FFD700 !important; }
+    .card .text-success { color: #FFD700 !important; }
+    .card .text-secondary { color: #d1d5db !important; }
+    .card .text-danger { color: #ef4444 !important; }
+    .card .text-info { color: #7DD3FC !important; }
+    .card .text-warning { color: #FFD700 !important; }
+    .card .lead { color: #ffffff !important; font-size: 1.4rem !important; }
+    .card p { color: #ffffff; font-size: 1.1rem; line-height: 1.6; }
+    .card strong { color: #FFD700 !important; }
+    .card .form-label { color: #FFD700 !important; font-weight: 700 !important; }
+    .card .form-text { color: #999 !important; }
+    .card .small { color: #ccc !important; }
+    .card .fs-5 { font-size: 1.25rem !important; color: #fff; }
+
+    /* --- Fondos DENTRO de la card --- */
+    .card .bg-white { background-color: #111111 !important; }
+    .card .bg-light {
+        background-color: #111111 !important;
+        border-color: #333 !important;
+    }
+    .card .bg-success-subtle { background-color: #1a1a00 !important; }
+    .card .bg-light-subtle { background-color: #111111 !important; }
+
+    /* --- Icono de la intro (clipboard) --- */
+    .card .bg-success-subtle.rounded-circle {
+        background: linear-gradient(to bottom right, #FFD700, #F6E05E) !important;
+        border: none !important;
+        filter: drop-shadow(0 0 10px rgba(255,215,0,0.8));
+    }
+    .card .bg-success-subtle.rounded-circle i { color: #000 !important; }
+
+    /* --- Botón altavoz (🔊) --- */
+    .card .btn-altavoz,
+    .card .btn-light.btn-altavoz {
+        background: linear-gradient(to bottom right, #FFD700, #F6E05E) !important;
+        border: 1px solid #F6E05E !important;
+        border-radius: 1rem !important;
+        box-shadow: 0 8px 16px rgba(255,215,0,0.4) !important;
+    }
+    .card .btn-altavoz i { color: #000 !important; }
+
+    /* --- Botones CTA (success, primary) --- */
+    .card .btn-success,
+    .card .btn-primary {
+        background: linear-gradient(to right, #FFD700, #F6E05E) !important;
+        border: 1px solid #F6E05E !important;
+        color: #000 !important;
+        font-weight: 900 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
+        border-radius: 1rem !important;
+        box-shadow: 0 8px 20px rgba(255,215,0,0.4) !important;
+        font-size: 1.15rem !important;
+    }
+    .card .btn-success:hover,
+    .card .btn-primary:hover {
+        transform: scale(1.02) !important;
+        filter: brightness(1.05);
+    }
+
+    /* --- Botón error / reiniciar --- */
+    .card .btn-outline-danger {
+        background: rgba(255,255,255,0.05) !important;
+        backdrop-filter: blur(8px);
+        border: 2px solid rgba(239,68,68,0.5) !important;
+        color: #ef4444 !important;
+        border-radius: 1rem !important;
+        font-weight: 900 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.08em !important;
+    }
+    .card .btn-outline-danger:hover {
+        background-color: #ef4444 !important;
+        color: #fff !important;
+        box-shadow: 0 0 20px rgba(239,68,68,0.4) !important;
+    }
+
+    /* --- Botón outline-primary --- */
+    .card .btn-outline-primary {
+        background: rgba(255,255,255,0.05) !important;
+        border: 2px solid #FFD700 !important;
+        color: #FFD700 !important;
+        border-radius: 1rem !important;
+        font-weight: 900 !important;
+    }
+    .card .btn-outline-primary:hover {
+        background-color: #FFD700 !important;
+        color: #000 !important;
+    }
+
+    /* --- Botón Anterior --- */
+    #btn-atras {
+        background: rgba(255,255,255,0.8) !important;
+        backdrop-filter: blur(8px);
+        color: #000 !important;
+        border: 2px solid #d1d5db !important;
+        border-radius: 1rem !important;
+        font-weight: 900 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
+    }
+    #btn-atras:hover {
+        background-color: #fff !important;
+        border-color: #fff !important;
+    }
+
+    /* --- Botón Siguiente --- */
+    #btn-siguiente {
+        background: linear-gradient(to right, #FFD700, #F6E05E) !important;
+        color: #000 !important;
+        border: 1px solid #F6E05E !important;
+        border-radius: 1rem !important;
+        font-weight: 900 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.15em !important;
+        box-shadow: 0 8px 20px rgba(255,215,0,0.4) !important;
+    }
+
+    /* --- Botón micrófono (rojo semántico) --- */
+    .card button.btn-danger.rounded-circle {
+        border: 3px solid #ef4444 !important;
+        box-shadow: 0 0 20px rgba(239,68,68,0.3) !important;
+    }
+
+    /* --- Botón FINALIZAR EVALUACIÓN --- */
+    .card .btn-danger.btn-lg.w-100 {
+        background: linear-gradient(to right, #FFD700, #F6E05E) !important;
+        border: 1px solid #F6E05E !important;
+        color: #000 !important;
+        font-weight: 900 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
+        border-radius: 1rem !important;
+        box-shadow: 0 8px 20px rgba(255,215,0,0.4) !important;
+    }
+
+    /* --- Botón play (audio) --- */
+    .card .btn-warning {
+        background: linear-gradient(to bottom right, #FFD700, #F6E05E) !important;
+        border: 1px solid #F6E05E !important;
+        box-shadow: 0 8px 16px rgba(255,215,0,0.4) !important;
+    }
+    .card .btn-warning i { color: #000 !important; }
+
+    /* --- Inputs y Selects --- */
+    .card .form-control,
+    .card .form-control-lg {
+        background-color: #111 !important;
+        color: #fff !important;
+        border: 2px solid #FFD700 !important;
+        border-radius: 1rem !important;
+        font-size: 1.3rem !important;
+    }
+    .card .form-control::placeholder { color: #666 !important; }
+    .card .form-select,
+    .card .form-select-lg {
+        background-color: #111 !important;
+        color: #fff !important;
+        border: 2px solid #FFD700 !important;
+        border-radius: 1rem !important;
+        font-size: 1.2rem !important;
+    }
+
+    /* --- Cajas de palabras (Memoria) --- */
+    .card .palabra-box {
+        background-color: #111 !important;
+        border-color: #FFD700 !important;
+        color: #FFD700 !important;
+        border-radius: 0.75rem !important;
+        box-shadow: 0 0 15px rgba(255,215,0,0.3) !important;
+        font-size: 1.6rem !important;
+    }
+
+    /* --- Teclado numérico --- */
+    .card .btn-outline-dark {
+        background-color: #111 !important;
+        border: 2px solid #FFD700 !important;
+        color: #FFD700 !important;
+        border-radius: 0.75rem !important;
+        font-weight: 900 !important;
+        font-size: 1.6rem !important;
+    }
+    .card .btn-outline-dark:hover {
+        background-color: #FFD700 !important;
+        color: #000 !important;
+    }
+    /* Borrar en teclado */
+    .card .btn-danger:not(.rounded-circle):not(.btn-lg) {
+        background-color: #300 !important;
+        border-color: #ef4444 !important;
+        border-radius: 0.75rem !important;
+    }
+    /* Confirmar (✓) en teclado */
+    .card .btn-success:not(.btn-lg):not(.rounded-pill) {
+        background: linear-gradient(to right, #FFD700, #F6E05E) !important;
+    }
+    #btn-confirmar-resta {
+        background: linear-gradient(to right, #FFD700, #F6E05E) !important;
+        color: #000 !important;
+        border: 1px solid #F6E05E !important;
+        border-radius: 1rem !important;
+        font-weight: 900 !important;
+    }
+
+    /* --- Displays numéricos (Atención) --- */
+    #display-numeros-dir, #display-numeros-inv {
+        background-color: #111 !important;
+        border-color: #FFD700 !important;
+        color: #FFD700 !important;
+        border-radius: 0.75rem !important;
+    }
+    #display-letra {
+        background-color: #111 !important;
+        border-color: #FFD700 !important;
+        color: #FFD700 !important;
+    }
+    #display-numero-actual-resta { color: #FFD700 !important; }
+
+    /* --- Cajas de restas --- */
+    [id^="caja-resta-"] {
+        background-color: #111 !important;
+        border-color: #FFD700 !important;
+        color: #FFD700 !important;
+        border-radius: 0.5rem !important;
+    }
+
+    /* --- Canvas (dibujo): mantener blanco para trazos --- */
+    #contenedor-canvas,
+    #contenedor-canvas-cubo,
+    #contenedor-canvas-reloj {
+        background-color: #ffffff !important;
+        border: 3px solid #FFD700 !important;
+        border-radius: 16px !important;
+        box-shadow: 0 0 30px rgba(255,215,0,0.15) !important;
+    }
+
+    /* Cubo SVG ejemplo */
+    .card .d-inline-flex.bg-light.border.rounded {
+        background-color: #fff !important;
+        border-color: #FFD700 !important;
+    }
+
+    /* --- Bordes genéricos dentro de card --- */
+    .card .border-primary { border-color: #FFD700 !important; }
+    .card .border-success { border-color: #FFD700 !important; }
+    .card .border-dark { border-color: #FFD700 !important; }
+    .card .border-top { border-color: rgba(255,255,255,0.2) !important; }
+    .card .border, .card .border-2 { border-color: #333 !important; }
+    .card hr { border-color: rgba(255,255,255,0.2) !important; }
+
+    /* --- Badges --- */
+    .card .badge.bg-secondary {
+        background: linear-gradient(to right, #FFD700, #F6E05E) !important;
+        color: #000 !important;
+        font-weight: 900 !important;
+        border-radius: 0.5rem !important;
+    }
+
+    /* --- Alertas --- */
+    .card .alert-info {
+        background-color: #111 !important;
+        border: 2px solid #FFD700 !important;
+        color: #fff !important;
+        border-radius: 1rem !important;
+    }
+
+    /* --- Spinner IA --- */
+    .card .spinner-border.text-primary { color: #FFD700 !important; }
+
+    /* --- Resultados transcripción --- */
+    .card [id^="resultado-"] {
+        background-color: rgba(255,215,0,0.08) !important;
+        border-color: #FFD700 !important;
+        border-radius: 1rem !important;
+    }
+
+    /* --- Imagen animales (mantener visible) --- */
+    .card #img-animal {
+        border-color: #FFD700 !important;
+    }
+
+    /* --- Paso 12 (Completado) --- */
+    #paso-12 .bg-light {
+        background: linear-gradient(135deg, #111, #1a1a1a) !important;
+        border: 2px solid #FFD700 !important;
+        border-radius: 2rem !important;
+    }
+    #paso-12 .display-1 { font-size: 5rem !important; }
+
+    /* --- DevBypass (discreto, fuera de la card) --- */
+    .card-body ~ .mt-4 .btn-outline-secondary {
+        border-color: #d1d5db !important;
+        color: #9ca3af !important;
+        border-radius: 0.75rem !important;
+    }
+    #devMode .card {
+        background-color: #f3f4f6 !important;
+        border-color: #d1d5db !important;
+    }
+    #devMode .card .text-muted { color: #6b7280 !important; }
+
+    /* --- Caja letra F (Fluidez Verbal) --- */
+    .card .bg-warning.text-dark {
+        background-color: #000 !important;
+        color: #FFD700 !important;
+        border-color: #FFD700 !important;
+        box-shadow: 0 0 30px rgba(255,215,0,0.5) !important;
+    }
+
+    /* --- Alert reglas (Fluidez) --- */
+    .card .alert-warning {
+        background-color: #111 !important;
+        border: 2px solid #FFD700 !important;
+        color: #fff !important;
+        border-radius: 1rem !important;
+    }
+    .card .alert-warning strong { color: #FFD700 !important; }
+    .card .alert-warning li { color: #ddd !important; }
+</style>
+{% endblock %}
 
 {% block main_class %}col-12 bg-light min-vh-100{% endblock %}
 
@@ -310,7 +708,8 @@
                                 <input type="text" id="input-animal"
                                     class="form-control form-control-lg text-center fw-bold text-primary shadow-sm mb-4"
                                     style="font-size: 1.8rem; border-width: 3px;" placeholder="Escriba aquí..."
-                                    autocomplete="off">
+                                    autocomplete="off"
+                                    oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')">
 
                                 <button id="btn-siguiente-animal" onclick="siguienteAnimal()"
                                     class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm fw-bold">
@@ -1266,22 +1665,25 @@
 </div>
 
 <style>
+    /* === Neon glow effects === */
+    .neon-glow { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)); }
+    .neon-glow-white { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)); }
+
     .btn-altavoz {
         transition: transform 0.1s ease, box-shadow 0.2s ease;
     }
-
     .btn-altavoz:active {
         transform: scale(0.9);
     }
-
     .btn-altavoz:hover {
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+        box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4) !important;
+        transform: scale(1.05);
     }
 
     .border-dashed {
         border-style: dashed !important;
         border-width: 2px !important;
-        border-color: #dee2e6 !important;
+        border-color: #FFD700 !important;
     }
 
     .paso-test {
@@ -1298,62 +1700,71 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 3px solid transparent;
+        border: 2px solid #fff;
+        font-weight: 900;
+    }
+    .circulo-ejemplo.bg-primary {
+        background: linear-gradient(to bottom right, #FFD700, #F6E05E) !important;
+        color: #000 !important;
+        box-shadow: 0 0 15px rgba(255,215,0,0.8);
+    }
+    .circulo-ejemplo.bg-warning {
+        background-color: #111 !important;
+        color: #FFD700 !important;
+        border: 2px solid #FFD700 !important;
+        box-shadow: 0 0 15px rgba(255,215,0,0.5);
     }
 
+    /* --- Nodos del Trail Making (circulo-moca) --- */
     .circulo-moca {
-        width: 45px;
-        height: 45px;
-        background-color: white;
-        border: 3px solid #6c757d;
-        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        background-color: #111;
+        border: 2px solid #FFD700;
+        border-radius: 0.75rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
-        font-size: 1.3rem;
+        font-weight: 900;
+        font-size: 1.4rem;
         cursor: pointer;
         position: absolute;
         transform: translate(-50%, -50%);
         transition: all 0.2s ease;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-        color: #495057;
+        box-shadow: 0 0 15px rgba(255,215,0,0.5);
+        color: #FFD700;
     }
-
     .circulo-moca:hover {
-        transform: translate(-50%, -50%) scale(1.15);
-        border-color: #0d6efd;
-        color: #0d6efd;
+        transform: translate(-50%, -50%) scale(1.1);
+        background-color: #1a1a1a;
+        border-color: #F6E05E;
+        box-shadow: 0 0 20px rgba(255,215,0,0.7);
     }
-
     .circulo-moca.seleccionado {
-        background-color: #0d6efd;
-        color: white;
-        border-color: #0d6efd;
-        box-shadow: 0 0 10px rgba(13, 110, 253, 0.5);
+        background: linear-gradient(to bottom right, #FFD700, #F6E05E);
+        color: #000;
+        border-color: #fff;
+        box-shadow: 0 0 20px rgba(255,215,0,0.8);
     }
 
     /* Animación del botón de grabar */
     @keyframes pulse-rojo {
         0% {
             transform: scale(1);
-            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
         }
-
         70% {
             transform: scale(1.05);
-            box-shadow: 0 0 0 20px rgba(220, 53, 69, 0);
+            box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
         }
-
         100% {
             transform: scale(1);
-            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
         }
     }
-
     .grabando {
         animation: pulse-rojo 1.5s infinite;
-        background-color: #bb2d3b !important;
+        background-color: #dc2626 !important;
     }
 </style>
 

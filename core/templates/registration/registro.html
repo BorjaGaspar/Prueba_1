@@ -16,7 +16,7 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold text-muted">{{ form.username.label }}</label>
                         {{ form.username }}
-                        <small class="text-muted">{{ form.username.help_text }}</small>
+                        <small class="text-muted">Obligatorio. 150 caracteres como máximo. Solo letras, dígitos y los símbolos @/./+/-/_.</small>
                     </div>
 
                     <div class="mb-3">
@@ -129,6 +129,12 @@
     // Aplicar estilo a los selectores (lado afectado, médico)
     for (var field of selects) {
         field.classList.add('form-select');
+    }
+
+    // Impedir años de escolarización negativos
+    var inputAnios = document.getElementById('id_anios_estudio');
+    if (inputAnios) {
+        inputAnios.setAttribute('min', '0');
     }
 
     // 2. SCRIPT PARA OCULTAR/MOSTRAR SECCIÓN PACIENTE
