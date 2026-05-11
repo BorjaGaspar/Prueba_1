@@ -401,6 +401,19 @@ def jugar_prueba_voz(request):
     return render(request, 'core/games/Lenguaje/juego_prueba_voz.html')
 
 
+@login_required
+def jugar_lista_compra(request):
+    perfil = request.user.perfil
+    # Usamos nivel_cognitivo como base para este juego de memoria
+    nivel_actual = perfil.nivel_cognitivo
+    
+    context = {
+        'nivel_inicial': nivel_actual
+    }
+    
+    return render(request, 'core/games/cognitivo/memoria/ListaCompra.html', context)
+
+
 # =========================================================
 # FUNCIONES API (GUARDADO Y WHISPER)
 # =========================================================

@@ -1,0 +1,136 @@
+{% extends 'core/layouts/base_private.html' %}
+{% load static %} 
+
+{% block content %}
+
+<style>
+    .carita-btn { font-size: 3rem; cursor: pointer; transition: transform 0.2s; border: none; background: none; filter: grayscale(100%); opacity: 0.5; }
+    .carita-btn.active { filter: grayscale(0%); opacity: 1; transform: scale(1.2); }
+    .btn-prom-dif { font-size: 1rem; border-radius: 15px; transition: 0.3s; flex: 1; }
+    .btn-prom-dif.active { background-color: #0d6efd; color: white; }
+
+    .libreta {
+        background-color: #fdfaf0;
+        background-image: linear-gradient(#e0d8c3 1px, transparent 1px);
+        background-size: 100% 2.5rem;
+        padding: 2rem 2rem 2rem 4.5rem;
+        min-height: 400px;
+        border-left: 40px solid #cc4444;
+        position: relative;
+        font-family: 'Indie Flower', cursive;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        text-align: left;
+        border-radius: 5px;
+    }
+
+    .item-lista { list-style: none; font-size: 2.2rem; line-height: 2.5rem; color: #2c3e50; }
+    .anotacion { border: 2px solid #2c3e50; background: #fff; padding: 10px 20px; margin: 8px; cursor: pointer; display: inline-block; font-size: 1.8rem; font-family: 'Indie Flower', cursive; transition: all 0.2s; box-shadow: 3px 3px 0px rgba(0,0,0,0.1); }
+    #timer-visual { height: 6px; background: #cc4444; width: 0%; margin-bottom: 15px; border-radius: 3px; }
+    #mensaje-turno { height: 50px; }
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+
+<div class="container-fluid py-2 d-flex flex-column" style="height: 92vh; max-height: 95vh;"> 
+    
+    <div id="pantalla-instrucciones" class="card shadow-lg border-0 mx-auto my-auto w-100" style="max-width: 800px; border-radius: 20px;">
+        <div class="card-body p-5 text-center">
+            <button id="btn-leer-instrucciones" class="btn btn-primary rounded-circle mb-4 shadow" style="width: 80px; height: 80px;">
+                <i class="bi bi-volume-up-fill" style="font-size: 2.5rem;"></i>
+            </button>
+            <h2 class="fw-bold mb-4 display-6 text-dark">La Lista de la Compra</h2>
+            <div id="texto-instrucciones" class="fs-4 text-muted mb-5 px-3" style="line-height: 1.6;">
+                Memoriza los objetos que aparecen en la libreta. <br>
+                Cuando desaparezcan, recuérdalos en orden. <br><br>
+                <strong>Acierto:</strong> +200 puntos | <strong>Fallo:</strong> -200 puntos.
+            </div>
+            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                <button class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow fw-bold text-white" onclick="comenzarJuego()" style="font-size: 1.2rem;">
+                    <i class="bi bi-play-fill me-2 fs-4"></i> ¡Empezar a Jugar!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pantalla-juego" style="display: none; height: 100%; flex-direction: column;">
+        <div class="d-flex justify-content-between align-items-center mb-1 px-3" style="max-width: 1200px; margin: 0 auto; width: 100%;">
+            <div>
+                <h4 class="fw-bold mb-0">La Lista de la Compra</h4>
+                <p class="text-muted mb-0 small">Nivel: <span id="display-nivel" class="fw-bold text-primary">{{ nivel_inicial }}</span> | Ronda: <span id="display-ronda" class="fw-bold text-primary">1</span>/5</p>
+            </div>
+            <div class="d-flex gap-3 text-end">
+                <div>
+                    <span class="text-muted small">Puntos</span>
+                    <div class="fw-bold text-success h5 mb-0" id="score">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mx-auto d-flex justify-content-center align-items-center flex-grow-1" style="width: 100%; max-width: 1200px; background-color: #fff;"> 
+            <div class="card-body text-center w-100 d-flex flex-column justify-content-center">
+                <div class="libreta mx-auto w-100" style="max-width: 650px;">
+                    <div id="timer-visual"></div>
+                    <div id="contenedor-memorizar">
+                        <ul id="lista-objetos" class="p-0"></ul>
+                    </div>
+                    <div id="contenedor-juego" class="d-none">
+                        <div id="botones-opciones"></div>
+                    </div>
+                </div>
+                <div id="mensaje-turno" class="h3 fw-bold text-secondary mt-4">Atención...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Autopercepción -->
+<div class="modal fade" id="modalAutopercepcion" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-body p-5 text-center">
+                <h3 class="fw-bold mb-4">¿Cómo te has sentido?</h3>
+                <div class="d-flex justify-content-center gap-3 mb-5">
+                    <button class="carita-btn btn-prom-ani" onclick="seleccionarAnimo(1, this)">😢</button>
+                    <button class="carita-btn btn-prom-ani" onclick="seleccionarAnimo(2, this)">🙁</button>
+                    <button class="carita-btn btn-prom-ani" onclick="seleccionarAnimo(3, this)">😐</button>
+                    <button class="carita-btn btn-prom-ani" onclick="seleccionarAnimo(4, this)">🙂</button>
+                    <button class="carita-btn btn-prom-ani" onclick="seleccionarAnimo(5, this)">😄</button>
+                </div>
+                <h4 class="fw-bold mb-3">¿Te ha parecido difícil?</h4>
+                <div class="d-flex justify-content-center gap-2 mb-4">
+                    <button class="btn btn-outline-primary btn-prom-dif" onclick="seleccionarDificultad(1, this)">Muy Fácil</button>
+                    <button class="btn btn-outline-primary btn-prom-dif" onclick="seleccionarDificultad(2, this)">Fácil</button>
+                    <button class="btn btn-outline-primary btn-prom-dif" onclick="seleccionarDificultad(3, this)">Normal</button>
+                    <button class="btn btn-outline-primary btn-prom-dif" onclick="seleccionarDificultad(4, this)">Difícil</button>
+                    <button class="btn btn-outline-primary btn-prom-dif" onclick="seleccionarDificultad(5, this)">Muy Difícil</button>
+                </div>
+                <button id="btn-continuar-prom" class="btn btn-success btn-lg w-100 rounded-pill fw-bold" disabled onclick="enviarAutopercepcion()">Ver Resultados</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Fin de Juego -->
+<div class="modal fade" id="modalFinJuego" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-body p-5">
+                <div id="medalla-icon" style="font-size: 5rem;"></div>
+                <h2 class="fw-bold mb-2">¡Juego Terminado!</h2>
+                <h4 id="mensaje-final" class="mb-4"></h4>
+                <div class="display-4 fw-bold text-primary mb-2"><span id="puntos-finales">0</span></div>
+                <p class="text-muted mb-4">Puntos totales conseguidos</p>
+                <button class="btn btn-primary btn-lg w-100 rounded-pill" onclick="location.reload()">Finalizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const NIVEL_DEL_SISTEMA = {{ nivel_inicial }};
+    const TOKEN_DJANGO = '{{ csrf_token }}';
+</script>
+
+<script src="{% static 'core/js/games/cognitivo/memoria/ListaCompra.js' %}"></script>
+
+{% endblock %}
