@@ -162,7 +162,11 @@
                 </div>
                 {% if request.user.perfil.notificaciones_sin_leer > 0 or request.user.perfilpaciente.notificaciones_sin_leer > 0 %}
                     <span class="bg-[#ba1a1a] text-white border-2 border-white rounded-full px-3 py-1 text-base font-black shadow-sm">
-                        {{ request.user.perfil.notificaciones_sin_leer|default:request.user.perfilpaciente.notificaciones_sin_leer }}
+                        {% if request.user.perfil.notificaciones_sin_leer > 0 %}
+                            {{ request.user.perfil.notificaciones_sin_leer }}
+                        {% else %}
+                            {{ request.user.perfilpaciente.notificaciones_sin_leer }}
+                        {% endif %}
                     </span>
                 {% endif %}
             </a>
