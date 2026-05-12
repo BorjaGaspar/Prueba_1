@@ -28,7 +28,36 @@ class PerfilPaciente(models.Model):
     ]
     
     lado_afectado = models.CharField(max_length=20, choices=OPCIONES_LADO, null=True, blank=True)
-    
+
+    # --- DATOS CLÍNICOS PARA MODELO ML ---
+    OPCIONES_SEXO = [
+        ('M', 'Masculino'),
+        ('F', 'Femenino'),
+    ]
+    sexo = models.CharField(max_length=1, choices=OPCIONES_SEXO, null=True, blank=True, verbose_name="Sexo")
+
+    meses_desde_ictus = models.PositiveIntegerField(null=True, blank=True, verbose_name="Meses desde el ictus")
+
+    OPCIONES_TIPO_ICTUS = [
+        ('Isquemico', 'Isquémico'),
+        ('Hemorragico', 'Hemorrágico'),
+    ]
+    tipo_ictus = models.CharField(max_length=15, choices=OPCIONES_TIPO_ICTUS, null=True, blank=True, verbose_name="Tipo de ictus")
+
+    OPCIONES_HEMISFERIO = [
+        ('Izquierdo', 'Izquierdo'),
+        ('Derecho', 'Derecho'),
+        ('Bilateral', 'Bilateral'),
+        ('Ninguno', 'Ninguno'),
+    ]
+    hemisferio_afectado = models.CharField(max_length=15, choices=OPCIONES_HEMISFERIO, null=True, blank=True, verbose_name="Hemisferio afectado")
+
+    OPCIONES_HEMIPARESIA = [
+        ('Si', 'Sí'),
+        ('No', 'No'),
+    ]
+    hemiparesia_dominante = models.CharField(max_length=2, choices=OPCIONES_HEMIPARESIA, null=True, blank=True, verbose_name="Hemiparesia dominante")
+
     # --- ESTADO DE EVALUACIÓN ---
     test_completado = models.BooleanField(default=False)
     fecha_ultima_evaluacion = models.DateTimeField(null=True, blank=True)
