@@ -3,154 +3,443 @@
 {% block title %}Registro | SamiraDTx{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center mt-4 mb-5">
-    <div class="col-md-10 col-lg-10">
-        <div class="card shadow-sm border-0 rounded-4">
-            <div class="card-body p-5">
+<!-- Lexend Font + Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
-                <h2 class="text-center mb-4 fw-bold text-success">Crear Cuenta</h2>
+<style>
+    /* === REGISTRO SAMIRA DTx — Glassmorphism Theme === */
+    .reg-wrapper {
+        font-family: 'Lexend', sans-serif;
+        background-color: #f8f9fa;
+        position: relative;
+        overflow: hidden;
+        min-height: 100vh;
+        padding: 2.5rem 0 4rem;
+    }
 
-                <form method="post">
-                    {% csrf_token %}
+    /* --- Decorative blobs --- */
+    .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        pointer-events: none;
+        z-index: 0;
+    }
+    .blob-1 {
+        width: 22rem; height: 22rem;
+        background: rgba(119, 218, 159, 0.30);
+        top: -5rem; right: -5rem;
+    }
+    .blob-2 {
+        width: 18rem; height: 18rem;
+        background: rgba(177, 197, 255, 0.40);
+        top: 35%; left: -4rem;
+    }
+    .blob-3 {
+        width: 20rem; height: 20rem;
+        background: rgba(147, 247, 186, 0.20);
+        bottom: -3rem; right: 20%;
+    }
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold text-muted">{{ form.username.label }}</label>
+    /* --- Glass panel --- */
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1.5px solid rgba(255, 255, 255, 0.4);
+        border-radius: 1.5rem;
+        padding: 1.75rem;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        margin-bottom: 2rem;
+    }
+
+    /* --- Section header --- */
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .section-header .material-symbols-outlined {
+        font-size: 1.75rem;
+        color: #006c40;
+        font-variation-settings: 'FILL' 1;
+    }
+    .section-header h2 {
+        font-family: 'Lexend', sans-serif;
+        font-size: 1.55rem;
+        font-weight: 600;
+        color: #191c1d;
+        margin: 0;
+    }
+
+    /* --- Page title --- */
+    .reg-title {
+        font-family: 'Lexend', sans-serif;
+        font-weight: 600;
+        font-size: 2.4rem;
+        color: #006c40;
+    }
+    .reg-subtitle {
+        font-family: 'Lexend', sans-serif;
+        font-size: 1.15rem;
+        color: #526069;
+    }
+
+    /* --- Labels --- */
+    .reg-label {
+        font-family: 'Lexend', sans-serif;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #3e4941;
+        letter-spacing: 0.02em;
+        margin-bottom: 0.35rem;
+    }
+
+    /* --- Pill inputs / selects --- */
+    .reg-wrapper input.form-control,
+    .reg-wrapper select.form-select,
+    .reg-wrapper input[type="text"],
+    .reg-wrapper input[type="email"],
+    .reg-wrapper input[type="number"],
+    .reg-wrapper input[type="password"] {
+        height: 3.5rem;
+        border-radius: 9999px !important;
+        border: 1.5px solid #bdcabe;
+        background-color: #f8f9fa;
+        padding: 0 1.5rem;
+        font-family: 'Lexend', sans-serif;
+        font-size: 1rem;
+        color: #191c1d;
+        transition: all 0.25s ease;
+        outline: none;
+    }
+    .reg-wrapper input.form-control:focus,
+    .reg-wrapper select.form-select:focus,
+    .reg-wrapper input[type="text"]:focus,
+    .reg-wrapper input[type="email"]:focus,
+    .reg-wrapper input[type="number"]:focus,
+    .reg-wrapper input[type="password"]:focus {
+        box-shadow: 0 0 15px rgba(0, 108, 64, 0.3);
+        border-color: #006c40;
+    }
+    .reg-wrapper select.form-select {
+        border-radius: 9999px !important;
+        height: 3.5rem;
+        padding: 0 1.5rem;
+        appearance: auto;
+    }
+
+    /* --- Helper text --- */
+    .reg-helper {
+        font-family: 'Lexend', sans-serif;
+        font-size: 0.78rem;
+        color: #6e7a70;
+        margin-top: 0.3rem;
+    }
+
+    /* --- Toggle Médico/Paciente (radio pills) --- */
+    .role-toggle {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+    .role-toggle label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        font-family: 'Lexend', sans-serif;
+        font-size: 1rem;
+        color: #191c1d;
+    }
+    .role-toggle input[type="checkbox"] {
+        width: 1.4rem;
+        height: 1.4rem;
+        accent-color: #006c40;
+    }
+
+    /* --- Submit button --- */
+    .btn-register {
+        height: 3.5rem;
+        border-radius: 9999px;
+        background-color: #006c40;
+        color: #fff;
+        font-family: 'Lexend', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0, 108, 64, 0.4);
+        transition: all 0.3s ease;
+        padding: 0 3rem;
+    }
+    .btn-register:hover {
+        box-shadow: 0 6px 20px rgba(0, 108, 64, 0.5);
+        transform: scale(1.02);
+        background-color: #005a35;
+        color: #fff;
+    }
+
+    /* --- Login link --- */
+    .login-link {
+        font-family: 'Lexend', sans-serif;
+        font-weight: 600;
+        color: #0056cc;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        text-decoration-thickness: 2px;
+        transition: color 0.2s;
+    }
+    .login-link:hover {
+        color: #006c40;
+    }
+
+    /* --- Error text --- */
+    .reg-error {
+        color: #ba1a1a;
+        font-size: 0.82rem;
+        margin-top: 0.25rem;
+        font-weight: 500;
+    }
+
+    /* --- Role switch panel --- */
+    .role-panel {
+        background: rgba(0, 108, 64, 0.06);
+        border-radius: 1rem;
+        padding: 1rem 1.25rem;
+        border: 1.5px solid rgba(0, 108, 64, 0.15);
+    }
+</style>
+
+<div class="reg-wrapper">
+    <!-- Decorative Blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="container position-relative" style="z-index: 1; max-width: 52rem;">
+
+        <!-- Header -->
+        <div class="text-center mb-5">
+            <h1 class="reg-title">SamiraDTx</h1>
+            <p class="reg-subtitle">Registro de Nuevo Usuario</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- ═══════ SECTION 1: Cuenta de Usuario ═══════ -->
+            <div class="glass-panel">
+                <div class="section-header">
+                    <span class="material-symbols-outlined">person</span>
+                    <h2>Cuenta de Usuario</h2>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="reg-label">{{ form.username.label }}</label>
                         {{ form.username }}
-                        <small class="text-muted">Obligatorio. 150 caracteres como máximo. Solo letras, dígitos y los símbolos @/./+/-/_.</small>
+                        <div class="reg-helper">Obligatorio. 150 caracteres como máximo. Solo letras, dígitos y los símbolos @/./+/-/_.</div>
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold text-muted">{{ form.email.label }}</label>
+                    <div class="col-md-6">
+                        <label class="reg-label">{{ form.email.label }}</label>
                         {{ form.email }}
                     </div>
+                    <div class="col-md-6">
+                        <label class="reg-label">{{ form.first_name.label }}</label>
+                        {{ form.first_name }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="reg-label">{{ form.last_name.label }}</label>
+                        {{ form.last_name }}
+                    </div>
+                </div>
+            </div>
 
-                    <hr class="my-4">
+            <!-- ═══════ ROLE SWITCH ═══════ -->
+            <div class="glass-panel">
+                <div class="section-header">
+                    <span class="material-symbols-outlined">badge</span>
+                    <h2>Rol en la Plataforma</h2>
+                </div>
+                <div class="role-panel d-flex align-items-center gap-3">
+                    {{ form.es_medico }}
+                    <label class="mb-0" for="check_es_medico" style="font-family: 'Lexend', sans-serif; font-weight: 600; cursor: pointer;">
+                        Soy Profesional de la Salud (Médico / Terapeuta)
+                    </label>
+                </div>
+            </div>
 
-                    <div class="mb-4 form-check form-switch p-3 bg-light rounded">
-                        {{ form.es_medico }}
-                        <label class="form-check-label fw-bold ms-2" for="check_es_medico">
-                            Soy Profesional de la Salud
-                        </label>
+            <!-- ═══════ SECCIÓN PACIENTE (se oculta si es médico) ═══════ -->
+            <div id="seccion_paciente">
+
+                <!-- ═══════ SECTION 2: Datos Clínicos ═══════ -->
+                <div class="glass-panel">
+                    <div class="section-header">
+                        <span class="material-symbols-outlined">monitor_heart</span>
+                        <h2>Datos Clínicos</h2>
                     </div>
 
-                    <div id="seccion_paciente">
-                        <h5 class="text-success mb-3 small text-uppercase fw-bold"><i
-                                class="bi bi-clipboard-pulse me-2"></i>Datos Clínicos</h5>
-
-                        <div class="row">
-                            <div class="col-4 mb-3">
-                                <label class="form-label small fw-bold text-muted">Edad</label>
-                                {{ form.edad }}
-                            </div>
-                            <div class="col-4 mb-3">
-                                <label class="form-label small fw-bold text-muted">Altura (cm)</label>
-                                {{ form.altura }}
-                            </div>
-                            <div class="col-4 mb-3">
-                                <label class="form-label small fw-bold text-muted">Peso (kg)</label>
-                                {{ form.peso }}
-                            </div>
+                    <div class="row g-4">
+                        <div class="col-md-3 col-6">
+                            <label class="reg-label">Edad</label>
+                            {{ form.edad }}
                         </div>
-
-                        <div class="row bg-light p-3 rounded mb-3 border">
-                            <h6 class="text-primary fw-bold mb-3">Datos para Evaluación (MoCA)</h6>
-                            <div class="col-12 mb-3">
-                                <label class="form-label small fw-bold text-muted">Años de escolarización (Ej: 12)</label>
-                                {{ form.anios_estudio }}
-                                <div class="form-text small">Primaria = 6 | ESO = 10 | Bachiller = 12 | Universidad =
-                                    16+</div>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <label class="form-label small fw-bold text-muted">¿Dónde suele estar? (Ej: Mi casa)</label>
-                                {{ form.lugar_habitual }}
-                            </div>
-                            <div class="col-6 mb-3">
-                                <label class="form-label small fw-bold text-muted">Ciudad de residencia</label>
-                                {{ form.ciudad_residencia }}
-                            </div>
+                        <div class="col-md-3 col-6">
+                            <label class="reg-label">Sexo</label>
+                            {{ form.sexo }}
                         </div>
-
-                        <div class="mb-4 p-3 border rounded bg-light-subtle">
-                            <label class="form-label fw-bold text-primary mb-1">Elige a tu Médico (Opcional)</label>
-                            {{ form.medico_selector }}
-                            <div class="form-text small">El médico podrá ver tu evolución.</div>
+                        <div class="col-md-3 col-6">
+                            <label class="reg-label">Altura (cm)</label>
+                            {{ form.altura }}
                         </div>
+                        <div class="col-md-3 col-6">
+                            <label class="reg-label">Peso (kg)</label>
+                            {{ form.peso }}
+                        </div>
+                    </div>
+                </div>
 
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted">Lado Afectado</label>
+                <!-- ═══════ SECTION 3: Datos del Ictus ═══════ -->
+                <div class="glass-panel">
+                    <div class="section-header">
+                        <span class="material-symbols-outlined">neurology</span>
+                        <h2>Detalles del Ictus</h2>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="reg-label">Tipo de ictus</label>
+                            {{ form.tipo_ictus }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="reg-label">Meses desde el ictus</label>
+                            {{ form.meses_desde_ictus }}
+                            <div class="reg-helper">Tiempo transcurrido desde el episodio.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="reg-label">Hemisferio cerebral afectado</label>
+                            {{ form.hemisferio_afectado }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="reg-label">¿Hemiparesia en lado dominante?</label>
+                            {{ form.hemiparesia_dominante }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════ SECTION 4: MoCA Contexto ═══════ -->
+                <div class="glass-panel">
+                    <div class="section-header">
+                        <span class="material-symbols-outlined">psychology</span>
+                        <h2>Evaluación MoCA — Contexto</h2>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <label class="reg-label">Años de escolarización</label>
+                            {{ form.anios_estudio }}
+                            <div class="reg-helper">Primaria = 6 | ESO = 10 | Bachiller = 12 | Universidad = 16+</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="reg-label">¿Dónde suele estar?</label>
+                            {{ form.lugar_habitual }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="reg-label">Ciudad de residencia</label>
+                            {{ form.ciudad_residencia }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════ SECTION 5: Lado Afectado + Médico ═══════ -->
+                <div class="glass-panel">
+                    <div class="section-header">
+                        <span class="material-symbols-outlined">medical_services</span>
+                        <h2>Asignación Clínica</h2>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="reg-label">Lado corporal afectado</label>
                             {{ form.lado_afectado }}
                         </div>
-                    </div>
-
-                    <hr class="my-4">
-
-                    {% for field in form %}
-                    {% if field.name not in 'username,email,es_medico,edad,altura,peso,lado_afectado,medico_selector,anios_estudio,lugar_habitual,ciudad_residencia' %}
-                    <div class="mb-3">
-                        <label class="form-label fw-bold text-muted">{{ field.label }}</label>
-                        <div class="input-group">
-                            {{ field }}
+                        <div class="col-md-6">
+                            <label class="reg-label">Médico asignado (opcional)</label>
+                            {{ form.medico_selector }}
+                            <div class="reg-helper">El médico podrá ver tu evolución.</div>
                         </div>
-                        {% if field.errors %}
-                        <div class="text-danger small mt-1">{{ field.errors }}</div>
-                        {% endif %}
-                        {% if field.help_text %}
-                        <div class="form-text small text-muted">{{ field.help_text }}</div>
-                        {% endif %}
                     </div>
+                </div>
+
+            </div><!-- fin seccion_paciente -->
+
+            <!-- ═══════ Contraseñas (renderizadas por el bucle genérico) ═══════ -->
+            {% for field in form %}
+                {% if field.name not in 'username,email,first_name,last_name,es_medico,edad,altura,peso,lado_afectado,medico_selector,anios_estudio,lugar_habitual,ciudad_residencia,sexo,meses_desde_ictus,tipo_ictus,hemisferio_afectado,hemiparesia_dominante' %}
+                <div class="glass-panel">
+                    <label class="reg-label">{{ field.label }}</label>
+                    <div>{{ field }}</div>
+                    {% if field.errors %}
+                        <div class="reg-error">{{ field.errors }}</div>
                     {% endif %}
-                    {% endfor %}
+                    {% if field.help_text %}
+                        <div class="reg-helper">{{ field.help_text }}</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% endfor %}
 
-                    <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-success btn-lg rounded-pill">Registrarse</button>
-                    </div>
-                </form>
-
-                <p class="text-center mt-3 text-muted">
-                    ¿Ya tienes cuenta? <a href="{% url 'login' %}" class="text-success fw-bold">Inicia sesión aquí</a>
-                </p>
-
+            <!-- ═══════ Submit ═══════ -->
+            <div class="text-center mt-4 mb-3">
+                <button type="submit" class="btn-register w-100 w-md-auto">Registrarse</button>
             </div>
-        </div>
+            <p class="text-center">
+                <a href="{% url 'login' %}" class="login-link">¿Ya tienes cuenta? Inicia sesión aquí</a>
+            </p>
+        </form>
     </div>
 </div>
 
 <script>
-    // 1. TU SCRIPT ORIGINAL DE ESTILOS (Mejorado para no romper el checkbox)
+    // 1. ESTILIZAR INPUTS (pill shape via CSS, pero asegurar clases)
     var form_fields = document.getElementsByTagName('input');
     var selects = document.getElementsByTagName('select');
 
-    // Aplicar estilo a inputs (menos al checkbox del médico)
     for (var field of form_fields) {
         if (field.type !== 'checkbox') {
             field.classList.add('form-control');
         }
     }
-    // Aplicar estilo a los selectores (lado afectado, médico)
     for (var field of selects) {
         field.classList.add('form-select');
     }
 
-    // Impedir años de escolarización negativos
+    // 2. IMPEDIR VALORES NEGATIVOS
     var inputAnios = document.getElementById('id_anios_estudio');
     if (inputAnios) {
         inputAnios.setAttribute('min', '0');
     }
 
-    // 2. SCRIPT PARA OCULTAR/MOSTRAR SECCIÓN PACIENTE
+    var inputMeses = document.getElementById('id_meses_desde_ictus');
+    if (inputMeses) {
+        inputMeses.setAttribute('min', '0');
+    }
+
+    // 3. OCULTAR/MOSTRAR SECCIÓN PACIENTE
     document.addEventListener('DOMContentLoaded', function () {
         const checkMedico = document.getElementById('check_es_medico');
         const seccionPaciente = document.getElementById('seccion_paciente');
 
         function toggleCampos() {
             if (checkMedico.checked) {
-                seccionPaciente.style.display = 'none'; // Si es médico, oculta datos
+                seccionPaciente.style.display = 'none';
             } else {
-                seccionPaciente.style.display = 'block'; // Si es paciente, muestra datos
+                seccionPaciente.style.display = 'block';
             }
         }
 
-        // Ejecutar al inicio y al cambiar
         if (checkMedico) {
             checkMedico.addEventListener('change', toggleCampos);
             toggleCampos();

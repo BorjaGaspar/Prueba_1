@@ -19,7 +19,14 @@ class RegistroUsuarioForm(UserCreationForm):
     
     lado_afectado = forms.ChoiceField(choices=PerfilPaciente.OPCIONES_LADO, required=False, label="Lado corporal afectado", widget=forms.Select(attrs={'class': 'form-select'}))
 
-    # --- NUEVOS CAMPOS: MOCA ---
+    # --- CAMPOS CLÍNICOS PARA MODELO ML ---
+    sexo = forms.ChoiceField(choices=[('', '-- Seleccione --')] + list(PerfilPaciente.OPCIONES_SEXO), required=False, label="Sexo", widget=forms.Select(attrs={'class': 'form-select'}))
+    meses_desde_ictus = forms.IntegerField(required=False, label="Meses desde el ictus", min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 6', 'min': '0'}))
+    tipo_ictus = forms.ChoiceField(choices=[('', '-- Seleccione --')] + list(PerfilPaciente.OPCIONES_TIPO_ICTUS), required=False, label="Tipo de ictus", widget=forms.Select(attrs={'class': 'form-select'}))
+    hemisferio_afectado = forms.ChoiceField(choices=[('', '-- Seleccione --')] + list(PerfilPaciente.OPCIONES_HEMISFERIO), required=False, label="Hemisferio cerebral afectado", widget=forms.Select(attrs={'class': 'form-select'}))
+    hemiparesia_dominante = forms.ChoiceField(choices=[('', '-- Seleccione --')] + list(PerfilPaciente.OPCIONES_HEMIPARESIA), required=False, label="¿Hemiparesia en lado dominante?", widget=forms.Select(attrs={'class': 'form-select'}))
+
+    # --- CAMPOS PARA MOCA ---
     anios_estudio = forms.IntegerField(required=False, label="Años de escolarización (Ej: 12)", widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Años de estudio'}))
     lugar_habitual = forms.CharField(required=False, label="¿Dónde suele estar? (Ej: Mi casa)", max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     ciudad_residencia = forms.CharField(required=False, label="Ciudad de residencia", max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Bilbao'}))
@@ -59,6 +66,11 @@ class RegistroUsuarioForm(UserCreationForm):
                     peso=self.cleaned_data.get('peso'),
                     lado_afectado=self.cleaned_data.get('lado_afectado'),
                     medico_asignado=self.cleaned_data.get('medico_selector'),
+                    sexo=self.cleaned_data.get('sexo') or None,
+                    meses_desde_ictus=self.cleaned_data.get('meses_desde_ictus'),
+                    tipo_ictus=self.cleaned_data.get('tipo_ictus') or None,
+                    hemisferio_afectado=self.cleaned_data.get('hemisferio_afectado') or None,
+                    hemiparesia_dominante=self.cleaned_data.get('hemiparesia_dominante') or None,
                     anios_estudio=self.cleaned_data.get('anios_estudio'),
                     lugar_habitual=self.cleaned_data.get('lugar_habitual'),
                     ciudad_residencia=self.cleaned_data.get('ciudad_residencia')
