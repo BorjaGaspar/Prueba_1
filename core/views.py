@@ -13,6 +13,7 @@ import os
 import tempfile
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from core.services.ml_service import predecir_nivel
 
 # --- CONFIGURACIÓN WHISPER ---
 MODELO_WHISPER = None
@@ -176,84 +177,130 @@ def auditoria_moca(request, pk_evaluacion):
     paciente = evaluacion.paciente
 
     if request.method == 'POST':
-        # 1. Recogemos las puntuaciones que el médico ha validado/corregido en el formulario
-        # (Si el médico no toca un campo, se queda con la nota que le dio la IA)
-        evaluacion.score_visuoespacial = int(request.POST.get('score_visuoespacial', evaluacion.score_visuoespacial))
-        evaluacion.score_identificacion = int(request.POST.get('score_identificacion', evaluacion.score_identificacion))
-        evaluacion.score_atencion = int(request.POST.get('score_atencion', evaluacion.score_atencion))
-        evaluacion.score_lenguaje = int(request.POST.get('score_lenguaje', evaluacion.score_lenguaje))
-        evaluacion.score_abstraccion = int(request.POST.get('score_abstraccion', evaluacion.score_abstraccion))
-        evaluacion.score_recuerdo = int(request.POST.get('score_recuerdo', evaluacion.score_recuerdo))
-        evaluacion.score_orientacion = int(request.POST.get('score_orientacion', evaluacion.score_orientacion))
+        try:
+            def safe_int(val, default=0):
+                try:
+                    return int(val)
+                except (ValueError, TypeError):
+                    return default
 
-        # 2. Recalculamos la nota final oficial
-        evaluacion.score_total = (
-            evaluacion.score_visuoespacial + evaluacion.score_identificacion +
-            evaluacion.score_atencion + evaluacion.score_lenguaje +
-            evaluacion.score_abstraccion + evaluacion.score_recuerdo +
-            evaluacion.score_orientacion
-        )
+            # 1. Recogemos las puntuaciones (protegidas contra cadenas vacías o nulos)
+            evaluacion.score_visuoespacial = safe_int(request.POST.get('score_visuoespacial'), evaluacion.score_visuoespacial)
+            evaluacion.score_identificacion = safe_int(request.POST.get('score_identificacion'), evaluacion.score_identificacion)
+            evaluacion.score_atencion = safe_int(request.POST.get('score_atencion'), evaluacion.score_atencion)
+            evaluacion.score_lenguaje = safe_int(request.POST.get('score_lenguaje'), evaluacion.score_lenguaje)
+            evaluacion.score_abstraccion = safe_int(request.POST.get('score_abstraccion'), evaluacion.score_abstraccion)
+            evaluacion.score_recuerdo = safe_int(request.POST.get('score_recuerdo'), evaluacion.score_recuerdo)
+            evaluacion.score_orientacion = safe_int(request.POST.get('score_orientacion'), evaluacion.score_orientacion)
 
-        # 3. Marcamos la prueba como revisada y guardamos
-        evaluacion.revisada_por_medico = True
-        evaluacion.save()
+            # 2. Recalculamos la nota final oficial
+            evaluacion.score_total = (
+                evaluacion.score_visuoespacial + evaluacion.score_identificacion +
+                evaluacion.score_atencion + evaluacion.score_lenguaje +
+                evaluacion.score_abstraccion + evaluacion.score_recuerdo +
+                evaluacion.score_orientacion
+            )
 
-        # 4. ACTUALIZACIÓN DEL PERFIL (Niveles de Terapia)
-        # Comprobamos si esta evaluación es la última que ha hecho el paciente
-        ultima_evaluacion = paciente.evaluaciones_moca.first()
-        
-        if ultima_evaluacion == evaluacion:
-            # Actualizamos las notas globales del paciente
-            paciente.puntuacion_total_moca = evaluacion.score_total
-            paciente.score_visuoespacial = evaluacion.score_visuoespacial
-            paciente.score_identificacion = evaluacion.score_identificacion
-            paciente.score_atencion = evaluacion.score_atencion
-            paciente.score_lenguaje = evaluacion.score_lenguaje
-            paciente.score_abstraccion = evaluacion.score_abstraccion
-            paciente.score_recuerdo = evaluacion.score_recuerdo
-            paciente.score_orientacion = evaluacion.score_orientacion
+            # 3. Marcamos la prueba como revisada y guardamos
+            evaluacion.revisada_por_medico = True
+            evaluacion.save()
+
+            # 4. Actualizamos las notas globales del paciente
+            ultima_evaluacion = paciente.evaluaciones_moca.first()
             
-            # Recalculamos los niveles con tu lógica original
-            if evaluacion.score_total >= 26:
-                paciente.nivel_cognitivo = 5
-            elif evaluacion.score_total >= 24:
-                paciente.nivel_cognitivo = 4
-            elif evaluacion.score_total >= 18:
-                paciente.nivel_cognitivo = 3
-            elif evaluacion.score_total >= 10:
-                paciente.nivel_cognitivo = 2
-            else:
-                paciente.nivel_cognitivo = 1
-                
-            if evaluacion.score_lenguaje == 0:
-                paciente.nivel_lenguaje = 1
-            else:
-                paciente.nivel_lenguaje = paciente.nivel_cognitivo
+            if ultima_evaluacion == evaluacion:
+                paciente.puntuacion_total_moca = evaluacion.score_total
+                paciente.score_visuoespacial = evaluacion.score_visuoespacial
+                paciente.score_identificacion = evaluacion.score_identificacion
+                paciente.score_atencion = evaluacion.score_atencion
+                paciente.score_lenguaje = evaluacion.score_lenguaje
+                paciente.score_abstraccion = evaluacion.score_abstraccion
+                paciente.score_recuerdo = evaluacion.score_recuerdo
+                paciente.score_orientacion = evaluacion.score_orientacion
+                paciente.save()
 
-            paciente.nivel_asignado = paciente.nivel_cognitivo
-            paciente.save()
+            # 5. PREDICCIÓN ML — Obtener sugerencia del modelo
+            nivel_sugerido = predecir_nivel(paciente, evaluacion)
+            
+            # Si la petición es AJAX, devolvemos JSON con la sugerencia
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'ok': True,
+                    'nivel_sugerido': nivel_sugerido,
+                    'score_total': evaluacion.score_total,
+                    'evaluacion_pk': evaluacion.pk,
+                    'paciente_pk': paciente.pk,
+                })
+            
+            # Fallback: si no es AJAX (ej: JS desactivado), aplicar nivel sugerido directamente
+            nivel_final = nivel_sugerido or paciente.nivel_cognitivo
+            _aplicar_nivel_a_paciente(paciente, evaluacion, nivel_final)
+            messages.success(request, f"Evaluación validada. Nivel ajustado a {nivel_final} (sugerido por IA).")
+            return redirect('historial_moca', pk=paciente.pk)
 
-            mensaje_notificacion = (
-                f"El especialista ha revisado y validado tu última evaluación cognitiva. "
-                f"Tu nivel de dificultad ha sido ajustado: Cognitivo (Nivel {paciente.nivel_cognitivo}), "
-                f"Lenguaje (Nivel {paciente.nivel_lenguaje}). ¡Sigue así!"
-            )
-            NotificacionBuzon.objects.create(
-                paciente=paciente,
-                remitente='SISTEMA',
-                mensaje=mensaje_notificacion
-            )
-        
-        
-
-        messages.success(request, "Evaluación validada correctamente. Los niveles del paciente han sido ajustados.")
-        return redirect('historial_moca', pk=paciente.pk)
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            return JsonResponse({'ok': False, 'error': str(e), 'trace': error_trace})
 
     context = {
         'evaluacion': evaluacion,
         'paciente': paciente
     }
     return render(request, 'core/patients/auditoria_moca.html', context)
+
+
+def _aplicar_nivel_a_paciente(paciente, evaluacion, nivel_final):
+    """Función auxiliar que aplica el nivel elegido al perfil del paciente."""
+    paciente.nivel_cognitivo = nivel_final
+    
+    # Lenguaje: si score_lenguaje es 0, forzar nivel 1; si no, usar el mismo nivel
+    if evaluacion.score_lenguaje == 0:
+        paciente.nivel_lenguaje = 1
+    else:
+        paciente.nivel_lenguaje = nivel_final
+    
+    paciente.nivel_asignado = nivel_final
+    paciente.save()
+
+    # Notificación al paciente
+    mensaje_notificacion = (
+        f"El especialista ha revisado y validado tu última evaluación cognitiva. "
+        f"Tu nivel de dificultad ha sido ajustado: Cognitivo (Nivel {paciente.nivel_cognitivo}), "
+        f"Lenguaje (Nivel {paciente.nivel_lenguaje}). ¡Sigue así!"
+    )
+    NotificacionBuzon.objects.create(
+        paciente=paciente,
+        remitente='SISTEMA',
+        mensaje=mensaje_notificacion
+    )
+
+
+@login_required
+def aplicar_nivel_ml(request, pk_evaluacion):
+    """Endpoint AJAX que recibe la decisión final del médico tras ver la sugerencia ML."""
+    if request.method != 'POST':
+        return JsonResponse({'ok': False, 'error': 'Método no permitido'}, status=405)
+    
+    evaluacion = get_object_or_404(EvaluacionMoCA, pk=pk_evaluacion)
+    paciente = evaluacion.paciente
+    
+    try:
+        data = json.loads(request.body)
+        nivel_final = int(data.get('nivel_final', 1))
+        nivel_final = max(1, min(5, nivel_final))
+    except (json.JSONDecodeError, ValueError, TypeError):
+        return JsonResponse({'ok': False, 'error': 'Datos inválidos'}, status=400)
+    
+    _aplicar_nivel_a_paciente(paciente, evaluacion, nivel_final)
+    
+    return JsonResponse({
+        'ok': True,
+        'nivel_cognitivo': paciente.nivel_cognitivo,
+        'nivel_lenguaje': paciente.nivel_lenguaje,
+        'redirect_url': f'/paciente/{paciente.pk}/moca/',
+    })
+
 
 @login_required
 def forzar_evaluacion(request, pk):
