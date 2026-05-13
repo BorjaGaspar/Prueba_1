@@ -51,5 +51,6 @@ urlpatterns = [
     path('medico/dashboard/', views.dashboard_medico, name='dashboard_medico'),
     path('paciente/<int:pk>/moca/', views.historial_moca, name='historial_moca'),
     path('auditoria-moca/<int:pk_evaluacion>/', views.auditoria_moca, name='auditoria_moca'),
+    path('api/aplicar-nivel-ml/<int:pk_evaluacion>/', views.aplicar_nivel_ml, name='aplicar_nivel_ml'),
     path('medico/paciente/<int:pk>/buzon/', views.buzon_paciente_medico, name='buzon_paciente_medico'),
 ]
