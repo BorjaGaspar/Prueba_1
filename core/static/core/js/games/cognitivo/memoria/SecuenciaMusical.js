@@ -32,6 +32,11 @@ const infoColores = [
 let animoSeleccionado = null;
 let dificultadSeleccionada = null;
 
+// --- VTR Data Logger ---
+let vtrErrores = 0;
+let vtrTiemposRonda = [];
+let vtrInicioTurno = null;
+
 // ==========================================
 // LÓGICA DEL JUEGO
 // ==========================================
@@ -94,6 +99,7 @@ async function reproducirSecuencia() {
         await new Promise(r => setTimeout(r, configTiempos[nivelVelocidad]));
     }
     puedeJugar = true;
+    vtrInicioTurno = performance.now();
     document.getElementById('mensaje-turno').innerText = "¡Tu turno!";
     document.getElementById('mensaje-turno').className = "h3 fw-bold text-success";
 }
@@ -130,9 +136,14 @@ function manejarEntradaUsuario(id) {
     secuenciaUsuario.push(id);
     const index = secuenciaUsuario.length - 1;
 
+    if (secuenciaUsuario.length === 1 && vtrInicioTurno !== null) {
+        vtrTiemposRonda.push(Math.round(performance.now() - vtrInicioTurno));
+    }
+
     if (secuenciaUsuario[index] !== secuenciaJuego[index]) {
         puedeJugar = false;
         puntosTotales = Math.max(0, puntosTotales - 100);
+        vtrErrores++;
         actualizarUI();
         document.getElementById('mensaje-turno').innerText = "¡Error!";
         document.getElementById('mensaje-turno').className = "h3 fw-bold text-danger";
@@ -212,30 +223,30 @@ function enviarAutopercepcion() {
     modalResultados.show();
 
     // 3. Empaquetamos los datos y los guardamos en SamiraDTx silenciosamente
+    const trPromedio = vtrTiemposRonda.length > 0
+        ? Math.round(vtrTiemposRonda.reduce((a, b) => a + b, 0) / vtrTiemposRonda.length)
+        : null;
+
     const datosGuardar = {
-        juego: "Música y Colores", // Nombre Oficial para las estadísticas
+        juego: "Música y Colores",
         nivel: nivelUsuario,
         puntos: puntosTotales,
-        tiempo: 0, // En este juego no medimos tiempo de reacción
+        tiempo_jugado: 0,
         completado: true,
         dificultad_percibida: dificultadSeleccionada,
-        estado_animo: animoSeleccionado
+        estado_animo: animoSeleccionado,
+        tiempo_reaccion_ms: trPromedio,
+        errores_cometidos: vtrErrores
     };
 
-    fetch('/api/guardar-progreso/', {
+    fetch('/api/vtr/guardar-partida/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken
         },
         body: JSON.stringify(datosGuardar)
-    }).then(response => {
-        if (response.ok) {
-            console.log("¡Partida de Música y Colores guardada en BD con éxito!");
-        } else {
-            console.error("Hubo un error guardando los datos.");
-        }
-    });
+    }).then(() => {});
 }
 
 // Botón del altavoz de las instrucciones

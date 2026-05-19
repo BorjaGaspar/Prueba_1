@@ -53,4 +53,12 @@ urlpatterns = [
     path('auditoria-moca/<int:pk_evaluacion>/', views.auditoria_moca, name='auditoria_moca'),
     path('api/aplicar-nivel-ml/<int:pk_evaluacion>/', views.aplicar_nivel_ml, name='aplicar_nivel_ml'),
     path('medico/paciente/<int:pk>/buzon/', views.buzon_paciente_medico, name='buzon_paciente_medico'),
+
+    # VTR — Data Logger
+    path('api/vtr/iniciar-sesion/', views.vtr_iniciar_sesion, name='vtr_iniciar_sesion'),
+    path('api/vtr/guardar-partida/', views.vtr_guardar_partida, name='vtr_guardar_partida'),
+
+    # VTR — Panel Médico
+    path('medico/paciente/<int:pk>/sesiones/', views.lista_sesiones_terapia, name='lista_sesiones_terapia'),
+    path('medico/sesion/<uuid:session_id>/', views.detalle_sesion_terapia, name='detalle_sesion_terapia'),
 ]

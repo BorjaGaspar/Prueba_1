@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python manage.py makemigrations)",
+      "Bash(\"C:\\\\Users\\\\borja\\\\OneDrive\\\\Escritorio\\\\SamiraDTx\\\\proyecto_web\\\\venv\\\\Scripts\\\\python.exe\" manage.py makemigrations)",
+      "Bash(\"C:\\\\Users\\\\borja\\\\OneDrive\\\\Escritorio\\\\SamiraDTx\\\\proyecto_web\\\\venv\\\\Scripts\\\\python.exe\" manage.py makemigrations --skip-checks)",
+      "Bash(\"C:\\\\Users\\\\borja\\\\OneDrive\\\\Escritorio\\\\SamiraDTx\\\\proyecto_web\\\\venv\\\\Scripts\\\\python.exe\" manage.py migrate --skip-checks)",
+      "Bash('C:\\\\Users\\\\borja\\\\OneDrive\\\\Escritorio\\\\SamiraDTx\\\\proyecto_web\\\\venv\\\\Scripts\\\\python.exe' -c ' *)"
+    ]
+  }
+}

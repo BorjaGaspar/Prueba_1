@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PerfilPaciente, SesionDeJuego, EvaluacionMoCA
+from .models import PerfilPaciente, SesionDeJuego, EvaluacionMoCA, SesionTerapia, MarcaPersonalTR
 
 # Configuración bonita para el Perfil
 class PerfilPacienteAdmin(admin.ModelAdmin):
@@ -33,3 +33,5 @@ class EvaluacionMoCAAdmin(admin.ModelAdmin):
 admin.site.register(PerfilPaciente, PerfilPacienteAdmin)
 admin.site.register(SesionDeJuego, SesionDeJuegoAdmin)
 admin.site.register(EvaluacionMoCA, EvaluacionMoCAAdmin)
+admin.site.register(SesionTerapia)
+admin.site.register(MarcaPersonalTR)

@@ -4,7 +4,13 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
 from .forms import RegistroUsuarioForm
-from .models import PerfilPaciente, SesionDeJuego, NotaEspecialista, EvaluacionMoCA, NotificacionBuzon
+from .models import PerfilPaciente, SesionDeJuego, NotaEspecialista, EvaluacionMoCA, NotificacionBuzon, SesionTerapia, MarcaPersonalTR
+from core.services.vtr_service import (
+    obtener_o_crear_sesion,
+    registrar_actividad,
+    actualizar_marca_personal,
+    calcular_degradacion,
+)
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -791,3 +797,154 @@ def jugar_SecuenciaMusical(request):
         from .models import PerfilPaciente
         paciente = PerfilPaciente.objects.get(usuario=request.user)
     return render(request, 'core/games/cognitivo/memoria/SecuenciaMusical.html', {'nivel_inicial': paciente.nivel_cognitivo})
+
+
+# =========================================================
+# VTR — PANEL MÉDICO
+# =========================================================
+
+@login_required
+def lista_sesiones_terapia(request, pk):
+    perfil_paciente = get_object_or_404(PerfilPaciente, pk=pk)
+    medico_perfil = get_object_or_404(PerfilPaciente, usuario=request.user)
+    if not medico_perfil.es_medico:
+        return redirect('dashboard')
+
+    sesiones = SesionTerapia.objects.filter(paciente=perfil_paciente)
+    context = {
+        'paciente': perfil_paciente,
+        'sesiones': sesiones,
+    }
+    return render(request, 'core/patients/lista_sesiones_terapia.html', context)
+
+
+@login_required
+def detalle_sesion_terapia(request, session_id):
+    sesion = get_object_or_404(SesionTerapia, session_id=session_id)
+    medico_perfil = get_object_or_404(PerfilPaciente, usuario=request.user)
+    if not medico_perfil.es_medico:
+        return redirect('dashboard')
+
+    partidas = list(SesionDeJuego.objects.filter(sesion_terapia=sesion).order_by('fecha'))
+
+    for p in partidas:
+        if p.tiempo_reaccion_ms is not None and p.degradacion_porcentaje is not None:
+            p.tr_ideal_en_partida = round(p.tiempo_reaccion_ms / (1 + p.degradacion_porcentaje / 100))
+        else:
+            p.tr_ideal_en_partida = None
+
+    labels = list(range(1, len(partidas) + 1))
+    degradacion = [p.degradacion_porcentaje for p in partidas]
+    errores = [p.errores_cometidos for p in partidas]
+    juegos_unicos = list(dict.fromkeys(p.juego for p in partidas))
+
+    datos_grafica = json.dumps({
+        'labels': labels,
+        'degradacion': degradacion,
+        'errores': errores,
+        'vas_inicial': sesion.vas_inicial,
+        'duracion_min': sesion.duracion_minutos,
+        'juegos': juegos_unicos,
+    })
+
+    context = {
+        'sesion': sesion,
+        'paciente': sesion.paciente,
+        'partidas': partidas,
+        'datos_grafica_json': datos_grafica,
+    }
+    return render(request, 'core/patients/detalle_sesion_terapia.html', context)
+
+
+# =========================================================
+# VTR — API DE DATA LOGGER
+# =========================================================
+
+@csrf_exempt
+@login_required
+def vtr_iniciar_sesion(request):
+    """
+    POST: Inicia o reutiliza una sesión de terapia VTR.
+    Body JSON (opcional): {"vas_inicial": 3}
+    Responde: {"estado": "ok", "session_id": "<uuid>"}
+    """
+    if request.method != 'POST':
+        return JsonResponse({'estado': 'error', 'mensaje': 'Método no permitido'}, status=405)
+
+    try:
+        perfil = request.user.perfil
+        vas_inicial = None
+        try:
+            datos = json.loads(request.body)
+            vas_raw = datos.get('vas_inicial')
+            if vas_raw is not None:
+                vas_inicial = int(vas_raw)
+        except Exception:
+            pass
+
+        sesion = obtener_o_crear_sesion(perfil, vas_inicial=vas_inicial)
+        return JsonResponse({'estado': 'ok', 'session_id': str(sesion.session_id)})
+
+    except Exception as e:
+        return JsonResponse({'estado': 'error', 'mensaje': str(e)}, status=500)
+
+
+@csrf_exempt
+@login_required
+def vtr_guardar_partida(request):
+    """
+    POST: Registra una partida con datos VTR.
+    Responde siempre {"estado": "ok"} — el juego nunca recibe órdenes.
+    Body JSON:
+        juego, nivel, puntos, tiempo_reaccion_ms, errores_cometidos,
+        tiempo_jugado, completado, dificultad_percibida, estado_animo
+    """
+    if request.method != 'POST':
+        return JsonResponse({'estado': 'error', 'mensaje': 'Método no permitido'}, status=405)
+
+    try:
+        datos = json.loads(request.body)
+        perfil = request.user.perfil
+
+        juego = datos.get('juego', 'General')
+        nivel = int(datos.get('nivel', 1))
+        puntos = int(datos.get('puntos', 0))
+        tiempo_reaccion_ms = datos.get('tiempo_reaccion_ms')
+        if tiempo_reaccion_ms is not None:
+            tiempo_reaccion_ms = int(tiempo_reaccion_ms)
+        errores_cometidos = int(datos.get('errores_cometidos', 0))
+
+        sesion = obtener_o_crear_sesion(perfil)
+
+        if tiempo_reaccion_ms is not None:
+            actualizar_marca_personal(perfil, juego, nivel, tiempo_reaccion_ms, puntos, sesion)
+
+        degradacion = None
+        if tiempo_reaccion_ms is not None:
+            try:
+                marca = MarcaPersonalTR.objects.get(paciente=perfil, juego=juego, nivel=nivel)
+                degradacion = calcular_degradacion(tiempo_reaccion_ms, marca.TR_ideal)
+            except MarcaPersonalTR.DoesNotExist:
+                pass
+
+        SesionDeJuego.objects.create(
+            paciente=perfil,
+            juego=juego,
+            nivel_jugado=nivel,
+            puntos=puntos,
+            tiempo_jugado=int(datos.get('tiempo_jugado', 0)),
+            completado=bool(datos.get('completado', True)),
+            dificultad_percibida=datos.get('dificultad_percibida'),
+            estado_animo=datos.get('estado_animo'),
+            sesion_terapia=sesion,
+            tiempo_reaccion_ms=tiempo_reaccion_ms,
+            errores_cometidos=errores_cometidos,
+            degradacion_porcentaje=degradacion,
+        )
+
+        registrar_actividad(sesion)
+        evaluar_ajuste_dinamico(perfil, juego)
+        return JsonResponse({'estado': 'ok'})
+
+    except Exception as e:
+        return JsonResponse({'estado': 'error', 'mensaje': str(e)}, status=500)
