@@ -5,7 +5,18 @@
       "Bash(\"C:\\\\Users\\\\borja\\\\OneDrive\\\\Escritorio\\\\SamiraDTx\\\\proyecto_web\\\\venv\\\\Scripts\\\\python.exe\" manage.py makemigrations)",
       "Bash(\"C:\\\\Users\\\\borja\\\\OneDrive\\\\Escritorio\\\\SamiraDTx\\\\proyecto_web\\\\venv\\\\Scripts\\\\python.exe\" manage.py makemigrations --skip-checks)",
       "Bash(\"C:\\\\Users\\\\borja\\\\OneDrive\\\\Escritorio\\\\SamiraDTx\\\\proyecto_web\\\\venv\\\\Scripts\\\\python.exe\" manage.py migrate --skip-checks)",
-      "Bash('C:\\\\Users\\\\borja\\\\OneDrive\\\\Escritorio\\\\SamiraDTx\\\\proyecto_web\\\\venv\\\\Scripts\\\\python.exe' -c ' *)"
+      "Bash('C:\\\\Users\\\\borja\\\\OneDrive\\\\Escritorio\\\\SamiraDTx\\\\proyecto_web\\\\venv\\\\Scripts\\\\python.exe' -c ' *)",
+      "Bash(bash hooks/install_hooks.sh --project)",
+      "PowerShell(choco install *)",
+      "PowerShell(New-Item *)",
+      "PowerShell(& \"C:\\\\Users\\\\borja\\\\.local\\\\bin\\\\jq.exe\" --version)",
+      "Bash(python *)",
+      "Bash(where python *)",
+      "Bash(pip list *)",
+      "Bash(py -m pip list)",
+      "Bash(docker compose *)",
+      "Skill(impeccable)",
+      "Bash(node *)"
     ]
   }
 }

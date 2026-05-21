@@ -3,133 +3,265 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-4 shadow-sm border">
-    <div class="d-flex align-items-center">
-        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 60px; height: 60px; font-size: 1.5rem;">
+<!-- Page Header -->
+<div class="flex items-center justify-between mb-6 bg-white border border-outline-variant/20 rounded-[14px] px-6 py-4 shadow-sm">
+    <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-white font-bold text-base font-headline flex-shrink-0">
             {{ paciente.usuario.username|slice:":2"|upper }}
         </div>
         <div>
-            <h3 class="fw-bold text-dark mb-0">Detalle de Sesión VTR</h3>
-            <p class="text-muted mb-0">Paciente: <strong>{{ paciente.usuario.username }}</strong> · {{ sesion.fecha_inicio|date:"d/m/Y H:i" }}h</p>
+            <h1 class="font-headline font-bold text-xl text-on-surface tracking-tight leading-tight mb-0">Detalle de Sesión VTR</h1>
+            <p class="text-sm text-outline mb-0 mt-0.5">
+                Paciente: <span class="text-on-surface font-medium">{{ paciente.usuario.username }}</span>
+                <span class="mx-2 text-outline-variant">·</span>
+                {{ sesion.fecha_inicio|date:"d/m/Y H:i" }}h
+            </p>
         </div>
     </div>
-    <a href="{% url 'lista_sesiones_terapia' paciente.id %}" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
-        <i class="bi bi-arrow-left me-2"></i> Volver a Sesiones
+    <a href="{% url 'lista_sesiones_terapia' paciente.id %}"
+       class="inline-flex items-center gap-1.5 bg-white border border-outline-variant/30 text-on-surface-variant rounded-lg px-4 py-2 text-sm font-medium hover:bg-surface-container-low transition-colors duration-150">
+        <span class="material-symbols-outlined" style="font-size: 1.1rem; line-height: 1;">chevron_left</span>
+        Volver a Sesiones
     </a>
 </div>
 
-<!-- Cabecera informativa -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-3">
-            <div class="text-muted small fw-bold text-uppercase mb-1">Duración</div>
-            <div class="fw-bold fs-4 text-primary">{{ sesion.duracion_minutos }} min</div>
-        </div>
+<!-- KPI Strip -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+    <div class="bg-white border border-outline-variant/20 rounded-[12px] px-5 py-4 shadow-sm text-center">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-outline mb-2">Duración</p>
+        <p class="font-headline font-bold text-3xl text-primary leading-none mb-0">{{ sesion.duracion_minutos }}<span class="text-base font-medium ml-1">min</span></p>
     </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-3">
-            <div class="text-muted small fw-bold text-uppercase mb-1">Cansancio inicial (VAS)</div>
-            <div class="fw-bold fs-4 {% if sesion.vas_inicial %}{% if sesion.vas_inicial <= 3 %}text-success{% elif sesion.vas_inicial <= 6 %}text-warning{% else %}text-danger{% endif %}{% else %}text-muted{% endif %}">
-                {% if sesion.vas_inicial %}{{ sesion.vas_inicial }}/10{% else %}No declarado{% endif %}
-            </div>
-        </div>
+    <div class="bg-white border border-outline-variant/20 rounded-[12px] px-5 py-4 shadow-sm text-center">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-outline mb-2">Cansancio inicial (VAS)</p>
+        <p class="font-headline font-bold text-3xl leading-none mb-0
+            {% if sesion.vas_inicial %}{% if sesion.vas_inicial <= 3 %}text-green-600{% elif sesion.vas_inicial <= 6 %}text-amber-500{% else %}text-red-600{% endif %}{% else %}text-outline{% endif %}">
+            {% if sesion.vas_inicial %}{{ sesion.vas_inicial }}<span class="text-base font-medium">/10</span>{% else %}—{% endif %}
+        </p>
     </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-3">
-            <div class="text-muted small fw-bold text-uppercase mb-1">Partidas jugadas</div>
-            <div class="fw-bold fs-4 text-dark">{{ partidas|length }}</div>
-        </div>
+    <div class="bg-white border border-outline-variant/20 rounded-[12px] px-5 py-4 shadow-sm text-center">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-outline mb-2">Partidas jugadas</p>
+        <p class="font-headline font-bold text-3xl text-on-surface leading-none mb-0">{{ partidas|length }}</p>
     </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-3">
-            <div class="text-muted small fw-bold text-uppercase mb-1">Juegos</div>
-            <div class="fw-bold fs-6 text-dark" id="juegos-cabecera">—</div>
-        </div>
+    <div class="bg-white border border-outline-variant/20 rounded-[12px] px-5 py-4 shadow-sm text-center">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-outline mb-2">Juegos</p>
+        <p class="font-medium text-sm text-on-surface leading-snug mb-0" id="juegos-cabecera">—</p>
     </div>
 </div>
 
-<!-- Gráfica -->
-<div class="card border-0 shadow-sm rounded-4 mb-4">
-    <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
-        <h5 class="fw-bold text-dark mb-0">
-            <i class="bi bi-graph-up-arrow me-2 text-primary"></i>
-            Degradación del Tiempo de Reacción
-        </h5>
-        <p class="text-muted small mt-1 mb-0">
-            <span class="badge bg-secondary bg-opacity-20 text-secondary me-2">Zona gris = Calibración</span>
-            <span class="badge bg-primary bg-opacity-10 text-primary me-2">Línea azul = Degradación TR (%)</span>
-        </p>
+<!-- Chart Card -->
+<div class="bg-white border border-outline-variant/20 rounded-[14px] shadow-sm mb-5">
+    <div class="px-6 pt-5 pb-4 border-b border-outline-variant/10">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="material-symbols-outlined text-primary" style="font-size: 1.2rem;">show_chart</span>
+            <h2 class="font-headline font-bold text-lg text-on-surface tracking-tight mb-0">Degradación del Tiempo de Reacción</h2>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+            <span class="inline-flex items-center gap-1.5 border border-outline-variant/25 bg-surface-container-low rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-outline">
+                <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background: rgba(118,118,131,0.35);"></span>
+                Zona gris = Calibración
+            </span>
+            <button id="btn-toggle-deg"
+                    title="Mostrar / ocultar línea de degradación"
+                    class="inline-flex items-center gap-1.5 border border-primary/25 bg-primary/5 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-primary hover:bg-primary/10 transition-colors duration-150">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                Degradación TR (%)
+            </button>
+            <button id="btn-toggle-fc"
+                    title="Mostrar / ocultar FC media"
+                    class="d-none inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] transition-colors duration-150"
+                    style="border: 1px solid rgba(217,45,32,0.25); background: rgba(217,45,32,0.05); color: #b42318;">
+                <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background: #d92d20;"></span>
+                FC Media (bpm)
+            </button>
+        </div>
     </div>
-    <div class="card-body p-4">
+    <div class="px-6 py-5">
         {% if partidas %}
-            <div style="height: 350px;">
+            <div style="height: 340px;">
                 <canvas id="graficaVTR"></canvas>
             </div>
         {% else %}
-            <div class="text-center text-muted py-5">
-                <i class="bi bi-bar-chart-line display-4 mb-3 d-block"></i>
-                <p>Esta sesión no tiene partidas registradas.</p>
+            <div class="text-center text-outline py-10">
+                <span class="material-symbols-outlined" style="font-size: 3rem; opacity: .25; display: block; margin-bottom: .5rem;">bar_chart</span>
+                <p class="text-sm mb-0">Esta sesión no tiene partidas registradas.</p>
             </div>
         {% endif %}
     </div>
 </div>
 
-<!-- Tabla drill-down -->
+<!-- Table Card -->
 {% if partidas %}
-<div class="card border-0 shadow-sm rounded-4">
-    <div class="card-header bg-white border-0 pt-4 pb-2 px-4">
-        <h6 class="fw-bold text-secondary mb-0"><i class="bi bi-table me-2"></i>Datos por partida</h6>
+<div class="bg-white border border-outline-variant/20 rounded-[14px] shadow-sm">
+    <div class="px-6 py-4 border-b border-outline-variant/10 flex items-center gap-2">
+        <span class="material-symbols-outlined text-outline" style="font-size: 1.15rem;">table_view</span>
+        <h2 class="font-headline font-bold text-lg text-on-surface tracking-tight mb-0">Datos por partida</h2>
     </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-sm table-hover mb-0 align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th class="px-3 py-2">#</th>
-                        <th class="py-2">Juego</th>
-                        <th class="py-2 text-center">Nivel</th>
-                        <th class="py-2 text-center">Puntos</th>
-                        <th class="py-2 text-center">TR (ms)</th>
-                        <th class="py-2 text-center">TR Ideal (ms)</th>
-                        <th class="py-2 text-center">Errores</th>
-                        <th class="py-2 text-center">Degradación</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for p in partidas %}
-                    <tr>
-                        <td class="px-3 py-2 text-muted small">{{ forloop.counter }}</td>
-                        <td class="py-2 fw-bold small">{{ p.juego }}</td>
-                        <td class="py-2 text-center"><span class="badge bg-primary bg-opacity-10 text-primary">N{{ p.nivel_jugado }}</span></td>
-                        <td class="py-2 text-center fw-bold text-success">{{ p.puntos }}</td>
-                        <td class="py-2 text-center">
-                            {% if p.tiempo_reaccion_ms %}{{ p.tiempo_reaccion_ms }}{% else %}<span class="text-muted">—</span>{% endif %}
-                        </td>
-                        <td class="py-2 text-center text-muted">
-                            {% if p.tr_ideal_en_partida %}{{ p.tr_ideal_en_partida }}{% else %}<span class="text-muted">—</span>{% endif %}
-                        </td>
-                        <td class="py-2 text-center">
-                            <span class="fw-bold {% if p.errores_cometidos > 0 %}text-danger{% else %}text-success{% endif %}">
-                                {{ p.errores_cometidos }}
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+            <thead>
+                <tr style="border-bottom: 1px solid rgba(198,197,212,0.3);">
+                    <th class="px-6 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-outline font-body">#</th>
+                    <th class="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-outline font-body">Juego</th>
+                    <th class="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-outline font-body">Nivel</th>
+                    <th class="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-outline font-body">Puntos</th>
+                    <th class="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-outline font-body">TR (ms)</th>
+                    <th class="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-outline font-body">TR Ideal (ms)</th>
+                    <th class="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-outline font-body">Errores</th>
+                    <th class="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-outline font-body">Degradación</th>
+                    <th class="px-6 py-3 text-right text-[10px] font-semibold uppercase tracking-[0.1em] text-outline font-body">FC</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in partidas %}
+                <tr class="partida-clicable hover:bg-surface-container-low transition-colors duration-100"
+                    style="border-bottom: 1px solid rgba(198,197,212,0.15); cursor: pointer;"
+                    data-juego="{{ p.juego }}"
+                    data-nivel="{{ p.nivel_jugado }}"
+                    data-puntos="{{ p.puntos }}"
+                    data-tr="{{ p.tiempo_reaccion_ms|default:'' }}"
+                    data-tr-ideal="{{ p.tr_ideal_en_partida|default:'' }}"
+                    data-errores="{{ p.errores_cometidos }}"
+                    data-degradacion="{{ p.degradacion_porcentaje|default:'' }}"
+                    data-fc-min="{{ p.fc_min|default:'' }}"
+                    data-fc-max="{{ p.fc_max|default:'' }}"
+                    data-fc-avg="{{ p.fc_avg|default:'' }}"
+                    data-fc-serie='{{ p.fc_serie|default:"" }}'>
+                    <td class="px-6 py-3.5 text-sm text-outline" style="font-variant-numeric: tabular-nums;">{{ forloop.counter }}</td>
+                    <td class="px-4 py-3.5 text-sm font-semibold text-on-surface">{{ p.juego }}</td>
+                    <td class="px-4 py-3.5 text-center">
+                        <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-primary/10 text-primary">N{{ p.nivel_jugado }}</span>
+                    </td>
+                    <td class="px-4 py-3.5 text-center text-sm font-bold text-green-600" style="font-variant-numeric: tabular-nums;">{{ p.puntos }}</td>
+                    <td class="px-4 py-3.5 text-center text-sm text-on-surface" style="font-variant-numeric: tabular-nums;">
+                        {% if p.tiempo_reaccion_ms %}{{ p.tiempo_reaccion_ms }}{% else %}<span class="text-outline">—</span>{% endif %}
+                    </td>
+                    <td class="px-4 py-3.5 text-center text-sm text-outline" style="font-variant-numeric: tabular-nums;">
+                        {% if p.tr_ideal_en_partida %}{{ p.tr_ideal_en_partida }}{% else %}—{% endif %}
+                    </td>
+                    <td class="px-4 py-3.5 text-center">
+                        <span class="text-sm font-bold {% if p.errores_cometidos > 0 %}text-red-600{% else %}text-green-600{% endif %}" style="font-variant-numeric: tabular-nums;">{{ p.errores_cometidos }}</span>
+                    </td>
+                    <td class="px-4 py-3.5 text-center">
+                        {% if p.degradacion_porcentaje is not None %}
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded"
+                                  style="font-variant-numeric: tabular-nums;
+                                  {% if p.degradacion_porcentaje > 20 %}background:#fef2f2;color:#b91c1c;{% elif p.degradacion_porcentaje > 0 %}background:#fffbeb;color:#b45309;{% else %}background:#f0fdf4;color:#15803d;{% endif %}">
+                                {% if p.degradacion_porcentaje > 0 %}+{% endif %}{{ p.degradacion_porcentaje|floatformat:1 }}%
                             </span>
-                        </td>
-                        <td class="py-2 text-center">
-                            {% if p.degradacion_porcentaje is not None %}
-                                <span class="badge {% if p.degradacion_porcentaje > 20 %}bg-danger{% elif p.degradacion_porcentaje > 0 %}bg-warning text-dark{% else %}bg-success{% endif %} fw-bold">
-                                    {% if p.degradacion_porcentaje > 0 %}+{% endif %}{{ p.degradacion_porcentaje|floatformat:1 }}%
-                                </span>
-                            {% else %}
-                                <span class="badge bg-secondary bg-opacity-20 text-secondary">Calibrando</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                        {% else %}
+                            <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-surface-container text-outline">Calibrando</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-3.5 text-right">
+                        {% if p.fc_avg %}
+                            <span class="fc-cell inline-flex items-center justify-end gap-1 text-sm font-bold" style="color: #b42318; font-variant-numeric: tabular-nums;">
+                                <span class="material-symbols-outlined" style="font-size: 0.85rem; font-variation-settings: 'FILL' 1; line-height: 1;">favorite</span>
+                                {{ p.fc_avg }}
+                            </span>
+                        {% else %}
+                            <span class="text-outline text-sm">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endif %}
+
+<!-- Modal detalle partida -->
+<div class="modal fade" id="modalDetalleFC" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 overflow-hidden"
+             style="border-radius: 14px; box-shadow: 0 24px 64px rgba(0,6,102,0.1), 0 4px 16px rgba(0,0,0,0.06);">
+
+            <!-- Modal Header -->
+            <div class="flex items-start justify-between px-6 pt-6 pb-4"
+                 style="border-bottom: 1px solid rgba(198,197,212,0.2);">
+                <div>
+                    <h5 class="font-headline font-bold text-lg text-on-surface mb-0 leading-tight" id="modalFC-titulo">Detalle de la partida</h5>
+                    <p class="text-sm text-outline mt-0.5 mb-0" id="modalFC-subtitulo">Nivel —</p>
+                </div>
+                <button type="button" class="btn-close mt-1" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body px-6 pt-5 pb-6">
+
+                <!-- Rendimiento cognitivo -->
+                <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-outline mb-3">Rendimiento Cognitivo</p>
+                <div class="grid grid-cols-5 gap-2 mb-5">
+                    <div class="rounded-[10px] px-3 py-3 text-center"
+                         style="background: #f8f9fc; border: 1px solid rgba(198,197,212,0.25);">
+                        <p class="text-[9px] font-semibold uppercase tracking-wider text-outline mb-2">Puntos</p>
+                        <div class="text-lg font-bold text-green-600" id="modalStat-puntos">—</div>
+                    </div>
+                    <div class="rounded-[10px] px-3 py-3 text-center"
+                         style="background: #f8f9fc; border: 1px solid rgba(198,197,212,0.25);">
+                        <p class="text-[9px] font-semibold uppercase tracking-wider text-outline mb-2">TR (ms)</p>
+                        <div class="text-lg font-bold text-primary" id="modalStat-tr">—</div>
+                    </div>
+                    <div class="rounded-[10px] px-3 py-3 text-center"
+                         style="background: #f8f9fc; border: 1px solid rgba(198,197,212,0.25);">
+                        <p class="text-[9px] font-semibold uppercase tracking-wider text-outline mb-2">TR Ideal</p>
+                        <div class="text-lg font-bold text-outline" id="modalStat-tr-ideal">—</div>
+                    </div>
+                    <div class="rounded-[10px] px-3 py-3 text-center"
+                         style="background: #f8f9fc; border: 1px solid rgba(198,197,212,0.25);">
+                        <p class="text-[9px] font-semibold uppercase tracking-wider text-outline mb-2">Errores</p>
+                        <div id="modalStat-errores">—</div>
+                    </div>
+                    <div class="rounded-[10px] px-3 py-3 text-center"
+                         style="background: #f8f9fc; border: 1px solid rgba(198,197,212,0.25);">
+                        <p class="text-[9px] font-semibold uppercase tracking-wider text-outline mb-2">Degradación</p>
+                        <div id="modalStat-degradacion">—</div>
+                    </div>
+                </div>
+
+                <!-- FC Section -->
+                <div style="border-top: 1px solid rgba(198,197,212,0.2); padding-top: 1.25rem;">
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-outline mb-3">Frecuencia Cardíaca</p>
+
+                    <div class="grid grid-cols-3 gap-3 mb-4">
+                        <div class="rounded-[10px] px-4 py-3" style="background: #fef3f2; border: 1px solid #fecdca;">
+                            <p class="text-[9px] font-semibold uppercase tracking-wider mb-2" style="color: #b42318;">FC Máxima</p>
+                            <div class="font-headline font-bold text-3xl leading-none" style="color: #b42318;" id="modalFC-max">—</div>
+                            <p class="text-xs mt-1.5 mb-0" style="color: #b42318; opacity: .55;">bpm</p>
+                        </div>
+                        <div class="rounded-[10px] px-4 py-3" style="background: #eff8ff; border: 1px solid #b2ddff;">
+                            <p class="text-[9px] font-semibold uppercase tracking-wider mb-2" style="color: #175cd3;">FC Mínima</p>
+                            <div class="font-headline font-bold text-3xl leading-none" style="color: #175cd3;" id="modalFC-min">—</div>
+                            <p class="text-xs mt-1.5 mb-0" style="color: #175cd3; opacity: .55;">bpm</p>
+                        </div>
+                        <div class="rounded-[10px] px-4 py-3"
+                             style="background: #f8f9fc; border: 1px solid rgba(198,197,212,0.25);">
+                            <p class="text-[9px] font-semibold uppercase tracking-wider text-outline mb-2">FC Media</p>
+                            <div class="font-headline font-bold text-3xl leading-none text-on-surface" id="modalFC-avg">—</div>
+                            <p class="text-xs text-outline mt-1.5 mb-0">bpm</p>
+                        </div>
+                    </div>
+
+                    <div id="modalFC-chart-wrap" style="height: 220px;">
+                        <canvas id="modalFC-canvas"></canvas>
+                    </div>
+                    <div id="modalFC-no-data" class="d-none text-center" style="padding: 2rem 0;">
+                        <span class="material-symbols-outlined text-outline"
+                              style="font-size: 2.5rem; opacity: .28; display: block; margin-bottom: .5rem;">watch</span>
+                        <p class="text-sm text-outline mb-0">El paciente no utilizó el reloj en esta partida.</p>
+                    </div>
+                    <p id="modalFC-axis-note" class="text-[11px] text-outline text-center mt-3 mb-0 d-none">
+                        Eje X: segundos desde el inicio &middot; Eje Y: pulsaciones por minuto.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    tr.partida-clicable:hover .fc-cell { text-decoration: underline; }
+</style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -144,52 +276,112 @@
         // Fondo de calibración: barras grises donde degradacion es null
         const fondoCalibracion = DATOS_VTR.degradacion.map(v => v === null ? 999 : null);
 
-        new Chart(ctx, {
-            data: {
-                labels: DATOS_VTR.labels,
-                datasets: [
-                    {
-                        type: 'bar',
-                        label: 'Calibrando',
-                        data: fondoCalibracion,
-                        backgroundColor: 'rgba(180,180,180,0.18)',
-                        borderColor: 'rgba(180,180,180,0.0)',
-                        yAxisID: 'yDeg',
-                        order: 2,
-                        barPercentage: 1.0,
-                        categoryPercentage: 1.0,
-                    },
-                    {
-                        type: 'line',
-                        label: 'Degradación TR (%)',
-                        data: DATOS_VTR.degradacion,
-                        borderColor: 'rgba(13,110,253,0.9)',
-                        backgroundColor: 'rgba(13,110,253,0.08)',
-                        borderWidth: 2,
-                        pointRadius: 5,
-                        pointBackgroundColor: 'rgba(13,110,253,0.9)',
-                        fill: false,
-                        spanGaps: false,
-                        tension: 0.3,
-                        yAxisID: 'yDeg',
-                        order: 1,
-                    },
-                ]
+        // ¿La sesión tiene algún dato de FC? (al menos una partida con fc_avg)
+        const tieneFC = (DATOS_VTR.fc_avg || []).some(v => v !== null && v !== undefined);
+        if (tieneFC) document.getElementById('btn-toggle-fc').classList.remove('d-none');
+
+        const degValues = DATOS_VTR.degradacion.filter(v => v !== null && v !== undefined);
+        const degMax = degValues.length > 0 ? Math.max(...degValues) : 0;
+        const degMin = degValues.length > 0 ? Math.min(...degValues) : 0;
+        const yDegMin = Math.min(0, degMin) - 25;
+        const yDegMax = Math.max(0, degMax) + 25;
+
+        const datasets = [
+            {
+                type: 'bar',
+                label: 'Calibrando',
+                data: fondoCalibracion,
+                backgroundColor: 'rgba(180,180,180,0.18)',
+                borderColor: 'rgba(180,180,180,0.0)',
+                yAxisID: 'yDeg',
+                order: 3,
+                barPercentage: 1.0,
+                categoryPercentage: 1.0,
             },
+            {
+                type: 'line',
+                label: 'Degradación TR (%)',
+                data: DATOS_VTR.degradacion,
+                borderColor: 'rgba(13,110,253,0.9)',
+                backgroundColor: 'rgba(13,110,253,0.08)',
+                borderWidth: 2,
+                pointRadius: 5,
+                pointBackgroundColor: 'rgba(13,110,253,0.9)',
+                fill: false,
+                spanGaps: false,
+                tension: 0.3,
+                yAxisID: 'yDeg',
+                order: 1,
+            },
+        ];
+
+        if (tieneFC) {
+            datasets.push({
+                type: 'line',
+                label: 'FC Media (bpm)',
+                data: DATOS_VTR.fc_avg,
+                borderColor: '#d92d20',
+                backgroundColor: 'rgba(217,45,32,0.08)',
+                borderWidth: 2,
+                pointRadius: 5,
+                pointBackgroundColor: '#d92d20',
+                fill: false,
+                spanGaps: false,
+                tension: 0.3,
+                yAxisID: 'yFC',
+                order: 0,
+            });
+        }
+
+        const scales = {
+            x: {
+                title: { display: true, text: 'Partida nº', font: { weight: 'bold' } },
+                grid: { color: 'rgba(0,0,0,0.05)' }
+            },
+            yDeg: {
+                type: 'linear',
+                position: 'left',
+                min: yDegMin,
+                max: yDegMax,
+                title: { display: true, text: 'Degradación TR (%)', font: { weight: 'bold' }, color: 'rgba(13,110,253,0.9)' },
+                grid: {
+                    color: function (ctx) {
+                        return ctx.tick.value === 0 ? 'rgba(0,0,0,0.28)' : 'rgba(0,0,0,0.05)';
+                    },
+                    lineWidth: function (ctx) {
+                        return ctx.tick.value === 0 ? 2 : 1;
+                    }
+                },
+                ticks: { color: 'rgba(13,110,253,0.9)' }
+            }
+        };
+        if (tieneFC) {
+            scales.yFC = {
+                type: 'linear',
+                position: 'right',
+                min: 40,
+                max: 200,
+                title: { display: true, text: 'FC (bpm)', font: { weight: 'bold' }, color: '#d92d20' },
+                grid: { drawOnChartArea: false },
+                ticks: { color: '#d92d20' }
+            };
+        }
+
+        const graficaVTR = new Chart(ctx, {
+            data: { labels: DATOS_VTR.labels, datasets: datasets },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
                 plugins: {
-                    legend: {
-                        labels: {
-                            filter: item => item.text !== 'Calibrando'
-                        }
-                    },
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
                             label: function(ctx) {
                                 if (ctx.dataset.label === 'Calibrando') return null;
+                                if (ctx.dataset.label === 'FC Media (bpm)') {
+                                    return ctx.raw === null ? 'FC: —' : `FC media: ${ctx.raw} bpm`;
+                                }
                                 return ctx.raw === null
                                     ? 'TR: Calibrando...'
                                     : `Degradación: ${ctx.raw > 0 ? '+' : ''}${ctx.raw}%`;
@@ -197,22 +389,142 @@
                         }
                     }
                 },
-                scales: {
-                    x: {
-                        title: { display: true, text: 'Partida nº', font: { weight: 'bold' } },
-                        grid: { color: 'rgba(0,0,0,0.05)' }
-                    },
-                    yDeg: {
-                        type: 'linear',
-                        position: 'left',
-                        title: { display: true, text: 'Degradación TR (%)', font: { weight: 'bold' }, color: 'rgba(13,110,253,0.9)' },
-                        grid: { color: 'rgba(0,0,0,0.05)' },
-                        ticks: { color: 'rgba(13,110,253,0.9)' }
-                    }
-                }
+                scales: scales
             }
         });
+
+        document.getElementById('btn-toggle-deg').addEventListener('click', function () {
+            const visible = graficaVTR.isDatasetVisible(1);
+            graficaVTR.setDatasetVisibility(1, !visible);
+            graficaVTR.update();
+            this.style.opacity = visible ? '0.4' : '1';
+            this.style.textDecoration = visible ? 'line-through' : 'none';
+        });
+        if (tieneFC) {
+            document.getElementById('btn-toggle-fc').addEventListener('click', function () {
+                const visible = graficaVTR.isDatasetVisible(2);
+                graficaVTR.setDatasetVisibility(2, !visible);
+                graficaVTR.update();
+                this.style.opacity = visible ? '0.4' : '1';
+                this.style.textDecoration = visible ? 'line-through' : 'none';
+            });
+        }
     }
+
+    // --- Modal drill-down: detalle partida ---
+    document.addEventListener('DOMContentLoaded', function () {
+        const modalEl = document.getElementById('modalDetalleFC');
+        if (!modalEl) return;
+        const modal = new bootstrap.Modal(modalEl);
+        let chartDetalle = null;
+
+        document.querySelectorAll('tr.partida-clicable').forEach(function (row) {
+            row.addEventListener('click', function () {
+                const d = row.dataset;
+
+                // Cabecera
+                document.getElementById('modalFC-titulo').textContent = d.juego || 'Partida';
+                document.getElementById('modalFC-subtitulo').textContent = 'Nivel ' + (d.nivel || '—');
+
+                // Stats de rendimiento
+                document.getElementById('modalStat-puntos').textContent = d.puntos || '—';
+                document.getElementById('modalStat-tr').textContent = d.tr ? d.tr + ' ms' : '—';
+                document.getElementById('modalStat-tr-ideal').textContent = d.trIdeal ? d.trIdeal + ' ms' : '—';
+
+                const errEl = document.getElementById('modalStat-errores');
+                const errores = d.errores !== '' ? parseInt(d.errores) : null;
+                errEl.textContent = errores !== null ? errores : '—';
+                errEl.className = 'fs-5 fw-bold ' + (errores > 0 ? 'text-danger' : 'text-success');
+
+                const degEl = document.getElementById('modalStat-degradacion');
+                if (d.degradacion !== '') {
+                    const deg = parseFloat(d.degradacion);
+                    degEl.textContent = (deg > 0 ? '+' : '') + deg.toFixed(1) + '%';
+                    degEl.className = 'fs-5 fw-bold ' + (deg > 20 ? 'text-danger' : deg > 0 ? 'text-warning' : 'text-success');
+                } else {
+                    degEl.textContent = 'Calibrando';
+                    degEl.className = 'fs-5 fw-bold text-muted';
+                }
+
+                // FC — parsear serie
+                let serie = [];
+                try {
+                    const raw = (d.fcSerie || '').replace(/'/g, '"');
+                    if (raw) serie = JSON.parse(raw);
+                } catch (e) {
+                    console.error('[Modal] Error al parsear fc_serie:', e, '| raw:', d.fcSerie);
+                }
+
+                const tieneFC = serie && serie.length > 0;
+                document.getElementById('modalFC-max').textContent = d.fcMax || '—';
+                document.getElementById('modalFC-min').textContent = d.fcMin || '—';
+                document.getElementById('modalFC-avg').textContent = d.fcAvg || '—';
+
+                const chartWrap = document.getElementById('modalFC-chart-wrap');
+                const noData   = document.getElementById('modalFC-no-data');
+                const axisNote = document.getElementById('modalFC-axis-note');
+
+                if (chartDetalle) { chartDetalle.destroy(); chartDetalle = null; }
+
+                if (tieneFC) {
+                    chartWrap.classList.remove('d-none');
+                    noData.classList.add('d-none');
+                    axisNote.classList.remove('d-none');
+                    const labelsX = serie.map(function (_, i) { return i + 1; });
+                    const fcMinNum = Math.min.apply(null, serie);
+                    const fcMaxNum = Math.max.apply(null, serie);
+                    chartDetalle = new Chart(
+                        document.getElementById('modalFC-canvas').getContext('2d'),
+                        {
+                            type: 'line',
+                            data: {
+                                labels: labelsX,
+                                datasets: [{
+                                    label: 'FC (bpm)',
+                                    data: serie,
+                                    borderColor: '#d92d20',
+                                    backgroundColor: 'rgba(217,45,32,0.08)',
+                                    borderWidth: 3,
+                                    pointRadius: 0,
+                                    tension: 0.4,
+                                    fill: false,
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    x: {
+                                        title: { display: true, text: 'Segundos', font: { weight: 'bold' } },
+                                        grid: { color: 'rgba(0,0,0,0.04)' },
+                                        ticks: { maxTicksLimit: 10 }
+                                    },
+                                    y: {
+                                        min: Math.max(30, fcMinNum - 10),
+                                        max: fcMaxNum + 10,
+                                        title: { display: true, text: 'FC (bpm)', font: { weight: 'bold' }, color: '#d92d20' },
+                                        grid: { color: 'rgba(0,0,0,0.04)' },
+                                        ticks: { color: '#d92d20' }
+                                    }
+                                }
+                            }
+                        }
+                    );
+                } else {
+                    chartWrap.classList.add('d-none');
+                    noData.classList.remove('d-none');
+                    axisNote.classList.add('d-none');
+                }
+
+                modal.show();
+            });
+        });
+
+        modalEl.addEventListener('hidden.bs.modal', function () {
+            if (chartDetalle) { chartDetalle.destroy(); chartDetalle = null; }
+        });
+    });
 </script>
 
 {% endblock %}

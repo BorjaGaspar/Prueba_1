@@ -25,6 +25,7 @@ function comenzarJuego() {
     window.speechSynthesis.cancel();
     document.getElementById('pantalla-instrucciones').style.display = 'none';
     document.getElementById('pantalla-juego').style.display = 'flex';
+    if (window.Wearable && Wearable.isConnected()) Wearable.startRecording();
     iniciarTuJuego();
 }
 
@@ -81,6 +82,10 @@ function guardarSesion(puntos, dificultad, animo) {
         ? Math.round(vtrTiemposRonda.reduce((a, b) => a + b, 0) / vtrTiemposRonda.length)
         : null;
 
+    const fc = (window.Wearable && Wearable.isConnected())
+        ? Wearable.stopRecording()
+        : null;
+
     const datos = {
         juego: "Lista de la Compra",
         nivel: nivelUsuario,
@@ -90,7 +95,11 @@ function guardarSesion(puntos, dificultad, animo) {
         dificultad_percibida: dificultad,
         estado_animo: animo,
         tiempo_reaccion_ms: trPromedio,
-        errores_cometidos: vtrErrores
+        errores_cometidos: vtrErrores,
+        fc_min: fc ? fc.fc_min : null,
+        fc_max: fc ? fc.fc_max : null,
+        fc_avg: fc ? fc.fc_avg : null,
+        fc_serie: fc ? fc.fc_serie : null
     };
 
     fetch('/api/vtr/guardar-partida/', {

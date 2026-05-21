@@ -163,6 +163,12 @@ class SesionDeJuego(models.Model):
     degradacion_porcentaje = models.FloatField(null=True, blank=True, verbose_name="Degradación vs TR Ideal (%)")
     errores_cometidos = models.IntegerField(default=0, verbose_name="Errores en la partida")
 
+    # --- CAMPOS FC (Wearable) ---
+    fc_min = models.IntegerField(null=True, blank=True, verbose_name="FC Mínima (bpm)")
+    fc_max = models.IntegerField(null=True, blank=True, verbose_name="FC Máxima (bpm)")
+    fc_avg = models.IntegerField(null=True, blank=True, verbose_name="FC Media (bpm)")
+    fc_serie = models.JSONField(null=True, blank=True, verbose_name="Serie FC segundo a segundo (bpm)")
+
     def __str__(self):
         return f"{self.paciente.usuario.username} - {self.juego} - {self.fecha.strftime('%d/%m/%Y %H:%M')}"
 

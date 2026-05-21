@@ -836,12 +836,20 @@ def detalle_sesion_terapia(request, session_id):
     labels = list(range(1, len(partidas) + 1))
     degradacion = [p.degradacion_porcentaje for p in partidas]
     errores = [p.errores_cometidos for p in partidas]
+    fc_avg = [p.fc_avg for p in partidas]
+    fc_min_arr = [p.fc_min for p in partidas]
+    fc_max_arr = [p.fc_max for p in partidas]
+    fc_series = [p.fc_serie for p in partidas]
     juegos_unicos = list(dict.fromkeys(p.juego for p in partidas))
 
     datos_grafica = json.dumps({
         'labels': labels,
         'degradacion': degradacion,
         'errores': errores,
+        'fc_avg': fc_avg,
+        'fc_min': fc_min_arr,
+        'fc_max': fc_max_arr,
+        'fc_series': fc_series,
         'vas_inicial': sesion.vas_inicial,
         'duracion_min': sesion.duracion_minutos,
         'juegos': juegos_unicos,
@@ -897,7 +905,8 @@ def vtr_guardar_partida(request):
     Responde siempre {"estado": "ok"} — el juego nunca recibe órdenes.
     Body JSON:
         juego, nivel, puntos, tiempo_reaccion_ms, errores_cometidos,
-        tiempo_jugado, completado, dificultad_percibida, estado_animo
+        tiempo_jugado, completado, dificultad_percibida, estado_animo,
+        fc_min, fc_max, fc_avg, fc_serie  (opcionales, Wearable BLE)
     """
     if request.method != 'POST':
         return JsonResponse({'estado': 'error', 'mensaje': 'Método no permitido'}, status=405)
@@ -913,6 +922,23 @@ def vtr_guardar_partida(request):
         if tiempo_reaccion_ms is not None:
             tiempo_reaccion_ms = int(tiempo_reaccion_ms)
         errores_cometidos = int(datos.get('errores_cometidos', 0))
+
+        # --- WEARABLE: validación defensiva de datos FC ---
+        fc_min = fc_max = fc_avg = fc_serie = None
+        try:
+            serie_cruda = datos.get('fc_serie')
+            if isinstance(serie_cruda, list):
+                serie_filtrada = [
+                    int(v) for v in serie_cruda
+                    if isinstance(v, (int, float)) and 30 <= int(v) <= 220
+                ]
+                if len(serie_filtrada) >= 3:
+                    fc_serie = serie_filtrada
+                    fc_min = min(serie_filtrada)
+                    fc_max = max(serie_filtrada)
+                    fc_avg = round(sum(serie_filtrada) / len(serie_filtrada))
+        except Exception:
+            fc_min = fc_max = fc_avg = fc_serie = None
 
         sesion = obtener_o_crear_sesion(perfil)
 
@@ -940,6 +966,10 @@ def vtr_guardar_partida(request):
             tiempo_reaccion_ms=tiempo_reaccion_ms,
             errores_cometidos=errores_cometidos,
             degradacion_porcentaje=degradacion,
+            fc_min=fc_min,
+            fc_max=fc_max,
+            fc_avg=fc_avg,
+            fc_serie=fc_serie,
         )
 
         registrar_actividad(sesion)

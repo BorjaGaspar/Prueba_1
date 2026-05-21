@@ -2,67 +2,81 @@
 {% load static %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-4 shadow-sm border">
-    <div class="d-flex align-items-center">
-        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 60px; height: 60px; font-size: 1.5rem;">
+
+<!-- Page Header -->
+<div class="flex items-center justify-between mb-6 bg-white border border-outline-variant/20 rounded-[14px] px-6 py-4 shadow-sm">
+    <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-white font-bold text-base font-headline flex-shrink-0">
             {{ paciente.usuario.username|slice:":2"|upper }}
         </div>
         <div>
-            <h3 class="fw-bold text-dark mb-0">Sesiones de Terapia VTR</h3>
-            <p class="text-muted mb-0">Paciente: <strong>{{ paciente.usuario.username }}</strong></p>
+            <h1 class="font-headline font-bold text-xl text-on-surface tracking-tight leading-tight mb-0">Sesiones de Terapia VTR</h1>
+            <p class="text-sm text-outline mb-0 mt-0.5">
+                Paciente: <span class="text-on-surface font-medium">{{ paciente.usuario.username }}</span>
+            </p>
         </div>
     </div>
-    <a href="{% url 'detalle_paciente' paciente.id %}" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
-        <i class="bi bi-arrow-left me-2"></i> Volver al Perfil
+    <a href="{% url 'detalle_paciente' paciente.id %}"
+       class="inline-flex items-center gap-1.5 bg-white border border-outline-variant/30 text-on-surface-variant rounded-lg px-4 py-2 text-sm font-medium hover:bg-surface-container-low transition-colors duration-150">
+        <span class="material-symbols-outlined" style="font-size: 1.1rem; line-height: 1;">chevron_left</span>
+        Volver al Perfil
     </a>
 </div>
 
 {% if not sesiones %}
-    <div class="alert alert-info rounded-4 text-center p-5 border-0 shadow-sm">
-        <i class="bi bi-info-circle-fill display-4 text-info mb-3 d-block"></i>
-        <h5 class="fw-bold">Sin sesiones registradas</h5>
-        <p class="text-muted mb-0">El paciente aún no ha jugado con el sistema VTR activo.</p>
+    <!-- Empty State -->
+    <div class="bg-white border border-outline-variant/20 rounded-[14px] shadow-sm text-center py-16 px-8">
+        <span class="material-symbols-outlined text-outline"
+              style="font-size: 3.5rem; opacity: .25; display: block; margin-bottom: 1rem;">calendar_clock</span>
+        <h3 class="font-headline font-bold text-lg text-on-surface mb-1">Sin sesiones registradas</h3>
+        <p class="text-sm text-outline mb-0">El paciente aún no ha jugado con el sistema VTR activo.</p>
     </div>
+
 {% else %}
-    <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body p-0">
-            <table class="table table-hover mb-0 align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th class="px-4 py-3 fw-bold text-secondary">Fecha y Hora</th>
-                        <th class="py-3 fw-bold text-secondary text-center">Duración</th>
-                        <th class="py-3 fw-bold text-secondary text-center">Cansancio (VAS)</th>
-                        <th class="py-3 fw-bold text-secondary text-center">Partidas</th>
-                        <th class="py-3 fw-bold text-secondary text-center">Acción</th>
+    <!-- Sessions Table -->
+    <div class="bg-white border border-outline-variant/20 rounded-[14px] shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr style="border-bottom: 1px solid rgba(198,197,212,0.3);">
+                        <th class="px-6 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-outline">Fecha y Hora</th>
+                        <th class="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-outline">Duración</th>
+                        <th class="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-outline">Cansancio (VAS)</th>
+                        <th class="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-outline">Partidas</th>
+                        <th class="px-6 py-3 text-right text-[10px] font-semibold uppercase tracking-[0.1em] text-outline">Acción</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for sesion in sesiones %}
-                    <tr>
-                        <td class="px-4 py-3">
-                            <div class="fw-bold text-dark">{{ sesion.fecha_inicio|date:"d/m/Y" }}</div>
-                            <small class="text-muted">{{ sesion.fecha_inicio|date:"H:i" }}h</small>
+                    <tr class="hover:bg-surface-container-low transition-colors duration-100"
+                        style="border-bottom: 1px solid rgba(198,197,212,0.15);">
+                        <td class="px-6 py-4">
+                            <div class="font-semibold text-sm text-on-surface">{{ sesion.fecha_inicio|date:"d/m/Y" }}</div>
+                            <div class="text-xs text-outline mt-0.5">{{ sesion.fecha_inicio|date:"H:i" }}h</div>
                         </td>
-                        <td class="py-3 text-center">
-                            <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-2">
+                        <td class="px-4 py-4 text-center">
+                            <span class="text-[11px] font-semibold px-2.5 py-1 rounded bg-primary/10 text-primary">
                                 {{ sesion.duracion_minutos }} min
                             </span>
                         </td>
-                        <td class="py-3 text-center">
+                        <td class="px-4 py-4 text-center">
                             {% if sesion.vas_inicial %}
-                                <span class="badge {% if sesion.vas_inicial <= 3 %}bg-success{% elif sesion.vas_inicial <= 6 %}bg-warning text-dark{% else %}bg-danger{% endif %} fw-bold px-3 py-2">
+                                <span class="text-[11px] font-bold px-2.5 py-1 rounded"
+                                      style="{% if sesion.vas_inicial <= 3 %}background:#f0fdf4;color:#15803d;{% elif sesion.vas_inicial <= 6 %}background:#fffbeb;color:#b45309;{% else %}background:#fef2f2;color:#b91c1c;{% endif %}">
                                     {{ sesion.vas_inicial }}/10
                                 </span>
                             {% else %}
-                                <span class="text-muted small">No declarado</span>
+                                <span class="text-xs text-outline">No declarado</span>
                             {% endif %}
                         </td>
-                        <td class="py-3 text-center fw-bold text-dark">
+                        <td class="px-4 py-4 text-center font-bold text-sm text-on-surface" style="font-variant-numeric: tabular-nums;">
                             {{ sesion.partidas.count }}
                         </td>
-                        <td class="py-3 text-center">
-                            <a href="{% url 'detalle_sesion_terapia' sesion.session_id %}" class="btn btn-sm btn-primary rounded-pill px-3 fw-bold">
-                                <i class="bi bi-graph-up me-1"></i> Ver gráfica
+                        <td class="px-6 py-4 text-right">
+                            <a href="{% url 'detalle_sesion_terapia' sesion.session_id %}"
+                               class="inline-flex items-center gap-1.5 border border-primary/25 bg-primary/5 text-primary rounded-lg px-3 py-1.5 text-[11px] font-semibold hover:bg-primary/10 transition-colors duration-150">
+                                <span class="material-symbols-outlined" style="font-size: 0.95rem; line-height: 1;">show_chart</span>
+                                Ver gráfica
                             </a>
                         </td>
                     </tr>
@@ -72,4 +86,5 @@
         </div>
     </div>
 {% endif %}
+
 {% endblock %}
