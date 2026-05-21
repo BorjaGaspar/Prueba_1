@@ -1,6 +1,11 @@
 // Parseamos la variable que nos ha dejado el HTML
 const baseDatosJuegos = JSON.parse(JSON_DATOS_JUEGOS);
 
+// Global Chart.js defaults — matches dashboard typography and colors
+Chart.defaults.font.family = 'Inter, sans-serif';
+Chart.defaults.font.size = 11;
+Chart.defaults.color = '#767683';
+
 let chartPuntos = null;
 let chartTiempos = null;
 let chartDificultad = null;
@@ -145,64 +150,140 @@ function dibujarGraficas(fechas, puntos, tiempos, dificultades, animos) {
     if (chartDificultad) chartDificultad.destroy();
     if (chartAnimo) chartAnimo.destroy();
 
+    // Shared tooltip style — white card, matches dashboard
+    const tooltipBase = {
+        backgroundColor: '#ffffff',
+        titleColor: '#191c1e',
+        bodyColor: '#767683',
+        borderColor: 'rgba(198,197,212,0.5)',
+        borderWidth: 1,
+        padding: { x: 12, y: 8 },
+        cornerRadius: 10,
+        displayColors: false,
+        titleFont: { family: 'Manrope, sans-serif', weight: '700', size: 12 },
+        bodyFont: { family: 'Inter, sans-serif', size: 11 },
+    };
+
+    // Shared scale axes — minimal, clean
+    const xAxis = {
+        grid: { display: false },
+        border: { display: false },
+        ticks: { color: '#767683', font: { family: 'Inter, sans-serif', size: 11 } }
+    };
+    const yAxisBase = {
+        grid: { color: 'rgba(198,197,212,0.2)' },
+        border: { display: false },
+        ticks: { color: '#767683', font: { family: 'Inter, sans-serif', size: 11 } }
+    };
+
+    // ── Puntuación — indigo line with gradient fill ──────────────────
     const ctxPuntos = document.getElementById('graficaPuntos').getContext('2d');
+    const gradPuntos = ctxPuntos.createLinearGradient(0, 0, 0, 260);
+    gradPuntos.addColorStop(0, 'rgba(76,86,175,0.22)');
+    gradPuntos.addColorStop(1, 'rgba(76,86,175,0)');
+
     chartPuntos = new Chart(ctxPuntos, {
         type: 'line',
         data: {
             labels: fechas,
             datasets: [{
-                label: 'Puntuación', data: puntos,
-                borderColor: '#0d6efd', backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                borderWidth: 3, tension: 0.3, fill: true,
-                pointBackgroundColor: '#fff', pointBorderColor: '#0d6efd', pointRadius: 6
+                label: 'Puntuación',
+                data: puntos,
+                borderColor: '#4c56af',
+                backgroundColor: gradPuntos,
+                borderWidth: 2.5,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#4c56af',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointHoverBackgroundColor: '#4c56af',
             }]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { borderDash: [5, 5] } }, x: { grid: { display: false } } } }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: tooltipBase },
+            scales: { x: xAxis, y: { ...yAxisBase, beginAtZero: true } }
+        }
     });
 
+    // ── Tiempos — sky bar chart, rounded bars ────────────────────────
     const ctxTiempos = document.getElementById('graficaTiempos').getContext('2d');
     chartTiempos = new Chart(ctxTiempos, {
         type: 'bar',
         data: {
             labels: fechas,
             datasets: [{
-                label: 'Tiempo', data: tiempos,
-                backgroundColor: 'rgba(13, 202, 240, 0.7)', borderColor: '#0dcaf0',
-                borderWidth: 2, borderRadius: 4
+                label: 'Tiempo (s)',
+                data: tiempos,
+                backgroundColor: 'rgba(14,165,233,0.12)',
+                borderColor: '#0ea5e9',
+                borderWidth: 1.5,
+                borderRadius: 8,
+                borderSkipped: false,
+                hoverBackgroundColor: 'rgba(14,165,233,0.25)',
             }]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { borderDash: [5, 5] } }, x: { grid: { display: false } } } }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: tooltipBase },
+            scales: { x: xAxis, y: { ...yAxisBase, beginAtZero: true } }
+        }
     });
 
     const difDataLimpiada = dificultades.map(d => d === 0 ? null : d);
     const aniDataLimpiada = animos.map(a => a === 0 ? null : a);
 
+    // ── Dificultad — amber line ──────────────────────────────────────
     const ctxDificultad = document.getElementById('graficaDificultad').getContext('2d');
+    const gradDif = ctxDificultad.createLinearGradient(0, 0, 0, 260);
+    gradDif.addColorStop(0, 'rgba(217,119,6,0.2)');
+    gradDif.addColorStop(1, 'rgba(217,119,6,0)');
+
     chartDificultad = new Chart(ctxDificultad, {
         type: 'line',
         data: {
             labels: fechas,
             datasets: [{
-                label: 'Dificultad', data: difDataLimpiada,
-                borderColor: '#ffc107', backgroundColor: 'rgba(255, 193, 7, 0.1)',
-                borderWidth: 3, tension: 0.1, fill: true, spanGaps: true,
-                pointBackgroundColor: '#fff', pointBorderColor: '#ffc107', pointRadius: 6
+                label: 'Dificultad',
+                data: difDataLimpiada,
+                borderColor: '#d97706',
+                backgroundColor: gradDif,
+                borderWidth: 2.5,
+                tension: 0.4,
+                fill: true,
+                spanGaps: true,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#d97706',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointHoverBackgroundColor: '#d97706',
             }]
         },
         options: {
-            responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: tooltipBase },
             scales: {
-                x: { grid: { display: false } },
+                x: xAxis,
                 y: {
-                    min: 0.5, max: 5.5,
+                    ...yAxisBase,
+                    min: 0.5,
+                    max: 5.5,
                     ticks: {
+                        ...yAxisBase.ticks,
                         stepSize: 1,
                         callback: function (value) {
-                            if (value === 1) return '1 - Muy Fácil';
-                            if (value === 2) return '2 - Fácil';
-                            if (value === 3) return '3 - Normal';
-                            if (value === 4) return '4 - Difícil';
-                            if (value === 5) return '5 - Muy Difícil';
+                            if (value === 1) return '1 · Muy Fácil';
+                            if (value === 2) return '2 · Fácil';
+                            if (value === 3) return '3 · Normal';
+                            if (value === 4) return '4 · Difícil';
+                            if (value === 5) return '5 · Muy Difícil';
                             return '';
                         }
                     }
@@ -211,26 +292,47 @@ function dibujarGraficas(fechas, puntos, tiempos, dificultades, animos) {
         }
     });
 
+    // ── Ánimo — emerald line ─────────────────────────────────────────
     const ctxAnimo = document.getElementById('graficaAnimo').getContext('2d');
+    const gradAni = ctxAnimo.createLinearGradient(0, 0, 0, 260);
+    gradAni.addColorStop(0, 'rgba(5,150,105,0.2)');
+    gradAni.addColorStop(1, 'rgba(5,150,105,0)');
+
     chartAnimo = new Chart(ctxAnimo, {
         type: 'line',
         data: {
             labels: fechas,
             datasets: [{
-                label: 'Ánimo', data: aniDataLimpiada,
-                borderColor: '#198754', backgroundColor: 'rgba(25, 135, 84, 0.1)',
-                borderWidth: 3, tension: 0.1, fill: true, spanGaps: true,
-                pointBackgroundColor: '#fff', pointBorderColor: '#198754', pointRadius: 6
+                label: 'Ánimo',
+                data: aniDataLimpiada,
+                borderColor: '#059669',
+                backgroundColor: gradAni,
+                borderWidth: 2.5,
+                tension: 0.4,
+                fill: true,
+                spanGaps: true,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#059669',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointHoverBackgroundColor: '#059669',
             }]
         },
         options: {
-            responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: tooltipBase },
             scales: {
-                x: { grid: { display: false } },
+                x: xAxis,
                 y: {
-                    min: 0.5, max: 5.5,
+                    ...yAxisBase,
+                    min: 0.5,
+                    max: 5.5,
                     ticks: {
-                        stepSize: 1, font: { size: 16 },
+                        ...yAxisBase.ticks,
+                        stepSize: 1,
+                        font: { family: 'Inter, sans-serif', size: 15 },
                         callback: function (value) {
                             if (value === 1) return '1 😢';
                             if (value === 2) return '2 🙁';

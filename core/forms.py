@@ -34,10 +34,10 @@ class RegistroUsuarioForm(UserCreationForm):
     # --- 4. Selector de Médico ---
     medico_selector = forms.ModelChoiceField(
         queryset=User.objects.filter(perfil__es_medico=True),
-        required=False,
-        label="Selecciona tu Médico (Opcional)",
+        required=True,
+        label="Selecciona tu Médico",
         widget=forms.Select(attrs={'class': 'form-select'}),
-        empty_label="-- Prefiero ir por libre --"
+        empty_label="-- Selecciona un médico --"
     )
 
     class Meta:

@@ -10,6 +10,7 @@ from core.services.vtr_service import (
     registrar_actividad,
     actualizar_marca_personal,
     calcular_degradacion,
+    TIMEOUT_INACTIVIDAD_MIN,
 )
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -356,7 +357,17 @@ def buzon_paciente_medico(request, pk):
 
 @login_required
 def juegos(request):
-    return render(request, 'core/juegos.html')
+    # ¿El paciente tiene ya una sesión de terapia activa (<60 min de inactividad)?
+    # El test VAS solo debe mostrarse cuando NO la hay. Gating en backend para
+    # no depender de sessionStorage (que sobrevive a cambios de usuario/pestaña).
+    sesion_activa = False
+    perfil = getattr(request.user, 'perfil', None)
+    if perfil is not None:
+        ultima = SesionTerapia.objects.filter(paciente=perfil).first()
+        if ultima is not None:
+            mins_inactivo = (timezone.now() - ultima.ultima_actividad).total_seconds() / 60
+            sesion_activa = mins_inactivo < TIMEOUT_INACTIVIDAD_MIN
+    return render(request, 'core/juegos.html', {'sesion_activa': sesion_activa})
 
 @login_required
 def sala_evaluacion(request):
