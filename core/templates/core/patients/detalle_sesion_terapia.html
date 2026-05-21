@@ -1,0 +1,218 @@
+{% extends 'core/layouts/base_medico.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-4 shadow-sm border">
+    <div class="d-flex align-items-center">
+        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 60px; height: 60px; font-size: 1.5rem;">
+            {{ paciente.usuario.username|slice:":2"|upper }}
+        </div>
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Detalle de Sesión VTR</h3>
+            <p class="text-muted mb-0">Paciente: <strong>{{ paciente.usuario.username }}</strong> · {{ sesion.fecha_inicio|date:"d/m/Y H:i" }}h</p>
+        </div>
+    </div>
+    <a href="{% url 'lista_sesiones_terapia' paciente.id %}" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
+        <i class="bi bi-arrow-left me-2"></i> Volver a Sesiones
+    </a>
+</div>
+
+<!-- Cabecera informativa -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 text-center p-3">
+            <div class="text-muted small fw-bold text-uppercase mb-1">Duración</div>
+            <div class="fw-bold fs-4 text-primary">{{ sesion.duracion_minutos }} min</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 text-center p-3">
+            <div class="text-muted small fw-bold text-uppercase mb-1">Cansancio inicial (VAS)</div>
+            <div class="fw-bold fs-4 {% if sesion.vas_inicial %}{% if sesion.vas_inicial <= 3 %}text-success{% elif sesion.vas_inicial <= 6 %}text-warning{% else %}text-danger{% endif %}{% else %}text-muted{% endif %}">
+                {% if sesion.vas_inicial %}{{ sesion.vas_inicial }}/10{% else %}No declarado{% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 text-center p-3">
+            <div class="text-muted small fw-bold text-uppercase mb-1">Partidas jugadas</div>
+            <div class="fw-bold fs-4 text-dark">{{ partidas|length }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 text-center p-3">
+            <div class="text-muted small fw-bold text-uppercase mb-1">Juegos</div>
+            <div class="fw-bold fs-6 text-dark" id="juegos-cabecera">—</div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráfica -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+        <h5 class="fw-bold text-dark mb-0">
+            <i class="bi bi-graph-up-arrow me-2 text-primary"></i>
+            Degradación del Tiempo de Reacción
+        </h5>
+        <p class="text-muted small mt-1 mb-0">
+            <span class="badge bg-secondary bg-opacity-20 text-secondary me-2">Zona gris = Calibración</span>
+            <span class="badge bg-primary bg-opacity-10 text-primary me-2">Línea azul = Degradación TR (%)</span>
+        </p>
+    </div>
+    <div class="card-body p-4">
+        {% if partidas %}
+            <div style="height: 350px;">
+                <canvas id="graficaVTR"></canvas>
+            </div>
+        {% else %}
+            <div class="text-center text-muted py-5">
+                <i class="bi bi-bar-chart-line display-4 mb-3 d-block"></i>
+                <p>Esta sesión no tiene partidas registradas.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Tabla drill-down -->
+{% if partidas %}
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-header bg-white border-0 pt-4 pb-2 px-4">
+        <h6 class="fw-bold text-secondary mb-0"><i class="bi bi-table me-2"></i>Datos por partida</h6>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th class="px-3 py-2">#</th>
+                        <th class="py-2">Juego</th>
+                        <th class="py-2 text-center">Nivel</th>
+                        <th class="py-2 text-center">Puntos</th>
+                        <th class="py-2 text-center">TR (ms)</th>
+                        <th class="py-2 text-center">TR Ideal (ms)</th>
+                        <th class="py-2 text-center">Errores</th>
+                        <th class="py-2 text-center">Degradación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in partidas %}
+                    <tr>
+                        <td class="px-3 py-2 text-muted small">{{ forloop.counter }}</td>
+                        <td class="py-2 fw-bold small">{{ p.juego }}</td>
+                        <td class="py-2 text-center"><span class="badge bg-primary bg-opacity-10 text-primary">N{{ p.nivel_jugado }}</span></td>
+                        <td class="py-2 text-center fw-bold text-success">{{ p.puntos }}</td>
+                        <td class="py-2 text-center">
+                            {% if p.tiempo_reaccion_ms %}{{ p.tiempo_reaccion_ms }}{% else %}<span class="text-muted">—</span>{% endif %}
+                        </td>
+                        <td class="py-2 text-center text-muted">
+                            {% if p.tr_ideal_en_partida %}{{ p.tr_ideal_en_partida }}{% else %}<span class="text-muted">—</span>{% endif %}
+                        </td>
+                        <td class="py-2 text-center">
+                            <span class="fw-bold {% if p.errores_cometidos > 0 %}text-danger{% else %}text-success{% endif %}">
+                                {{ p.errores_cometidos }}
+                            </span>
+                        </td>
+                        <td class="py-2 text-center">
+                            {% if p.degradacion_porcentaje is not None %}
+                                <span class="badge {% if p.degradacion_porcentaje > 20 %}bg-danger{% elif p.degradacion_porcentaje > 0 %}bg-warning text-dark{% else %}bg-success{% endif %} fw-bold">
+                                    {% if p.degradacion_porcentaje > 0 %}+{% endif %}{{ p.degradacion_porcentaje|floatformat:1 }}%
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary bg-opacity-20 text-secondary">Calibrando</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const DATOS_VTR = {{ datos_grafica_json|safe }};
+
+    // Mostrar juegos en cabecera
+    document.getElementById('juegos-cabecera').innerText = DATOS_VTR.juegos.join(', ') || '—';
+
+    if (DATOS_VTR.labels.length > 0) {
+        const ctx = document.getElementById('graficaVTR').getContext('2d');
+
+        // Fondo de calibración: barras grises donde degradacion es null
+        const fondoCalibracion = DATOS_VTR.degradacion.map(v => v === null ? 999 : null);
+
+        new Chart(ctx, {
+            data: {
+                labels: DATOS_VTR.labels,
+                datasets: [
+                    {
+                        type: 'bar',
+                        label: 'Calibrando',
+                        data: fondoCalibracion,
+                        backgroundColor: 'rgba(180,180,180,0.18)',
+                        borderColor: 'rgba(180,180,180,0.0)',
+                        yAxisID: 'yDeg',
+                        order: 2,
+                        barPercentage: 1.0,
+                        categoryPercentage: 1.0,
+                    },
+                    {
+                        type: 'line',
+                        label: 'Degradación TR (%)',
+                        data: DATOS_VTR.degradacion,
+                        borderColor: 'rgba(13,110,253,0.9)',
+                        backgroundColor: 'rgba(13,110,253,0.08)',
+                        borderWidth: 2,
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgba(13,110,253,0.9)',
+                        fill: false,
+                        spanGaps: false,
+                        tension: 0.3,
+                        yAxisID: 'yDeg',
+                        order: 1,
+                    },
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: {
+                        labels: {
+                            filter: item => item.text !== 'Calibrando'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                if (ctx.dataset.label === 'Calibrando') return null;
+                                return ctx.raw === null
+                                    ? 'TR: Calibrando...'
+                                    : `Degradación: ${ctx.raw > 0 ? '+' : ''}${ctx.raw}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Partida nº', font: { weight: 'bold' } },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    yDeg: {
+                        type: 'linear',
+                        position: 'left',
+                        title: { display: true, text: 'Degradación TR (%)', font: { weight: 'bold' }, color: 'rgba(13,110,253,0.9)' },
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: { color: 'rgba(13,110,253,0.9)' }
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+{% endblock %}

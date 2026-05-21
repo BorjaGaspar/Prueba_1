@@ -77,28 +77,30 @@ function enviarAutopercepcion() {
 }
 
 function guardarSesion(puntos, dificultad, animo) {
+    const trPromedio = vtrTiemposRonda.length > 0
+        ? Math.round(vtrTiemposRonda.reduce((a, b) => a + b, 0) / vtrTiemposRonda.length)
+        : null;
+
     const datos = {
-        juego: "LISTA_DE_LA_COMPRA",
+        juego: "Lista de la Compra",
         nivel: nivelUsuario,
         puntos: puntos,
-        tiempo: Math.round(tiempoTotalAcumulado),
+        tiempo_jugado: Math.round(tiempoTotalAcumulado),
         completado: true,
         dificultad_percibida: dificultad,
-        estado_animo: animo
+        estado_animo: animo,
+        tiempo_reaccion_ms: trPromedio,
+        errores_cometidos: vtrErrores
     };
 
-    fetch('/api/guardar-progreso/', {
+    fetch('/api/vtr/guardar-partida/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken
         },
         body: JSON.stringify(datos)
-    })
-    .then(response => {
-        if (response.ok) console.log("¡Guardado en BD con éxito!");
-        else console.error("Error al guardar");
-    });
+    }).then(() => {});
 }
 
 // ==========================================
@@ -122,6 +124,11 @@ const bancoPalabras = [
 let rondaActual = 1;
 let secuenciaJuego = [];
 let secuenciaUsuario = [];
+
+// --- VTR Data Logger ---
+let vtrErrores = 0;
+let vtrTiemposRonda = [];
+let vtrInicioRecuerdo = null;
 
 function iniciarTuJuego() {
     rondaActual = 1;
@@ -176,6 +183,7 @@ function mostrarLista(tiempo) {
         contenedorJuego.classList.remove('d-none');
         msg.innerText = "¡Tu turno!";
         msg.className = "h3 fw-bold text-success";
+        vtrInicioRecuerdo = performance.now();
         generarBotones();
     }, tiempo);
 }
@@ -198,6 +206,10 @@ function manejarClick(palabra, elemento) {
     if (elemento.style.opacity === "0.3") return;
     const palabraCorrecta = secuenciaJuego[secuenciaUsuario.length];
 
+    if (secuenciaUsuario.length === 0 && vtrInicioRecuerdo !== null) {
+        vtrTiemposRonda.push(Math.round(performance.now() - vtrInicioRecuerdo));
+    }
+
     if (palabra === palabraCorrecta) {
         secuenciaUsuario.push(palabra);
         elemento.style.opacity = "0.3";
@@ -208,6 +220,7 @@ function manejarClick(palabra, elemento) {
         }
     } else {
         puntosTotales -= 200;
+        vtrErrores++;
         elemento.style.backgroundColor = "#f8d7da";
         finalizarRonda(false);
     }

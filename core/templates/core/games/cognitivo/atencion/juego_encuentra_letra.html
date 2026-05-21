@@ -304,9 +304,14 @@
     let puntosTotales = 0;
     
     let startTime;
-    let timerInterval; 
+    let timerInterval;
     let clickHabilitado = true;
-    let tiempoTotalAcumulado = 0; 
+    let tiempoTotalAcumulado = 0;
+
+    // --- VTR Data Logger ---
+    let vtrErrores = 0;
+    let vtrTiemposRonda = [];
+    let vtrInicioRonda = null;
 
     const gridEl = document.getElementById('game-grid');
     const scoreEl = document.getElementById('score');
@@ -390,6 +395,7 @@
         }
 
         startTime = Date.now();
+        vtrInicioRonda = performance.now();
         timerInterval = setInterval(actualizarCronometro, 100);
     }
 
@@ -400,8 +406,12 @@
             clearInterval(timerInterval);
             clickHabilitado = false;
             elemento.classList.add('correct-click');
-            
-            let tiempoUsado = (Date.now() - startTime) / 1000; 
+
+            if (vtrInicioRonda !== null) {
+                vtrTiemposRonda.push(Math.round(performance.now() - vtrInicioRonda));
+            }
+
+            let tiempoUsado = (Date.now() - startTime) / 1000;
             tiempoTotalAcumulado += tiempoUsado;
             timerEl.innerText = tiempoUsado.toFixed(1) + 's';
 
@@ -432,6 +442,7 @@
             elemento.classList.add('wrong-click');
             puntosTotales = Math.max(0, puntosTotales - 10);
             scoreEl.innerText = puntosTotales;
+            vtrErrores++;
         }
     }
 
@@ -482,28 +493,30 @@
     }
 
     function guardarSesion(puntos, dificultad, animo) {
+        const trPromedio = vtrTiemposRonda.length > 0
+            ? Math.round(vtrTiemposRonda.reduce((a, b) => a + b, 0) / vtrTiemposRonda.length)
+            : null;
+
         const datos = {
             juego: "Encuentra la Letra",
             nivel: nivelUsuario,
             puntos: puntos,
-            tiempo: Math.round(tiempoTotalAcumulado),
+            tiempo_jugado: Math.round(tiempoTotalAcumulado),
             completado: true,
-            dificultad_percibida: dificultad, 
-            estado_animo: animo               
+            dificultad_percibida: dificultad,
+            estado_animo: animo,
+            tiempo_reaccion_ms: trPromedio,
+            errores_cometidos: vtrErrores
         };
 
-        fetch('/api/guardar-progreso/', {
+        fetch('/api/vtr/guardar-partida/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': '{{ csrf_token }}'
             },
             body: JSON.stringify(datos)
-        })
-        .then(response => {
-            if (response.ok) console.log("¡Guardado con éxito con autopercepción!");
-            else console.error("Error al guardar");
-        });
+        }).then(() => {});
     }
 
 </script>

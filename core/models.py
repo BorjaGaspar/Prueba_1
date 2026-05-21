@@ -1,6 +1,7 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils import timezone 
+from django.utils import timezone
 
 # ================================================================
 # TABLA 1: PERFIL DEL PACIENTE
@@ -107,6 +108,32 @@ class PerfilPaciente(models.Model):
 
 
 # ================================================================
+# TABLA VTR-1: SESIÓN DE TERAPIA (CONTENEDOR DE PARTIDAS)
+# ================================================================
+class SesionTerapia(models.Model):
+    paciente = models.ForeignKey(
+        PerfilPaciente,
+        on_delete=models.CASCADE,
+        related_name='sesiones_terapia'
+    )
+    session_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    fecha_inicio = models.DateTimeField(default=timezone.now)
+    ultima_actividad = models.DateTimeField(default=timezone.now)
+    vas_inicial = models.IntegerField(null=True, blank=True, verbose_name="Cansancio inicial (1-10)")
+
+    class Meta:
+        ordering = ['-fecha_inicio']
+
+    def __str__(self):
+        return f"Sesión {str(self.session_id)[:8]} - {self.paciente.usuario.username} - {self.fecha_inicio.strftime('%d/%m/%Y %H:%M')}"
+
+    @property
+    def duracion_minutos(self):
+        delta = self.ultima_actividad - self.fecha_inicio
+        return round(delta.total_seconds() / 60)
+
+
+# ================================================================
 # TABLA 2: HISTORIAL DE SESIONES
 # ================================================================
 class SesionDeJuego(models.Model):
@@ -124,11 +151,48 @@ class SesionDeJuego(models.Model):
     
     detalles = models.TextField(blank=True, null=True, verbose_name="Detalles JSON")
 
+    # --- CAMPOS VTR (Data Logger) ---
+    sesion_terapia = models.ForeignKey(
+        SesionTerapia,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='partidas'
+    )
+    tiempo_reaccion_ms = models.IntegerField(null=True, blank=True, verbose_name="Tiempo de Reacción (ms)")
+    degradacion_porcentaje = models.FloatField(null=True, blank=True, verbose_name="Degradación vs TR Ideal (%)")
+    errores_cometidos = models.IntegerField(default=0, verbose_name="Errores en la partida")
+
     def __str__(self):
         return f"{self.paciente.usuario.username} - {self.juego} - {self.fecha.strftime('%d/%m/%Y %H:%M')}"
 
     class Meta:
         ordering = ['-fecha']
+
+# ================================================================
+# TABLA VTR-2: MARCA PERSONAL DE TIEMPO DE REACCIÓN
+# ================================================================
+class MarcaPersonalTR(models.Model):
+    paciente = models.ForeignKey(
+        PerfilPaciente,
+        on_delete=models.CASCADE,
+        related_name='marcas_tr'
+    )
+    juego = models.CharField(max_length=100)
+    nivel = models.IntegerField()
+    TR_ideal = models.IntegerField(null=True, blank=True, verbose_name="TR Ideal (ms)")
+    partidas_base_calculadas = models.IntegerField(default=0)
+    tiempo1 = models.IntegerField(null=True, blank=True)
+    tiempo2 = models.IntegerField(null=True, blank=True)
+    tiempo3 = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ('paciente', 'juego', 'nivel')
+
+    def __str__(self):
+        estado = f"{self.TR_ideal}ms" if self.TR_ideal else "CALIBRANDO"
+        return f"{self.paciente.usuario.username} | {self.juego} N{self.nivel} | {estado}"
+
 
 # ================================================================
 # TABLA 3: NOTAS DEL ESPECIALISTA (HISTORIAL CLÍNICO)

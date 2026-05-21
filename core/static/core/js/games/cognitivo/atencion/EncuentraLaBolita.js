@@ -8,6 +8,11 @@ let csrfToken = typeof TOKEN_DJANGO !== 'undefined' ? TOKEN_DJANGO : '';
 
 let puntosTotales = 0;
 
+// --- VTR Data Logger ---
+let vtrErrores = 0;
+let vtrTiemposRonda = [];
+let vtrInicioInteraccion = null;
+
 // VOZ
 document.getElementById('btn-leer-instrucciones').addEventListener('click', function () {
     window.speechSynthesis.cancel();
@@ -69,26 +74,30 @@ function enviarAutopercepcion() {
 }
 
 function guardarSesion(puntos, dificultad, animo) {
+    const trPromedio = vtrTiemposRonda.length > 0
+        ? Math.round(vtrTiemposRonda.reduce((a, b) => a + b, 0) / vtrTiemposRonda.length)
+        : null;
+
     const datos = {
         juego: "Encuentra la Bolita",
         nivel: nivelUsuario,
         puntos: puntos,
-        tiempo: 0,
+        tiempo_jugado: 0,
         completado: true,
         dificultad_percibida: dificultad,
-        estado_animo: animo
+        estado_animo: animo,
+        tiempo_reaccion_ms: trPromedio,
+        errores_cometidos: vtrErrores
     };
 
-    fetch('/api/guardar-progreso/', {
+    fetch('/api/vtr/guardar-partida/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken
         },
         body: JSON.stringify(datos)
-    }).then(response => {
-        if (response.ok) console.log("Guardado en SamiraDTx con éxito");
-    });
+    }).then(() => {});
 }
 
 // ==========================================
@@ -178,6 +187,7 @@ class MotorJuego {
         }
         this.estaMezclando = false;
         this.puedeInteractuar = true;
+        vtrInicioInteraccion = performance.now();
     }
 
     async swap(iA, iB) {
@@ -219,8 +229,15 @@ class MotorJuego {
     async seleccionarVaso(v) {
         this.puedeInteractuar = false;
         v.revelado = true;
-        if (v.tieneBola) puntosTotales += 200;
-        else puntosTotales = Math.max(0, puntosTotales - 100);
+        if (vtrInicioInteraccion !== null) {
+            vtrTiemposRonda.push(Math.round(performance.now() - vtrInicioInteraccion));
+        }
+        if (v.tieneBola) {
+            puntosTotales += 200;
+        } else {
+            puntosTotales = Math.max(0, puntosTotales - 100);
+            vtrErrores++;
+        }
         document.getElementById('score').innerText = puntosTotales;
 
         const inicio = performance.now();
