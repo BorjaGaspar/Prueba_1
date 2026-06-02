@@ -18,7 +18,8 @@
       "Skill(impeccable)",
       "Bash(node *)",
       "Bash(git log *)",
-      "PowerShell(Test-Path *)"
+      "PowerShell(Test-Path *)",
+      "Bash(graphify update *)"
     ]
   }
 }

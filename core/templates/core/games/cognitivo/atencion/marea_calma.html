@@ -1,0 +1,130 @@
+{% extends 'core/layouts/base_private.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    body { background-color: #f8f9fa; overflow: hidden; }
+    
+    .ocean-container {
+        width: 100%;
+        max-width: 1300px;
+        height: 65vh;
+        background-color: #fff;
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        display: flex;
+        align-items: flex-end;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    #mar-wrapper {
+        width: 100%;
+        height: 15%; 
+        position: absolute;
+        bottom: 0;
+        transition: height 4s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+    }
+
+    .wave {
+        position: absolute;
+        top: -50px;
+        left: 0;
+        width: 200%;
+        height: 100vh;
+        background: url('https://raw.githubusercontent.com/taniarascia/sandbox/master/ghibli/ocean.png');
+        background-repeat: repeat-x;
+        opacity: 0.6;
+    }
+
+    .wave1 { background: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%); animation: wave-move 10s linear infinite; z-index: 5; }
+    .wave2 { top: -60px; background: linear-gradient(180deg, rgba(0, 198, 255, 0.3) 0%, rgba(0, 114, 255, 0.3) 100%); animation: wave-move 15s linear infinite reverse; z-index: 3; }
+
+    @keyframes wave-move { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    #guia-central {
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        z-index: 20;
+        text-transform: uppercase;
+        letter-spacing: 5px;
+        opacity: 0;
+        transition: opacity 0.5s;
+    }
+
+</style>
+
+<div class="container-fluid py-2 d-flex flex-column" style="height: 92vh; max-height: 95vh;"> 
+    
+    <div id="pantalla-instrucciones" class="card shadow-lg border-0 mx-auto w-100 my-auto" style="max-width: 800px; border-radius: 20px;">
+        <div class="card-body p-5 text-center">
+            <button id="btn-leer-instrucciones" class="btn btn-primary rounded-circle mb-4 shadow d-inline-flex justify-content-center align-items-center" style="width: 80px; height: 80px;">
+                <i class="bi bi-volume-up-fill" style="font-size: 2.5rem;"></i>
+            </button>
+            <h2 class="fw-bold mb-4 display-6 text-dark">Marea de Calma</h2>
+            <div id="texto-instrucciones" class="fs-4 text-muted mb-5 px-3">
+                Sincroniza tu respiración con el nivel del mar para relajarte.<br><br>
+                <strong>Objetivo:</strong> Inhala cuando el agua suba, mantén el aire y exhala cuando el agua baje.
+            </div>
+            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                <button class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow fw-bold text-white d-flex justify-content-center align-items-center" onclick="comenzarJuego()">
+                    <i class="bi bi-play-fill me-2 fs-4"></i> ¡Empezar a Jugar!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pantalla-juego" style="display: none; height: 100%; flex-direction: column;">
+        <div class="d-flex justify-content-between align-items-center mb-1 px-3" style="max-width: 1200px; margin: 0 auto; width: 100%;">
+            <div>
+                <h4 class="fw-bold mb-0">Marea de Calma</h4>
+                <p class="text-muted mb-0 small">Ciclo: <span id="display-ciclo" class="fw-bold text-primary">1</span>/5</p>
+            </div>
+            <div class="d-flex gap-3 text-end">
+                <div><span class="text-muted small">Estado</span><div class="fw-bold text-primary h5 mb-0" id="estado-respiracion">-</div></div>
+                <div><span class="text-muted small">Tiempo</span><div class="fw-bold text-success h5 mb-0" id="timer">0s</div></div>
+            </div>
+        </div>
+        <div class="card shadow-sm border-0 mx-auto d-flex justify-content-center align-items-center flex-grow-1" style="width: 100%; max-width: 1300px;"> 
+            <div class="card-body p-1 text-center w-100 h-100 d-flex flex-column justify-content-center">
+                <div class="ocean-container mx-auto">
+                    <div id="guia-central">INHALA</div>
+                    <div id="mar-wrapper"><div class="wave wave1"></div><div class="wave wave2"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Fin de Juego / Resultados -->
+<div class="modal fade" id="modalFinJuego" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-body p-5 text-center">
+                <div id="medalla-icon" style="font-size: 4rem;" class="mb-3">🥇</div>
+                <h3 class="fw-bold mb-2">¡Sesión completada!</h3>
+                <p id="mensaje-final" class="fw-bold fs-5 mb-4"></p>
+                <div class="d-flex justify-content-center gap-4 mb-4">
+                    <div>
+                        <div class="text-muted small">Puntos</div>
+                        <div class="fw-bold h4 text-success" id="puntos-finales">0</div>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Tiempo (s)</div>
+                        <div class="fw-bold h4 text-primary" id="tiempo-final-display">0</div>
+                    </div>
+                </div>
+                <button class="btn btn-primary w-100 rounded-pill py-3 fw-bold" onclick="window.location.href='{% url 'juegos' %}'">Volver a la Sala de Terapia</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'core/js/games/cognitivo/atencion/marea_calma.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,522 @@
+{
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\install_caveman.ps1": {
+    "mtime": 1779187781.0826309,
+    "ast_hash": "d92e3dea93dde87e72657efb601f5db5",
+    "semantic_hash": "d92e3dea93dde87e72657efb601f5db5"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\manage.py": {
+    "mtime": 1773675902.1843705,
+    "ast_hash": "747c8c1f612fb07e1ea90758e5c3b6ad",
+    "semantic_hash": "747c8c1f612fb07e1ea90758e5c3b6ad"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\skills-lock.json": {
+    "mtime": 1779291456.0128014,
+    "ast_hash": "0492696c7a01cd067d28b11807c33350",
+    "semantic_hash": "0492696c7a01cd067d28b11807c33350"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\.claude\\settings.json": {
+    "mtime": 1779389120.1058922,
+    "ast_hash": "5d6ecd96cf065b16e8bb9fbf5d7d8f0d",
+    "semantic_hash": "5d6ecd96cf065b16e8bb9fbf5d7d8f0d"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\.claude\\settings.local.json": {
+    "mtime": 1779397772.8203506,
+    "ast_hash": "1506714fb578fcda416fe07dec303573",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\config\\asgi.py": {
+    "mtime": 1773675887.38437,
+    "ast_hash": "dc1d14b8620f0bbfd17c2192a70c25da",
+    "semantic_hash": "dc1d14b8620f0bbfd17c2192a70c25da"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\config\\settings.py": {
+    "mtime": 1778164506.3890986,
+    "ast_hash": "3febf88ae4c0ccd9d85a6f28adad1462",
+    "semantic_hash": "3febf88ae4c0ccd9d85a6f28adad1462"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\config\\urls.py": {
+    "mtime": 1779397341.391679,
+    "ast_hash": "a2534545405a7e8f979511785594056f",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\config\\wsgi.py": {
+    "mtime": 1773675887.38437,
+    "ast_hash": "bc6d575c1c60c41a4330d3e1c4551fb6",
+    "semantic_hash": "bc6d575c1c60c41a4330d3e1c4551fb6"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\config\\__init__.py": {
+    "mtime": 1773675887.38437,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\admin.py": {
+    "mtime": 1779189146.1020484,
+    "ast_hash": "b265cdd741e8fc15af28f0f7fecfa1d3",
+    "semantic_hash": "b265cdd741e8fc15af28f0f7fecfa1d3"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\apps.py": {
+    "mtime": 1773675887.401116,
+    "ast_hash": "0a9a65cd7341677c8aa206239aac679d",
+    "semantic_hash": "0a9a65cd7341677c8aa206239aac679d"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\forms.py": {
+    "mtime": 1779386233.1344116,
+    "ast_hash": "ba0531313f80afba8672763a76af15fa",
+    "semantic_hash": "ba0531313f80afba8672763a76af15fa"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\models.py": {
+    "mtime": 1779291879.8747745,
+    "ast_hash": "89c247d5aa4a7e8ccc252c84ff6d7561",
+    "semantic_hash": "89c247d5aa4a7e8ccc252c84ff6d7561"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\tests.py": {
+    "mtime": 1773675900.2043717,
+    "ast_hash": "e08f0582500f6562bf0a931ef9503b39",
+    "semantic_hash": "e08f0582500f6562bf0a931ef9503b39"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\views.py": {
+    "mtime": 1779397331.5770442,
+    "ast_hash": "545aea70bbfb65916cadfa3d61110e7f",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\__init__.py": {
+    "mtime": 1773675887.38437,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0001_initial.py": {
+    "mtime": 1773675887.401116,
+    "ast_hash": "d988dab347dec9b1a8b93035caab2f30",
+    "semantic_hash": "d988dab347dec9b1a8b93035caab2f30"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0002_alter_perfilpaciente_options_and_more.py": {
+    "mtime": 1773675887.401116,
+    "ast_hash": "86f9f92b11c250650ccbe051a3dc0504",
+    "semantic_hash": "86f9f92b11c250650ccbe051a3dc0504"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0003_alter_perfilpaciente_options_perfilpaciente_altura_and_more.py": {
+    "mtime": 1773675887.401116,
+    "ast_hash": "086a4ef303bf2a2ac7974865a36a08b4",
+    "semantic_hash": "086a4ef303bf2a2ac7974865a36a08b4"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0004_sesiondejuego.py": {
+    "mtime": 1773675887.401116,
+    "ast_hash": "84f93eadc75263acb0f0b6b1f734bc6c",
+    "semantic_hash": "84f93eadc75263acb0f0b6b1f734bc6c"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0005_perfilpaciente_fecha_ultima_evaluacion_and_more.py": {
+    "mtime": 1773675887.401116,
+    "ast_hash": "542381fe7ca619f0b7df7b84dc7cec19",
+    "semantic_hash": "542381fe7ca619f0b7df7b84dc7cec19"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0006_alter_sesiondejuego_options_and_more.py": {
+    "mtime": 1773675887.401116,
+    "ast_hash": "5958205c1ef3546bc1e96ed8e7f0fb09",
+    "semantic_hash": "5958205c1ef3546bc1e96ed8e7f0fb09"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0007_perfilpaciente_nivel_cognitivo_and_more.py": {
+    "mtime": 1773675887.401116,
+    "ast_hash": "8e88051d0c1c498fb3c7f18e6914fbd2",
+    "semantic_hash": "8e88051d0c1c498fb3c7f18e6914fbd2"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0008_sesiondejuego_dificultad_percibida_and_more.py": {
+    "mtime": 1773675887.401116,
+    "ast_hash": "ae9e6de61572f34e1ab14f80f3a876b9",
+    "semantic_hash": "ae9e6de61572f34e1ab14f80f3a876b9"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0009_notaespecialista.py": {
+    "mtime": 1773675887.401116,
+    "ast_hash": "5864418d11c106ecf2df27a5a09a0323",
+    "semantic_hash": "5864418d11c106ecf2df27a5a09a0323"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0010_perfilpaciente_ciudad_residencia_and_more.py": {
+    "mtime": 1773675887.401116,
+    "ast_hash": "c0eabb61eeaf0c8f349caf4196418b38",
+    "semantic_hash": "c0eabb61eeaf0c8f349caf4196418b38"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0011_perfilpaciente_anios_estudio.py": {
+    "mtime": 1778164506.4200258,
+    "ast_hash": "590b58e7ebec74a24e71336ebc29a28d",
+    "semantic_hash": "590b58e7ebec74a24e71336ebc29a28d"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0012_remove_perfilpaciente_puntuacion_cognitiva_and_more.py": {
+    "mtime": 1778164506.420551,
+    "ast_hash": "1edd7192fd69807890c9dff74190e69b",
+    "semantic_hash": "1edd7192fd69807890c9dff74190e69b"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0013_evaluacionmoca_revisada_por_medico.py": {
+    "mtime": 1778164506.4215498,
+    "ast_hash": "8d493529d3ffd972dfb3ce40bc1e60ad",
+    "semantic_hash": "8d493529d3ffd972dfb3ce40bc1e60ad"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0014_notificacionbuzon.py": {
+    "mtime": 1778164506.4225492,
+    "ast_hash": "6378df5d9cbc384e56578f3de34eefcb",
+    "semantic_hash": "6378df5d9cbc384e56578f3de34eefcb"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0015_evaluacionmoca_abstraccion_reloj_score_and_more.py": {
+    "mtime": 1778164506.423553,
+    "ast_hash": "c4900663b1bfe6e33d207b8078696cad",
+    "semantic_hash": "c4900663b1bfe6e33d207b8078696cad"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0016_perfilpaciente_hemiparesia_dominante_and_more.py": {
+    "mtime": 1778604158.5258865,
+    "ast_hash": "ff31e42c244b3d15838b65ed53aa2de3",
+    "semantic_hash": "ff31e42c244b3d15838b65ed53aa2de3"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0017_sesiondejuego_degradacion_porcentaje_and_more.py": {
+    "mtime": 1779189257.0234637,
+    "ast_hash": "9d7fc8f4b56542bba94e1e37d93f3510",
+    "semantic_hash": "9d7fc8f4b56542bba94e1e37d93f3510"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\0018_sesiondejuego_fc_avg_sesiondejuego_fc_max_and_more.py": {
+    "mtime": 1779292005.7986827,
+    "ast_hash": "625f5dbc27a6f95a2c0ad29c658a9a4d",
+    "semantic_hash": "625f5dbc27a6f95a2c0ad29c658a9a4d"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\migrations\\__init__.py": {
+    "mtime": 1773675887.401116,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\ml_models\\leer_pkl.py": {
+    "mtime": 1778697007.2282205,
+    "ast_hash": "d85737e79761bbe0b0d9c47ad50067d7",
+    "semantic_hash": "d85737e79761bbe0b0d9c47ad50067d7"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\services\\ml_service.py": {
+    "mtime": 1778698722.1160266,
+    "ast_hash": "7253664cf366fd382cf3f3debe06f245",
+    "semantic_hash": "7253664cf366fd382cf3f3debe06f245"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\services\\vtr_service.py": {
+    "mtime": 1779192825.4213047,
+    "ast_hash": "4714d27cb3e26742b5a4b6d653ea0dfd",
+    "semantic_hash": "4714d27cb3e26742b5a4b6d653ea0dfd"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\services\\__init__.py": {
+    "mtime": 1778679799.4256172,
+    "ast_hash": "8ab5b0c2ff22a24bb8aaa76e9c669991",
+    "semantic_hash": "8ab5b0c2ff22a24bb8aaa76e9c669991"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\static\\core\\js\\wearable_service.js": {
+    "mtime": 1779316488.795626,
+    "ast_hash": "b39b4975f135e9c2eb2695c882b0d2bd",
+    "semantic_hash": "b39b4975f135e9c2eb2695c882b0d2bd"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\static\\core\\js\\DashboardMedico\\analisis_paciente.js": {
+    "mtime": 1779357668.5393536,
+    "ast_hash": "633f23192f7190e24b7abfbcb3cf4093",
+    "semantic_hash": "633f23192f7190e24b7abfbcb3cf4093"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\static\\core\\js\\games\\cognitivo\\atencion\\EncuentraLaBolita.js": {
+    "mtime": 1779316679.919353,
+    "ast_hash": "1be50d15e8cb4d6f82df3be4808880cf",
+    "semantic_hash": "1be50d15e8cb4d6f82df3be4808880cf"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\static\\core\\js\\games\\cognitivo\\memoria\\ListaCompra.js": {
+    "mtime": 1779316685.16721,
+    "ast_hash": "5ce37739bdb221dc61b2643a1f0fe62e",
+    "semantic_hash": "5ce37739bdb221dc61b2643a1f0fe62e"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\static\\core\\js\\games\\cognitivo\\memoria\\SecuenciaMusical.js": {
+    "mtime": 1779316691.3147771,
+    "ast_hash": "2613270c09ef01c5ec7b8cd7532de98a",
+    "semantic_hash": "2613270c09ef01c5ec7b8cd7532de98a"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\static\\core\\audio\\frase_gato.mp3": {
+    "mtime": 1773675887.4174116,
+    "ast_hash": "1c4431ab14b8ee25eddd1f737572545c",
+    "semantic_hash": "1c4431ab14b8ee25eddd1f737572545c"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\static\\core\\audio\\frase_juan.mp3": {
+    "mtime": 1773675887.4174116,
+    "ast_hash": "efc2f4db228b4262e51125835401066c",
+    "semantic_hash": "efc2f4db228b4262e51125835401066c"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\static\\core\\audio\\moca_palabras.m4a": {
+    "mtime": 1773675887.4279847,
+    "ast_hash": "2201e8e14c9aff9678dd7d0bb429b6cb",
+    "semantic_hash": "2201e8e14c9aff9678dd7d0bb429b6cb"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\static\\core\\videos\\tutorial_letras.mp4": {
+    "mtime": 1773675887.8171542,
+    "ast_hash": "a97e6c9a3c6c9c8e416f102c9aa34526",
+    "semantic_hash": "a97e6c9a3c6c9c8e416f102c9aa34526"
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\CLAUDE.md": {
+    "mtime": 1779389120.1018922,
+    "ast_hash": "8a6643a420fdad6bfb583523bc6cef16",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\docker-compose.yml": {
+    "mtime": 1778164506.925888,
+    "ast_hash": "f7b81339447255fba5a1d033ee03274f",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\docker-prod-compose.yml": {
+    "mtime": 1778164506.92689,
+    "ast_hash": "c8559b9b87cfd21d407ebefb312eb9c2",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\README.md": {
+    "mtime": 1778164506.3861017,
+    "ast_hash": "44b5c199f925e0e12dd874f69d429ef5",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\requirements.txt": {
+    "mtime": 1778682894.6095243,
+    "ast_hash": "50759b89fbfffaf8b93c7d0ea8a90ba7",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\.agents\\skills\\brandkit\\SKILL.md": {
+    "mtime": 1779291339.076951,
+    "ast_hash": "7491f8fb77b0ebf517b758d096ac4ab4",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\.agents\\skills\\caveman\\README.md": {
+    "mtime": 1779186061.5055015,
+    "ast_hash": "3358f5119f61b24f5fa65a25de7b866b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\.agents\\skills\\caveman\\SKILL.md": {
+    "mtime": 1779186061.5066862,
+    "ast_hash": "90e5f9d97791c2080495926731e0f5ad",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\.claude\\skills\\brandkit\\SKILL.md": {
+    "mtime": 1779291339.076951,
+    "ast_hash": "7491f8fb77b0ebf517b758d096ac4ab4",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\ArchivosBorja\\PlanImplementacionWearable.md": {
+    "mtime": 1779288680.1977024,
+    "ast_hash": "9bbf98653feb6f6838fec298fe991166",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\ArchivosBorja\\SAMIRADTX_CONTEXTO_COMPLETO.md": {
+    "mtime": 1779197723.4130898,
+    "ast_hash": "a5be3b8360497df099d789c60c5dd4c5",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\ArchivosBorja\\VTR_FINALIZADO.md": {
+    "mtime": 1779197988.5018513,
+    "ast_hash": "bc57a5afc2251839c6cd12d482d55fbf",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\ArchivosBorja\\wearable.md": {
+    "mtime": 1779293375.8664317,
+    "ast_hash": "1aa1678f98fc3333eaa38ed63669ecf7",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\ArchivosBorja\\wearablefinalizado.md": {
+    "mtime": 1779320278.8898494,
+    "ast_hash": "61e7d25e7e91afe746bec4f7cf62baec",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\ml_models\\README.md": {
+    "mtime": 1778679789.676024,
+    "ast_hash": "e6dc08adac6cb96b54384debd6d00843",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\juegos.html": {
+    "mtime": 1779386183.2317486,
+    "ast_hash": "b7cf45a335947ea8ceff12ef5cc80139",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\dashboard\\buzon_medico.html": {
+    "mtime": 1778164506.4330578,
+    "ast_hash": "8e2b128eac522a51ee5790825a9ff7a3",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\dashboard\\buzon_paciente.html": {
+    "mtime": 1778164506.4340582,
+    "ast_hash": "be883ea1c85758b77a4c415d12c18227",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\dashboard\\dashboard.html": {
+    "mtime": 1773675900.1367278,
+    "ast_hash": "d2ae20e8d168f63f86f5e548d4fc6227",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\dashboard\\dashboard_medico.html": {
+    "mtime": 1778164506.4370575,
+    "ast_hash": "fcb1029b10cdf8570c0198f3720b9f23",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\games\\cognitivo\\atencion\\EncuentraLaBolita.html": {
+    "mtime": 1779360016.3570883,
+    "ast_hash": "1ed2382ba116322eb9b3ecb0b0145d9c",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\games\\cognitivo\\atencion\\juego_encuentra_letra.html": {
+    "mtime": 1779360007.032308,
+    "ast_hash": "2d5ada93238817e3f28e6fef78360137",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\games\\cognitivo\\memoria\\ListaCompra.html": {
+    "mtime": 1779360025.4850838,
+    "ast_hash": "5f083e2992375400d5bd03e587dda8dd",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\games\\cognitivo\\memoria\\SecuenciaMusical.html": {
+    "mtime": 1779360033.5326698,
+    "ast_hash": "fdc2471c08b6b3ac59dfcfcfcbd76799",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\layouts\\base.html": {
+    "mtime": 1779386961.398396,
+    "ast_hash": "61f959331f4ea471dd166caef6d3e06a",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\layouts\\base_medico.html": {
+    "mtime": 1779319299.1058848,
+    "ast_hash": "fad60f6f07557cd0fff3fa77418d620b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\layouts\\base_private.html": {
+    "mtime": 1778519587.6510677,
+    "ast_hash": "e26de07741f3517bf5fe384f1268f6b9",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\pages\\contacto.html": {
+    "mtime": 1779386952.03942,
+    "ast_hash": "3f89432a5a5f77c836fc73379bf42602",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\pages\\home.html": {
+    "mtime": 1773675900.1837914,
+    "ast_hash": "8c18dbd2a5dba6209b132f55243ffe81",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\pages\\servicios.html": {
+    "mtime": 1779386949.4015112,
+    "ast_hash": "b39fe91a866a97cd5b08de2f69e71853",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\patients\\analisis_paciente.html": {
+    "mtime": 1779356460.664544,
+    "ast_hash": "c3418167aac0a8eb827558866591695e",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\patients\\auditoria_moca.html": {
+    "mtime": 1778693614.882418,
+    "ast_hash": "75df9298b7921b554fedb9c7ab2f4619",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\patients\\detalle_paciente.html": {
+    "mtime": 1779195083.6358588,
+    "ast_hash": "c9bd54bc1b87a3ed007b7a2f98a54f24",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\patients\\detalle_sesion_terapia.html": {
+    "mtime": 1779322374.9179564,
+    "ast_hash": "5a471d7d72c298ba04e6182d4967c713",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\patients\\evaluacion.html": {
+    "mtime": 1778527653.2874424,
+    "ast_hash": "d11809bdf8d9ac96cda2552eb992beb2",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\patients\\historia.html": {
+    "mtime": 1779386943.5789795,
+    "ast_hash": "9e957316cd835e6f64e7b859f2dae2b4",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\patients\\lista_evaluaciones_moca.html": {
+    "mtime": 1778164506.5088434,
+    "ast_hash": "a192ce74a61798535f6479f042bc4e07",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\core\\patients\\lista_sesiones_terapia.html": {
+    "mtime": 1779322804.3860614,
+    "ast_hash": "8ca94efaa25ee13fcbb1274cc762084a",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\registration\\login.html": {
+    "mtime": 1773675900.2043717,
+    "ast_hash": "78e28b28789fcc4599b11441448bb3e9",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\templates\\registration\\registro.html": {
+    "mtime": 1779386239.2234495,
+    "ast_hash": "97db8de60e6cdfc5db8d9639978bb87c",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\DocumentacionPagina\\00_INDICE.md": {
+    "mtime": 1779397456.7147574,
+    "ast_hash": "f6d5cc2d7b4a0196258229382798b44c",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\DocumentacionPagina\\03_Views_ElCerebro.md": {
+    "mtime": 1779397434.3563418,
+    "ast_hash": "3e90f850c8e33f2dc3090bed93cc97ba",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\DocumentacionPagina\\04_TestMoCA_Completo.md": {
+    "mtime": 1779397390.6526546,
+    "ast_hash": "0b2a2bdf09df9721de6ad2d90743b436",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\DocumentacionPagina\\05_InteligenciaArtificial_ML.md": {
+    "mtime": 1779392687.7675667,
+    "ast_hash": "895c8bad8d86a4c1f2801b86c20eec59",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\DocumentacionPagina\\06_VTR_y_Wearable.md": {
+    "mtime": 1779392745.578854,
+    "ast_hash": "0a1f19f03db2fe7a932026577714cf78",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\DocumentacionPagina\\07_Frontend_Plantillas.md": {
+    "mtime": 1779392802.9983065,
+    "ast_hash": "f871372036167bc8643af539cbea3547",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\DocumentacionPagina\\08_Catalogo_Juegos.md": {
+    "mtime": 1779397418.0596032,
+    "ast_hash": "9e1af38031a3f136ba2549521ccf4324",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\DocumentacionPagina\\09_Seguridad_y_Despliegue.md": {
+    "mtime": 1779397446.1243525,
+    "ast_hash": "32431cbec8164bd9776e7bea0790eba8",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\DocumentacionPagina\\BaseDeDatos.md": {
+    "mtime": 1779391123.4920695,
+    "ast_hash": "5bcbb97ef0e0665feb3ed7db92ed03c1",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\DocumentacionPagina\\SamiraDTxResumenCompleto.md": {
+    "mtime": 1779391628.3510368,
+    "ast_hash": "96d85bb939b2af60bece2c468ab532aa",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\static\\core\\images\\logoSamiraDTx.png": {
+    "mtime": 1778518385.3132298,
+    "ast_hash": "645924610744ff3e91523844d185f15d",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\static\\core\\images\\oficina.png": {
+    "mtime": 1773675887.4514916,
+    "ast_hash": "b28e1324e4c734bbeb58e49bab7d581c",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\static\\core\\images\\MOCA\\CamelloMOCA.JPG": {
+    "mtime": 1778518385.3142226,
+    "ast_hash": "8a59b0034db94021d2b527aa446bdf1b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\static\\core\\images\\MOCA\\LeonMOCA.JPG": {
+    "mtime": 1778518385.317282,
+    "ast_hash": "b72135d785392dc50146da95652d300d",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\borja\\OneDrive\\Escritorio\\SamiraDTx\\webSamiraDTx\\core\\static\\core\\images\\MOCA\\RinoceronteMOCA.JPG": {
+    "mtime": 1778518385.3182256,
+    "ast_hash": "11a67103cf34428395fcaa788124bcdb",
+    "semantic_hash": ""
+  }
+}
