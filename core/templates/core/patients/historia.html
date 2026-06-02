@@ -1,11 +1,12 @@
 {% extends 'core/layouts/base.html' %}
 
-{% block title %}Historia | Mi Empresa{% endblock %}
+{% block title %}Historia | SamiraDTx{% endblock %}
 
 {% block content %}
-    <h2>Nuestra Historia</h2>
-    <p>Nacimos en un garaje en 2025 con una misión clara: aprender Django.</p>
-    <p>Desde entonces, no hemos parado de crecer.</p>
-    
-    <a href="{% url 'home' %}" style="background: blue; color: white; padding: 10px; text-decoration: none;">Volver al Inicio</a>
+<div class="container py-5 text-center" style="max-width: 600px; margin: 0 auto;">
+    <p style="font-size: 3rem;">🚧</p>
+    <h2 class="fw-bold mb-3">Próximamente</h2>
+    <p class="text-muted">El equipo de SamiraDTx está preparando el contenido de esta sección. Vuelve pronto.</p>
+    <a href="{% url 'home' %}" class="btn btn-success rounded-pill mt-3 px-4">Volver al inicio</a>
+</div>
 {% endblock %}

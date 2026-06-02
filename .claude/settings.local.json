@@ -16,7 +16,10 @@
       "Bash(py -m pip list)",
       "Bash(docker compose *)",
       "Skill(impeccable)",
-      "Bash(node *)"
+      "Bash(node *)",
+      "Bash(git log *)",
+      "PowerShell(Test-Path *)",
+      "Bash(graphify update *)"
     ]
   }
 }

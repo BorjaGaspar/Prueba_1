@@ -1,20 +1,12 @@
 {% extends 'core/layouts/base.html' %}
 
-{% block title %}Servicios | Mi Empresa{% endblock %}
+{% block title %}Servicios | SamiraDTx{% endblock %}
 
 {% block content %}
-    <h1>Nuestros Servicios</h1>
-    <p>Ofrecemos soluciones tecnológicas a medida para hacer crecer tu negocio.</p>
-    
-    <div style="margin-top: 30px;">
-        <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
-            <h3 style="color: #2c3e50;">💻 Desarrollo Web</h3>
-            <p>Creamos páginas web corporativas modernas, rápidas y adaptadas a móviles usando tecnología Django.</p>
-        </div>
-
-        <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
-            <h3 style="color: #2c3e50;">📱 Aplicaciones Móviles</h3>
-            <p>Desarrollamos apps nativas para iOS y Android que conectan con tus clientes.</p>
-        </div>
-    </div>
+<div class="container py-5 text-center" style="max-width: 600px; margin: 0 auto;">
+    <p style="font-size: 3rem;">🚧</p>
+    <h2 class="fw-bold mb-3">Próximamente</h2>
+    <p class="text-muted">El equipo de SamiraDTx está preparando el contenido de esta sección. Vuelve pronto.</p>
+    <a href="{% url 'home' %}" class="btn btn-success rounded-pill mt-3 px-4">Volver al inicio</a>
+</div>
 {% endblock %}

@@ -10,6 +10,7 @@ from core.services.vtr_service import (
     registrar_actividad,
     actualizar_marca_personal,
     calcular_degradacion,
+    TIMEOUT_INACTIVIDAD_MIN,
 )
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -356,7 +357,17 @@ def buzon_paciente_medico(request, pk):
 
 @login_required
 def juegos(request):
-    return render(request, 'core/juegos.html')
+    # ¿El paciente tiene ya una sesión de terapia activa (<60 min de inactividad)?
+    # El test VAS solo debe mostrarse cuando NO la hay. Gating en backend para
+    # no depender de sessionStorage (que sobrevive a cambios de usuario/pestaña).
+    sesion_activa = False
+    perfil = getattr(request.user, 'perfil', None)
+    if perfil is not None:
+        ultima = SesionTerapia.objects.filter(paciente=perfil).first()
+        if ultima is not None:
+            mins_inactivo = (timezone.now() - ultima.ultima_actividad).total_seconds() / 60
+            sesion_activa = mins_inactivo < TIMEOUT_INACTIVIDAD_MIN
+    return render(request, 'core/juegos.html', {'sesion_activa': sesion_activa})
 
 @login_required
 def sala_evaluacion(request):
@@ -368,7 +379,6 @@ def sala_evaluacion(request):
         perfil.nivel_cognitivo = nivel_elegido
         perfil.nivel_lenguaje = nivel_elegido
         perfil.nivel_motor = nivel_elegido
-        perfil.puntuacion_cognitiva = nivel_elegido * 6 
         perfil.test_completado = True
         perfil.fecha_ultima_evaluacion = timezone.now()
         perfil.save()
@@ -449,6 +459,21 @@ def jugar_encuentra_bolita(request):
     return render(request, 'core/games/cognitivo/atencion/EncuentraLaBolita.html', context)
 
 @login_required
+def jugar_marea_calma(request):
+    # Ejercicio de relajación (respiración guiada). No depende del nivel,
+    # pero pasamos el contexto por consistencia con los demás juegos.
+    try:
+        perfil = request.user.perfil
+        nivel_actual = perfil.nivel_cognitivo if perfil else 1
+    except:
+        nivel_actual = 1
+
+    context = {
+        'nivel_inicial': nivel_actual
+    }
+    return render(request, 'core/games/cognitivo/atencion/marea_calma.html', context)
+
+@login_required
 def jugar_prueba_voz(request):
     # Una vista simple para probar el micrófono y Whisper
     return render(request, 'core/games/Lenguaje/juego_prueba_voz.html')
@@ -476,7 +501,16 @@ def evaluar_ajuste_dinamico(perfil, nombre_juego):
     Analiza las últimas 2 sesiones del dominio correspondiente al juego actual.
     """
     # 1. DICCIONARIO DE DOMINIOS (Aquí clasificamos los juegos)
-    JUEGOS_COGNITIVOS = ["Encuentra la Letra", "Calculadora", "Juego 1: Memoria", "Memoria MoCA"]
+    # IMPORTANTE: estos nombres deben coincidir EXACTAMENTE (mayúsculas, tildes,
+    # espacios) con el campo "juego" que cada juego envía en su fetch a la API.
+    # Si no coinciden, el DDA no se dispara para ese juego.
+    JUEGOS_COGNITIVOS = [
+        "Encuentra la Letra",   # juego_encuentra_letra.html
+        "Encuentra la Bolita",  # EncuentraLaBolita.js
+        "Lista de la Compra",   # ListaCompra.js
+        "Música y Colores",     # SecuenciaMusical.js
+        "Calculadora", "Juego 1: Memoria", "Memoria MoCA",
+    ]
     JUEGOS_LENGUAJE = ["Juego de Elsa", "Laboratorio Voz"]
     JUEGOS_MOTORES = ["Prueba de Cámara"]
     
