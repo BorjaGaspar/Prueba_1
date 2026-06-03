@@ -22,3 +22,34 @@ main {
 main img {
     border-radius: 12px;
 }
+
+/* =============================================
+   RESPONSIVE - HOME TARJETAS
+   ============================================= */
+
+/* Mobile optimizado - Pantallas muy pequeñas */
+@media (max-width: 767px) {
+    /* Las tarjetas ocupan 100% en móvil */
+    .col-md-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    main {
+        padding: 20px;
+        max-width: 100%;
+    }
+
+    .display-4 {
+        font-size: 1.8rem;
+    }
+
+    img.img-fluid {
+        max-height: 250px;
+    }
+
+    .text-center .mb-3 i {
+        font-size: 2rem !important;
+    }
+}
