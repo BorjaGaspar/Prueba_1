@@ -38,6 +38,8 @@ urlpatterns = [
     path('terapia/marea-calma/', views.jugar_marea_calma, name='jugar_marea_calma'),
     path('terapia/secuencia-musical/', views.jugar_SecuenciaMusical, name='jugar_SecuenciaMusical'),
     path('terapia/lista-compra/', views.jugar_lista_compra, name='jugar_lista_compra'),
+    path('terapia/atrapa-burbuja/', views.jugar_atrapa_burbuja, name='jugar_atrapa_burbuja'),
+    path('terapia/esquiva-oveja/', views.jugar_esquiva_oveja, name='jugar_esquiva_oveja'),
 
     
     # PANEL MÉDICO 

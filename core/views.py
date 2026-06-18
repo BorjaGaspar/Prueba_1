@@ -423,6 +423,36 @@ def jugar_prueba_camara(request):
     # Ruta basada en tu captura: games/motor/
     return render(request, 'core/games/motor/juego_prueba_camara.html')
 
+@login_required
+def jugar_atrapa_burbuja(request):
+    # Juego motor (coordinación mano-ojo con cámara/MediaPipe).
+    # Usa el nivel MOTOR del paciente para escalar tamaño/velocidad de la burbuja.
+    try:
+        perfil = request.user.perfil
+        nivel_actual = perfil.nivel_motor if perfil else 1
+    except Exception:
+        nivel_actual = 1
+
+    context = {
+        'nivel_inicial': nivel_actual
+    }
+    return render(request, 'core/games/motor/atrapa_burbuja.html', context)
+
+@login_required
+def jugar_esquiva_oveja(request):
+    # Juego motor (control de altura con brazos vía cámara/MediaPipe).
+    # Usa el nivel MOTOR del paciente para escalar obstáculos/velocidad/duración.
+    try:
+        perfil = request.user.perfil
+        nivel_actual = perfil.nivel_motor if perfil else 1
+    except Exception:
+        nivel_actual = 1
+
+    context = {
+        'nivel_inicial': nivel_actual
+    }
+    return render(request, 'core/games/motor/esquiva_oveja.html', context)
+
 # --- JUEGOS COGNITIVOS (El nuevo) ---
 @login_required
 def jugar_encuentra_letra(request):
@@ -512,7 +542,11 @@ def evaluar_ajuste_dinamico(perfil, nombre_juego):
         "Calculadora", "Juego 1: Memoria", "Memoria MoCA",
     ]
     JUEGOS_LENGUAJE = ["Juego de Elsa", "Laboratorio Voz"]
-    JUEGOS_MOTORES = ["Prueba de Cámara"]
+    JUEGOS_MOTORES = [
+        "Prueba de Cámara",
+        "Atrapa la Burbuja",   # atrapa_burbuja.js (juego motor por cámara)
+        "Esquiva la Oveja",    # esquiva_oveja.js (juego motor por cámara)
+    ]
     
     dominio = None
     nivel_actual = 1

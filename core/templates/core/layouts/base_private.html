@@ -24,6 +24,10 @@
           },
           theme: {
             extend: {
+              // Solo teléfonos en horizontal (alto < 600px). Desktop/laptop nunca entra.
+              screens: {
+                short: { raw: "(orientation: landscape) and (max-height: 600px)" },
+              },
               colors: {
                 "a11y-bg": "#F8F9FA", // Fondo crema/off-white (para no causar deslumbramiento)
                 "a11y-text": "#333333", // Gris carbón oscuro (no gris claro, contraste perfecto)
@@ -109,27 +113,27 @@
         }
     </style>
 </head>
-<body class="bg-a11y-bg text-a11y-text min-h-screen pb-24 lg:pb-0">
+<body class="bg-a11y-bg text-a11y-text min-h-screen pb-24 short:pb-16 lg:pb-0">
     
     <!-- TopAppBar -->
-    <header class="fixed top-0 w-full z-[1050] flex justify-between items-center px-6 md:px-10 h-28 bg-white border-b-4 border-a11y-border shadow-md">
-        <div class="flex items-center gap-5">
-            <div class="w-16 h-16 bg-a11y-accent border-4 border-a11y-border rounded-xl flex items-center justify-center shadow-sm">
-                <span class="material-symbols-outlined text-a11y-btn-bg text-4xl">neurology</span>
+    <header class="fixed top-0 w-full z-[1050] flex justify-between items-center px-6 md:px-10 short:px-4 h-28 short:h-16 bg-white border-b-4 border-a11y-border shadow-md">
+        <div class="flex items-center gap-5 short:gap-2">
+            <div class="w-16 h-16 short:w-11 short:h-11 bg-a11y-accent border-4 border-a11y-border rounded-xl short:rounded-lg flex items-center justify-center shadow-sm">
+                <span class="material-symbols-outlined text-a11y-btn-bg text-4xl short:text-2xl">neurology</span>
             </div>
-            <a href="{% url 'resumen_paciente' %}" class="text-4xl font-extrabold text-a11y-text tracking-tight no-underline hidden sm:block font-lexend">SamiraDTx</a>
+            <a href="{% url 'resumen_paciente' %}" class="text-4xl short:text-2xl font-extrabold text-a11y-text tracking-tight no-underline hidden sm:block font-lexend">SamiraDTx</a>
         </div>
-        
-        <div class="flex items-center gap-6">
-            <div class="flex items-center gap-3 bg-a11y-bg px-5 py-3 rounded-xl border-4 border-a11y-border shadow-sm">
-                <span class="material-symbols-outlined text-a11y-text text-3xl">account_circle</span>
-                <span class="text-2xl font-bold font-lexend text-a11y-text hidden md:block">{{ user.username|title }}</span>
+
+        <div class="flex items-center gap-6 short:gap-2">
+            <div class="flex items-center gap-3 short:gap-1 bg-a11y-bg px-5 py-3 short:px-2 short:py-1 rounded-xl border-4 border-a11y-border shadow-sm">
+                <span class="material-symbols-outlined text-a11y-text text-3xl short:text-xl">account_circle</span>
+                <span class="text-2xl short:text-base font-bold font-lexend text-a11y-text hidden md:block">{{ user.username|title }}</span>
             </div>
-            
+
             <form action="{% url 'logout' %}" method="post" class="m-0">
                 {% csrf_token %}
-                <button type="submit" class="a11y-btn-primary px-5 py-3 text-xl">
-                    <span class="material-symbols-outlined text-3xl">logout</span>
+                <button type="submit" class="a11y-btn-primary px-5 py-3 text-xl short:px-3 short:py-1 short:text-base">
+                    <span class="material-symbols-outlined text-3xl short:text-xl">logout</span>
                     <span class="hidden lg:inline">Salir</span>
                 </button>
             </form>
@@ -189,7 +193,7 @@
     {% endblock %}
 
     <!-- Main Content Canvas -->
-    <main class="lg:ml-80 pt-36 pb-20 px-4 md:px-10 max-w-[1400px]">
+    <main class="lg:ml-80 pt-36 short:pt-20 pb-20 short:pb-3 px-4 md:px-10 max-w-[1400px]">
         <div class="{% block main_class %}{% endblock %}">
             {% block content %}
             <!-- Aquí se inyectan las vistas hijas (usando grid Bootstrap original) -->
@@ -198,15 +202,15 @@
     </main>
 
     <!-- Bottom Nav Masivo (Solo Mobile) -->
-    <nav class="lg:hidden fixed bottom-0 left-0 w-full bg-white border-t-8 border-a11y-border flex justify-around p-3 z-[1050] shadow-[0_-10px_30px_rgba(0,0,0,0.15)] flex-nowrap overflow-x-auto gap-2">
-        <a href="{% url 'resumen_paciente' %}" class="flex flex-col items-center justify-center p-3 flex-1 rounded-2xl {% if request.resolver_match.url_name == 'resumen_paciente' %}bg-a11y-btn-bg text-white border-2 border-black{% else %}bg-slate-100 text-a11y-text hover:bg-a11y-accent border-2 border-transparent{% endif %} font-bold no-underline transition-all">
-            <span class="material-symbols-outlined text-4xl">home</span>
+    <nav class="lg:hidden fixed bottom-0 left-0 w-full bg-white border-t-8 short:border-t-4 border-a11y-border flex justify-around p-3 short:p-1 z-[1050] shadow-[0_-10px_30px_rgba(0,0,0,0.15)] flex-nowrap overflow-x-auto gap-2 short:gap-1">
+        <a href="{% url 'resumen_paciente' %}" class="flex flex-col items-center justify-center p-3 short:p-1 flex-1 rounded-2xl {% if request.resolver_match.url_name == 'resumen_paciente' %}bg-a11y-btn-bg text-white border-2 border-black{% else %}bg-slate-100 text-a11y-text hover:bg-a11y-accent border-2 border-transparent{% endif %} font-bold no-underline transition-all">
+            <span class="material-symbols-outlined text-4xl short:text-2xl">home</span>
         </a>
-        <a href="{% url 'juegos' %}" class="flex flex-col items-center justify-center p-3 flex-1 rounded-2xl {% if request.resolver_match.url_name == 'juegos' %}bg-a11y-btn-bg text-white border-2 border-black{% else %}bg-slate-100 text-[#1A4D2E] hover:bg-a11y-accent border-2 border-transparent{% endif %} font-bold no-underline transition-all">
-            <span class="material-symbols-outlined text-4xl">play_circle</span>
+        <a href="{% url 'juegos' %}" class="flex flex-col items-center justify-center p-3 short:p-1 flex-1 rounded-2xl {% if request.resolver_match.url_name == 'juegos' %}bg-a11y-btn-bg text-white border-2 border-black{% else %}bg-slate-100 text-[#1A4D2E] hover:bg-a11y-accent border-2 border-transparent{% endif %} font-bold no-underline transition-all">
+            <span class="material-symbols-outlined text-4xl short:text-2xl">play_circle</span>
         </a>
-        <a href="{% url 'buzon_paciente' %}" class="flex flex-col items-center justify-center p-3 flex-1 rounded-2xl relative {% if request.resolver_match.url_name == 'buzon_paciente' %}bg-a11y-btn-bg text-white border-2 border-black{% else %}bg-slate-100 text-a11y-text hover:bg-a11y-accent border-2 border-transparent{% endif %} font-bold no-underline transition-all">
-            <span class="material-symbols-outlined text-4xl">mail</span>
+        <a href="{% url 'buzon_paciente' %}" class="flex flex-col items-center justify-center p-3 short:p-1 flex-1 rounded-2xl relative {% if request.resolver_match.url_name == 'buzon_paciente' %}bg-a11y-btn-bg text-white border-2 border-black{% else %}bg-slate-100 text-a11y-text hover:bg-a11y-accent border-2 border-transparent{% endif %} font-bold no-underline transition-all">
+            <span class="material-symbols-outlined text-4xl short:text-2xl">mail</span>
             {% if request.user.perfil.notificaciones_sin_leer > 0 or request.user.perfilpaciente.notificaciones_sin_leer > 0 %}
                 <span class="absolute top-2 right-4 w-5 h-5 bg-[#ba1a1a] border-2 border-white rounded-full"></span>
             {% endif %}
