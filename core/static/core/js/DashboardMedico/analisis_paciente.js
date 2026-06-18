@@ -116,8 +116,10 @@ function cargarNivel(nivel) {
     const tituloGraficaTiempos = document.getElementById('titulo-grafica-tiempos');
     const overlayTiemposDisabled = document.getElementById('overlay-tiempos-disabled');
 
-    // Si el juego es VASOS, Encuentra la Bolita o Música y Colores atenuamos las tarjetas y mostramos los avisos
-    if (juegoActivo === 'VASOS' || juegoActivo === 'Encuentra la Bolita' || juegoActivo === 'Música y Colores') {
+    // Juegos sin tiempo de reacción evaluable (mandan tiempo_jugado=0 y tiempo_reaccion_ms=null):
+    // atenuamos la tarjeta de tiempo medio y la gráfica de tiempos, mostrando los avisos.
+    const JUEGOS_SIN_TIEMPO = ['VASOS', 'Encuentra la Bolita', 'Música y Colores', 'Atrapa la Burbuja', 'Esquiva la Oveja'];
+    if (JUEGOS_SIN_TIEMPO.includes(juegoActivo)) {
         // Apagar métrica superior
         tarjetaTiempoMedio.classList.replace('border-info', 'border-secondary');
         tarjetaTiempoMedio.style.opacity = '0.6';

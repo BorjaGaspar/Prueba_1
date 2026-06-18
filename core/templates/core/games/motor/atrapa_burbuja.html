@@ -1,0 +1,409 @@
+{% extends 'core/layouts/base_private.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  .video-container {
+    position: relative;
+    width: 960px;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #222;
+    overflow: hidden;
+    border-radius: 12px;
+    margin: 0 auto;
+  }
+
+  #webcam,
+  #outputCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #webcam {
+    transform: scaleX(-1);
+    z-index: 1;
+  }
+
+  #outputCanvas {
+    transform: scaleX(-1);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  #floatingBubble {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    left: 50%;
+    top: 50%;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0.92;
+    display: none;
+    border-radius: 50%;
+    /* Burbuja dibujada con CSS (sin imágenes externas). */
+    background: radial-gradient(circle at 32% 28%,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(150, 205, 255, 0.7) 26%,
+      rgba(45, 135, 235, 0.6) 68%,
+      rgba(20, 90, 190, 0.55) 100%);
+    box-shadow:
+      inset -10px -10px 26px rgba(0, 60, 140, 0.35),
+      inset 10px 10px 22px rgba(255, 255, 255, 0.55),
+      0 6px 20px rgba(0, 0, 0, 0.18);
+    transform: translate(-50%, -50%);
+    transform-origin: center center;
+    transition:
+      left 1.2s ease-in-out,
+      top 1.2s ease-in-out,
+      transform 1.2s ease-in-out;
+  }
+
+  /* Estado "tocada": la burbuja se vuelve verde. */
+  #floatingBubble.bubble-green {
+    background: radial-gradient(circle at 32% 28%,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(155, 240, 175, 0.75) 26%,
+      rgba(40, 200, 95, 0.62) 68%,
+      rgba(20, 150, 60, 0.55) 100%);
+    box-shadow:
+      inset -10px -10px 26px rgba(0, 110, 40, 0.4),
+      inset 10px 10px 22px rgba(255, 255, 255, 0.6),
+      0 0 28px rgba(40, 210, 95, 0.6);
+  }
+
+  #startButton:disabled {
+    background: #555;
+    cursor: not-allowed;
+    border-color: #555;
+  }
+
+  #status {
+    margin-bottom: 12px;
+    color: #555;
+    font-weight: 500;
+  }
+
+  .btn-prom.active,
+  .carita-btn.active {
+    background-color: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+  }
+
+  /* Burbuja decorativa estática para la pantalla de instrucciones. */
+  .bubble-demo {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(150, 205, 255, 0.7) 26%,
+      rgba(45, 135, 235, 0.6) 68%,
+      rgba(20, 90, 190, 0.55) 100%);
+    box-shadow:
+      inset -8px -8px 18px rgba(0, 60, 140, 0.35),
+      inset 8px 8px 16px rgba(255, 255, 255, 0.55),
+      0 4px 14px rgba(0, 0, 0, 0.15);
+  }
+</style>
+
+<div class="container-fluid py-2 d-flex flex-column" style="height: 92vh; max-height: 95vh;">
+
+  <!-- PANTALLA 1: INSTRUCCIONES -->
+  <div
+    id="pantalla-instrucciones"
+    class="card shadow-lg border-0 mx-auto w-100 my-auto"
+    style="max-width: 800px; border-radius: 20px;"
+  >
+    <div class="card-body p-5 text-center">
+
+      <button
+        id="btn-leer-instrucciones"
+        class="btn btn-primary rounded-circle mb-4 shadow"
+        style="width: 80px; height: 80px;"
+        type="button"
+      >
+        <i class="bi bi-volume-up-fill" style="font-size: 2.5rem;"></i>
+      </button>
+
+      <h2 class="fw-bold mb-4 display-6 text-dark">Atrapa la Burbuja</h2>
+
+      <div
+        id="texto-instrucciones"
+        class="fs-4 text-muted mb-5 px-3"
+        style="line-height: 1.6;"
+      >
+        <div style="text-align: center;">
+          Colócate frente a la cámara.
+        </div>
+
+        <br>
+
+        <div style="text-align: justify;">
+          <p><strong>Objetivo:</strong></p>
+          <p style="padding-left: 2rem;">Toca la burbuja con tu mano.</p>
+          <p style="padding-left: 2rem;">Mueve tu mano para seguir la burbuja mientras se desplaza por la pantalla.</p>
+          <p style="padding-left: 2rem;">Cuando la atrapes, la burbuja cambiará a color verde. Mientras esté verde, sumarás puntos.</p>
+        </div>
+      </div>
+
+      <!-- ILUSTRACIÓN DE INSTRUCCIONES (burbuja CSS + mano) -->
+      <div class="mb-5 d-flex justify-content-center">
+        <div class="p-4 bg-light rounded-4 d-flex align-items-center justify-content-center gap-4">
+          <div class="bubble-demo"></div>
+          <i class="bi bi-hand-index-thumb-fill text-primary" style="font-size: 3.5rem;"></i>
+        </div>
+      </div>
+
+      <div class="d-flex flex-column align-items-center gap-3">
+        <button
+          id="btn-wearable-juego"
+          class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-bold d-none"
+          type="button"
+        >
+          <i id="wearable-juego-icon" class="bi bi-bluetooth me-2"></i>
+          <span id="wearable-juego-label">Vincular Reloj</span>
+        </button>
+
+        <button
+          class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow fw-bold text-white"
+          onclick="comenzarJuego()"
+          style="font-size: 1.2rem;"
+          type="button"
+        >
+          <i class="bi bi-play-fill me-2 fs-4"></i>
+          ¡Empezar a Jugar!
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PANTALLA 2: EL JUEGO EN SÍ -->
+  <div id="pantalla-juego" style="display: none; height: 100%; flex-direction: column;">
+
+    <!-- Cabecera del juego -->
+    <div
+      class="d-flex justify-content-between align-items-center mb-1 px-3"
+      style="max-width: 1200px; margin: 0 auto; width: 100%;"
+    >
+      <div>
+        <h4 class="fw-bold mb-0">Atrapa la Burbuja</h4>
+        <p class="text-muted mb-0 small">
+          Nivel:
+          <span id="display-nivel" class="fw-bold text-primary">{{ nivel_inicial }}</span>
+        </p>
+      </div>
+
+      <div class="text-end d-flex gap-3">
+
+        <div>
+          <span class="text-muted small">Ronda</span>
+          <div class="fw-bold text-warning h5 mb-0" id="display-ronda">1</div>
+        </div>
+
+        <div>
+          <span class="text-muted small">Tiempo</span>
+          <div class="fw-bold text-primary h5 mb-0" id="timer">0:00</div>
+        </div>
+
+        <div>
+          <span class="text-muted small">Puntos</span>
+          <div class="fw-bold text-success h5 mb-0" id="score">0</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Contenedor principal del juego -->
+    <div
+      class="card shadow-sm border-0 mx-auto d-flex justify-content-center align-items-center flex-grow-1"
+      style="width: 100%; max-width: 1300px; background-color: #fff;"
+    >
+      <div class="card-body p-1 text-center w-100 h-100 d-flex flex-column justify-content-center">
+
+        <div id="contenedor-tu-juego" class="w-100">
+
+          <p id="cameraHelpText" class="mb-3">
+            Pulsa el botón para activar la cámara y comenzar el juego.
+          </p>
+
+          <button
+            id="startButton"
+            class="btn btn-primary btn-lg px-4 py-2 rounded-pill shadow fw-bold mb-2"
+            type="button"
+          >
+            <i class="bi bi-camera-video-fill me-2"></i>
+            Activar cámara
+          </button>
+
+          <div id="status" class="text-muted fw-semibold mb-3">
+            Esperando inicio...
+          </div>
+
+          <div class="video-container">
+            <video id="webcam" autoplay playsinline muted></video>
+            <canvas id="outputCanvas"></canvas>
+
+            <div id="floatingBubble" aria-hidden="true"></div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- MODALES DEL SISTEMA -->
+<!-- ========================================== -->
+
+<!-- Modal 1: Autopercepción -->
+<div class="modal fade" id="modalAutopercepcion" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-4 border-0 shadow-lg p-2 p-md-4">
+
+      <div class="modal-header border-0 justify-content-center pb-0">
+        <h2 class="fw-bold text-dark mb-0">¡Completado!</h2>
+      </div>
+
+      <div class="modal-body text-center">
+        <p class="fs-5 text-muted mb-5">
+          Antes de ver tu puntuación, cuéntanos cómo te ha ido:
+        </p>
+
+        <h5 class="fw-bold text-secondary mb-3">
+          ¿Qué tan difícil te ha parecido el ejercicio?
+        </h5>
+
+        <div class="d-flex justify-content-center gap-2 mb-5 flex-wrap">
+          <button class="btn btn-outline-success btn-prom btn-prom-dif fw-bold" onclick="seleccionarDificultad(1, this)" type="button">Muy Fácil</button>
+          <button class="btn btn-outline-info btn-prom btn-prom-dif fw-bold" onclick="seleccionarDificultad(2, this)" type="button">Fácil</button>
+          <button class="btn btn-outline-warning btn-prom btn-prom-dif fw-bold" onclick="seleccionarDificultad(3, this)" type="button">Normal</button>
+          <button class="btn btn-outline-danger btn-prom btn-prom-dif fw-bold opacity-75" onclick="seleccionarDificultad(4, this)" type="button">Difícil</button>
+          <button class="btn btn-outline-danger btn-prom btn-prom-dif fw-bold" onclick="seleccionarDificultad(5, this)" type="button">Muy Difícil</button>
+        </div>
+
+        <h5 class="fw-bold text-secondary mb-3">
+          ¿Cómo te sientes ahora mismo?
+        </h5>
+
+        <div class="d-flex justify-content-center gap-3 mb-4 flex-wrap">
+          <button class="btn btn-outline-secondary btn-prom btn-prom-ani carita-btn display-6 p-3" onclick="seleccionarAnimo(1, this)" type="button">😞</button>
+          <button class="btn btn-outline-secondary btn-prom btn-prom-ani carita-btn display-6 p-3" onclick="seleccionarAnimo(2, this)" type="button">😐</button>
+          <button class="btn btn-outline-secondary btn-prom btn-prom-ani carita-btn display-6 p-3" onclick="seleccionarAnimo(3, this)" type="button">🙂</button>
+          <button class="btn btn-outline-secondary btn-prom btn-prom-ani carita-btn display-6 p-3" onclick="seleccionarAnimo(4, this)" type="button">😊</button>
+          <button class="btn btn-outline-secondary btn-prom btn-prom-ani carita-btn display-6 p-3" onclick="seleccionarAnimo(5, this)" type="button">😁</button>
+        </div>
+      </div>
+
+      <div class="modal-footer border-0 justify-content-center pt-0">
+        <button
+          id="btn-continuar-prom"
+          class="btn btn-primary btn-lg rounded-pill px-5 fw-bold"
+          disabled
+          onclick="enviarAutopercepcion()"
+          type="button"
+        >
+          Ver mis Resultados
+          <i class="bi bi-arrow-right ms-2"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2: Pantalla de Fin y Medalla -->
+<div class="modal fade" id="modalFinJuego" data-bs-backdrop="static" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center border-0 shadow-lg" style="border-radius: 25px;">
+      <div class="modal-body p-5">
+
+        <div id="medalla-icon" style="font-size: 5rem;">🏅</div>
+
+        <h2 class="display-5 fw-bold mt-3" id="mensaje-final">
+          ¡Buen trabajo!
+        </h2>
+
+        <div class="my-4">
+          <p class="fs-2 mb-0">
+            Puntuación:
+            <span id="puntos-finales" class="fw-bold text-primary">0</span>
+          </p>
+        </div>
+
+        <a
+          href="{% url 'juegos' %}"
+          class="btn btn-primary btn-lg w-100 rounded-pill py-3 shadow"
+        >
+          Volver al Inicio
+        </a>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const NIVEL_DEL_SISTEMA = {{ nivel_inicial|default:1 }};
+  const TOKEN_DJANGO = "{{ csrf_token }}";
+
+  function comenzarJuego() {
+    window.speechSynthesis.cancel();
+    document.getElementById("pantalla-instrucciones").style.display = "none";
+
+    const pantallaJuego = document.getElementById("pantalla-juego");
+    pantallaJuego.style.display = "flex";
+  }
+</script>
+
+<script src="{% static 'core/js/wearable_service.js' %}"></script>
+<script type="module" src="{% static 'core/js/games/motor/atrapa_burbuja.js' %}"></script>
+
+<script>
+(function () {
+    if (!window.Wearable || !Wearable.isSupported()) return;
+    Wearable.mountHeartIcon();
+    var btn = document.getElementById('btn-wearable-juego');
+    var icon = document.getElementById('wearable-juego-icon');
+    var label = document.getElementById('wearable-juego-label');
+    if (!btn) return;
+    btn.classList.remove('d-none');
+    function render(connected) {
+        if (connected) {
+            btn.classList.add('text-danger'); btn.classList.remove('btn-outline-secondary');
+            btn.style.borderColor = '#d92d20';
+            icon.className = 'bi bi-heart-fill text-danger me-2';
+            label.textContent = 'Reloj vinculado';
+        } else {
+            btn.classList.remove('text-danger'); btn.classList.add('btn-outline-secondary');
+            btn.style.borderColor = '';
+            icon.className = 'bi bi-bluetooth me-2';
+            label.textContent = 'Vincular Reloj';
+        }
+    }
+    render(Wearable.isConnected());
+    Wearable.onStatusChange(function (s) { render(s === 'connected'); });
+    btn.addEventListener('click', async function () {
+        if (Wearable.isConnected()) return;
+        btn.disabled = true;
+        icon.className = 'bi bi-arrow-repeat me-2';
+        label.textContent = 'Conectando...';
+        await Wearable.connect();
+        btn.disabled = false;
+        render(Wearable.isConnected());
+    });
+})();
+</script>
+
+{% endblock %}
