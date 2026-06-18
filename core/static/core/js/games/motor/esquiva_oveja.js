@@ -15,25 +15,25 @@ const statusText = document.getElementById("status");
 // ===============================
 
 const backgroundImage = new Image();
-backgroundImage.src = "./fondo.png";
+backgroundImage.src = "/static/core/images/esquiva_oveja/fondo.png";
 
 const sheepImage = new Image();
-sheepImage.src = "./oveja.png";
+sheepImage.src = "/static/core/images/esquiva_oveja/oveja.png";
 
 const haloSheepImage = new Image();
-haloSheepImage.src = "./halo_oveja.png";
+haloSheepImage.src = "/static/core/images/esquiva_oveja/halo_oveja.png";
 
 const instructionImages = [
-  loadImage("./instrucciones_1.png"),
-  loadImage("./instrucciones_2.png"),
-  loadImage("./instrucciones_3.png")
+  loadImage("/static/core/images/esquiva_oveja/instrucciones_1.png"),
+  loadImage("/static/core/images/esquiva_oveja/instrucciones_2.png"),
+  loadImage("/static/core/images/esquiva_oveja/instrucciones_3.png")
 ];
 
 const obstacleImageSources = [
-  "./arbol_1.png",
-  "./arbol_2.png",
-  "./flor_1.png",
-  "./flor_2.png"
+  "/static/core/images/esquiva_oveja/arbol_1.png",
+  "/static/core/images/esquiva_oveja/arbol_2.png",
+  "/static/core/images/esquiva_oveja/flor_1.png",
+  "/static/core/images/esquiva_oveja/flor_2.png"
 ];
 
 const obstacleImages = obstacleImageSources.map((src) => {
